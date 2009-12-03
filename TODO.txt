@@ -1,0 +1,18 @@
+Notes to myself?
+
+High:
+-have grout create canvas tag itself (with optional override)
+-make var scope is legit
+-add pixel map class (one or more maps in a Grout)
+
+Medium:
+-shorthand way of setting maps (set up color pallette then use letters)
+  -pallette could be hash of alphanumeric characters
+  -then set to string ignoring whitespace
+-multiple animation loops
+-make sure pixel positions works when screen is scrolled
+
+Low:
+-design way to mess with draw functionality
+-make demo game
+-handle events other than clicks
