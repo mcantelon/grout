@@ -66,21 +66,18 @@ function pallette() {
 
 function demo() {
 
-	// create new screen
-	var my_screen = new Grout({
-		'width': 5,
-		'height': 7
-	});
-	
-	// set some pixels
-	my_screen.pixels[1][1] = true;
-	my_screen.pixels[3][1] = true;
-	my_screen.poke(1, 4);
-	my_screen.poke([[2, 5], [3, 4]]);
-	my_screen.draw();
+	// create new grout
+	var my_screen = new Grout({});
 
-	// set click logic
-	my_screen.click(function (x, y) {
+	// create pixel map
+	map = my_screen.map('goblin');
+	map.pixels[1][1] = true;
+	map.pixels[3][1] = true;
+	map.poke(1, 4);
+	map.poke([[2, 5], [3, 4]]);
+
+	// set click logic for pixel map
+	map.click(function (x, y) {
 
 		// toggle virtual pixel
 		this.pixels[x][y] = !this.pixels[x][y];
@@ -89,18 +86,26 @@ function demo() {
 		this.draw();
 	});
 
+	// set global click logic
+	my_screen.click(function (x, y) {
+
+		alert('You clicked x=' + x + ', y=' + y);
+	});
+
 	// animation loop
 	my_screen.animate(100, function () {
 
+		var goblin = this.maps['goblin']
+
 		// "zoom" in
-		this.pixel_height = this.pixel_width = (this.pixel_width < 50) ?
-			this.pixel_width + 1 : 1;
+		goblin.pixel_height = goblin.pixel_width = (goblin.pixel_width < 50) ?
+			goblin.pixel_width + 1 : 1;
 
 		// open mouth in fear
-		this.pixels[2][3] = this.pixel_width > 30 ? true : false;
+		goblin.pixels[2][3] = goblin.pixel_width > 30 ? true : false;
 
 		// flash eyes
-		this.pixels[1][1] = this.pixels[3][1] = !this.pixels[3][1];
+		goblin.pixels[1][1] = goblin.pixels[3][1] = !goblin.pixels[3][1];
 	});
 }
 
