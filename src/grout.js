@@ -6,8 +6,6 @@ Map.prototype = {
 
 	initialize:function(params) {
 
-		this.goat = 'rick';
-
 		this.width  = this.merge(params.width, 10);
 		this.height = this.merge(params.height, 10);
 
@@ -17,6 +15,8 @@ Map.prototype = {
 		this.pixels = new Array;
 
 		this.clear();
+		
+		this.state = {}
 	},
 
 	//
@@ -72,11 +72,11 @@ Map.prototype = {
 						that.pixel_width,
 						that.pixel_height
 					);
-				} catch(e) {
-				}
+				} catch(e) {}
 			}
 			else {
 
+				/*
 				// hide canvas errors
 				try {
 					that.parent.ctx.clearRect(
@@ -85,8 +85,8 @@ Map.prototype = {
 						that.pixel_width,
 						that.pixel_height
 					);
-				} catch(e) {
-				}
+				} catch(e) {}
+				*/
 			}
 		});
 	},
@@ -105,11 +105,16 @@ Map.prototype = {
 		}
 		else {
 
-			if (this.undefined_or_null(color)) {
-				color = true;
-			}
+			if (this.pixels.length >= (x + 1)
+				&& this.pixels[x].length >= (y + 1)
+			) {
 
-			this.pixels[x][y] = color;
+				if (this.undefined_or_null(color)) {
+					color = true;
+				}
+
+				this.pixels[x][y] = color;
+			}
 		}
 	},
 
@@ -124,11 +129,16 @@ Map.prototype = {
 		}
 		else {
 
-			if (this.undefined_or_null(color)) {
-				color = true;
-			}
+			if (this.pixels.length >= (x + 1)
+				&& this.pixels[x].length >= (y + 1)
+			) {
 
-			this.pixels[x][y] = this.pixels[x][y] ? false : color;
+				if (this.undefined_or_null(color)) {
+					color = true;
+				}
+
+				this.pixels[x][y] = this.pixels[x][y] ? false : color;
+			}
 		}
 	},
 
@@ -168,7 +178,8 @@ Grout.prototype = {
 
 		this.initialize_canvas(params);
 		
-		this.maps = {};
+		this.maps  = {};
+		this.state = {};
 	},
 
 	map:function(name) {
@@ -240,12 +251,21 @@ Grout.prototype = {
 			// determine x and y in virtual pixels
 			pixel_x = Math.floor(relative_x / this.screen.maps[map].pixel_width);
 			pixel_y = Math.floor(relative_y / this.screen.maps[map].pixel_height);
-		
+
 			this.screen.maps[map].click_logic(pixel_x, pixel_y);
 		}
 
 		// execute global click logic
 		this.screen.click_logic(relative_x, relative_y);
+	},
+
+	draw_all:function() {
+
+		this.ctx.clearRect(0,0,300,300);
+
+		for (var map in this.maps) {
+			this.maps[map].draw();
+		}
 	},
 
 	animate:function(speed, logic) {
@@ -255,10 +275,7 @@ Grout.prototype = {
 		}
 
 		this.animate_logic();
-
-		for (var map in this.maps) {
-			this.maps['goblin'].draw();
-		}
+		this.draw_all();
 
 		setTimeout('document.getElementById("' + this.canvas_id + '").screen.animate(' + speed + ')', speed);
 	},
