@@ -1,9 +1,37 @@
+maps:
+x, y <- virtual pixels
+offset_x <- real
+offset_y <- real
+
+tetris:
+-blank background map
+-create piece map
+-shift piece map down intermittantly
+-test for collision with background map as piece moves down
+-when collision detected, merge piece map with background map
+
+collision, and drop
+
+shift: x amount, y amount
+copy A to buffer
+blank A
+cycle through buffer copying to A while applying shift
+
+collision:
+cycle through A... if A shared pixel with B return true
+
+drop:
+cycle through A... any A pixel replaces B's pixel
+
+
+
 Notes to myself?
+
+Should maps be called sprites?
 
 High:
 -have grout create canvas tag itself (with optional override)
 -make var scope is legit
--add pixel map class (one or more maps in a Grout)
 
 Medium:
 -shorthand way of setting maps (set up color pallette then use letters)

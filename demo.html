@@ -5,7 +5,21 @@
   <script type="text/javascript" src="src/grout.js"></script>
 </head>
 
+<style>
+
+#content {
+	text-align: center;
+}
+canvas {
+	align: center;
+	border: 1px solid red;
+}
+
+</style>
+
 <body>
+
+<div id='content'>
 
 <script>
 
@@ -24,12 +38,12 @@ function pallette() {
 		return hex;
 	}
 
-	var my_screen = []
+	var grout = []
 
     for (r = 0; r < 16; r++) {
 
 		// create new screen
-		my_screen[r] = new Grout({
+		grout[r] = new Grout({
 			'canvas_id': 'pallette_' + r,
 			'width': 16,
 			'height': 16
@@ -43,22 +57,22 @@ function pallette() {
 				blue  = decimalToHex(b * 16);
 
 				color = '#' + red + green + blue;
-				//alert(my_screen[r]);
-				my_screen[r].pixels[g][b] = color;
+				//alert(grout[r]);
+				grout[r].pixels[g][b] = color;
 			}
 		}
 
 		// draw pallette
-		my_screen[r].draw();
+		grout[r].draw();
 
 		// add color display
 		document.write('<p><input id="color_' + r + '"></p>');
 
 		// store value of r for reference in click logic
-		my_screen[r].r = r;
+		grout[r].r = r;
 
 		// set click logic
-		my_screen[r].click(function (x, y) {
+		grout[r].click(function (x, y) {
 			this.doc_get('color_' + this.r).setAttribute('value', this.pixels[x][y]);
 		});
     }
@@ -67,10 +81,13 @@ function pallette() {
 function demo() {
 
 	// create new grout
-	var my_screen = new Grout({});
+	var grout = new Grout({
+		'width': 300,
+		'height': 300
+	});
 
 	// create pixel map
-	map = my_screen.map('face');
+	map = grout.map('face');
 	map.pixels[1][1] = true;
 	map.pixels[3][1] = true;
 	map.poke(1, 4);
@@ -87,21 +104,21 @@ function demo() {
 	});
 
 	// create pixel map
-	map = my_screen.map('dot');
+	map = grout.map('dot');
 	map.pixels[0][0] = true;
 
 	// ad-hoc map state info can be stored in the state hash
 	map.state['x'] = 0;
 
 	// set global click logic
-	my_screen.click(function (x, y) {
+	grout.click(function (x, y) {
 
 		// global click gets real pixel coordinates
 		alert('You clicked x=' + x + ', y=' + y);
 	});
 
 	// animation loop
-	my_screen.animate(100, function () {
+	grout.animate(100, function () {
 
 		//
 		// animate face
@@ -125,9 +142,13 @@ function demo() {
 		
 		var dot = this.maps['dot'];
 
-		dot.pixels[dot.state['x']][0] = false
-		dot.state['x'] = dot.state['x'] < 9 ? dot.state['x'] + 1 : 1;
-		dot.pixels[dot.state['x']][0] = true
+		//alert('-1:' + dot.pixels[0][0]);
+		dot.shift(1, 0);
+		//alert(dot.pixels[1][0]);
+
+		//dot.pixels[dot.state['x']][0] = false
+		//dot.state['x'] = dot.state['x'] < 9 ? dot.state['x'] + 1 : 1;
+		//dot.pixels[dot.state['x']][0] = true
 	});
 }
 
@@ -135,5 +156,8 @@ demo();
 //pallette()
 
 </script>
+
+</div id='content'>
+
 </body>
 </html>

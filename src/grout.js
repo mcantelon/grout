@@ -6,17 +6,21 @@ Map.prototype = {
 
 	initialize:function(params) {
 
+		params = typeof(params) != 'undefined' ? params : {};
+
 		this.width  = this.merge(params.width, 10);
 		this.height = this.merge(params.height, 10);
 
 		this.pixel_width  = this.merge(params.pixel_width, 10);
 		this.pixel_height = this.merge(params.pixel_height, 10);
 
-		this.pixels = new Array;
+		this.pixels = []; // pixels to draw when rendering
+		this.buffer = []; // buffer area for pixel transformations
 
-		this.clear();
-		
-		this.state = {}
+		this.state  = {} // ad-hoc variables for applications
+		this.system = {} // misc variable for internal use
+
+		this.clear(); // initialize pixel area
 	},
 
 	//
@@ -27,14 +31,16 @@ Map.prototype = {
 
 		for (x = 0; x < this.width; x++) {
 			for (y = 0; y < this.height; y++) {
-				logic(this, x, y);
+				// params is optional, to pass ad-hoc stuff through
+				params = typeof(params) != 'undefined' ? params : {};
+				logic(this, x, y, params);
 			}
 		}
 	},
 
 	clear:function() {
 
-		this.cycle_through_pixels(function(that, x, y) {
+		this.cycle_through_pixels(function(that, x, y, params) {
 				
 			if (that.undefined_or_null(that.pixels[x])) {
 				that.pixels[x] = Array()
@@ -44,11 +50,62 @@ Map.prototype = {
 		});
 	},
 
+	shift:function(x, y) {
+
+		params = {
+			'original': this.pixels,
+			'new': [],
+			'shift_x': x,
+			'shift_y': y
+		};
+
+		this.buffer = [] // clear buffer
+
+		this.cycle_through_pixels(function(that, x, y, params) {
+
+			pixel = params['original'][x][y];
+
+			// if attempting to shift pixel beyond map border, wrap
+			new_x = x + params['shift_x'];
+			if (new_x > (that.pixels.length - 1)) {
+				new_x = new_x - that.pixels.length;
+			}
+
+			// if attempting to shift pixel beyond map border, wrap
+			new_y = y + params['shift_y'];
+			if (new_y > (that.pixels[x].length - 1)) {
+				new_y = new_y - that.pixels[x].length;
+			}
+
+			try {
+
+				//if (params['new'][x] == undefined) {
+				//  params['new'][x] = [];
+				//}
+
+				if (that.buffer[new_x] == undefined) {
+					that.buffer[new_x] = [];
+				}
+
+				that.buffer[new_x][new_y] = pixel;
+
+			} catch(e) {
+				alert('b ' + new_x);
+				alert('b ' + new_y);
+				//eee();
+			}
+			
+			if(x == 0 && y ==0) {
+				//alert('2:' + that.pixels[0][0]);
+			}
+		});
+		
+		this.pixels = this.buffer;
+	},
+
 	draw:function() {
 
-		//this.size_canvas();
-
-		this.cycle_through_pixels(function(that, x, y) {
+		this.cycle_through_pixels(function(that, x, y, params) {
 
 			var real_x = x * that.pixel_width;
 			var real_y = y * that.pixel_width;
@@ -92,8 +149,8 @@ Map.prototype = {
 	},
 
 	// Shorthand for setting pixels:
-	// my_screen.poke(1, 4, 'red'); <- set individual pixel to red
-	// my_screen.poke([[2, 5], [3, 4, 'green']]); <- set one to black, one to green
+	// my_grout.poke(1, 4, 'red'); <- set individual pixel to red
+	// my_grout.poke([[2, 5], [3, 4, 'green']]); <- set one to black, one to green
 	poke:function(x, y, color) {
 
 		// allow x to be a set of points to poke
@@ -176,6 +233,8 @@ Grout.prototype = {
 
 	initialize:function(params) {
 
+		params = typeof(params) != 'undefined' ? params : {};
+
 		this.initialize_canvas(params);
 		
 		this.maps  = {};
@@ -185,7 +244,7 @@ Grout.prototype = {
 	map:function(name) {
 
 		if (!this.maps[name]) {
-			this.maps[name] = new Map({});
+			this.maps[name] = new Map();
 			this.maps[name].parent = this;
 		}
 			
@@ -196,34 +255,25 @@ Grout.prototype = {
 
 		this.canvas_id = this.merge(params.canvas_id, 'canvas');
 		this.canvas    = this.doc_get(this.canvas_id);
+		this.width = this.merge(params.width, 'width');
+		this.height = this.merge(params.height, 'height');
 
+		// write canvas to document
 		if (!this.canvas) {
 			document.write('<canvas id="' + this.canvas_id + '"></canvas>');
 			this.canvas    = this.doc_get(this.canvas_id);
 		}
 
+		// set canvas size
+		this.canvas.setAttribute('width', this.width);
+		this.canvas.setAttribute('height', this.height);
+
 		// put reference to this object in canvas
-		this.canvas.screen = this
+		this.canvas.grout = this
 
 		if (this.canvas.getContext) {  
 			this.ctx = this.canvas.getContext('2d');  
 		}		
-	},
-
-	size_canvas:function() {
-
-		var canvas_width  = this.doc_get(this.canvas_id).getAttribute('width');
-		var canvas_height = this.doc_get(this.canvas_id).getAttribute('height');
-
-		var auto_width = (this.width * this.pixel_width);
-		if (auto_width != canvas_width) {
-			this.doc_get(this.canvas_id).setAttribute('width', auto_width);
-		}
-
-		var auto_height = (this.height * this.pixel_height);
-		if (auto_height != canvas_height) {
-			this.doc_get(this.canvas_id).setAttribute('height', auto_height);
-		}
 	},
 
 	//
@@ -246,17 +296,17 @@ Grout.prototype = {
 		var relative_y = event.clientY - this.offsetTop;
 
 		// execute pixel map click logic
-		for (var map in this.screen.maps) {
+		for (var map in this.grout.maps) {
 
 			// determine x and y in virtual pixels
-			pixel_x = Math.floor(relative_x / this.screen.maps[map].pixel_width);
-			pixel_y = Math.floor(relative_y / this.screen.maps[map].pixel_height);
+			pixel_x = Math.floor(relative_x / this.grout.maps[map].pixel_width);
+			pixel_y = Math.floor(relative_y / this.grout.maps[map].pixel_height);
 
-			this.screen.maps[map].click_logic(pixel_x, pixel_y);
+			this.grout.maps[map].click_logic(pixel_x, pixel_y);
 		}
 
 		// execute global click logic
-		this.screen.click_logic(relative_x, relative_y);
+		this.grout.click_logic(relative_x, relative_y);
 	},
 
 	draw_all:function() {
@@ -277,7 +327,7 @@ Grout.prototype = {
 		this.animate_logic();
 		this.draw_all();
 
-		setTimeout('document.getElementById("' + this.canvas_id + '").screen.animate(' + speed + ')', speed);
+		setTimeout('document.getElementById("' + this.canvas_id + '").grout.animate(' + speed + ')', speed);
 	},
 
 	//
