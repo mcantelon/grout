@@ -152,8 +152,84 @@ function demo() {
 	});
 }
 
-demo();
+function groutris() {
+
+	var pixel_width = 10;
+	var pixel_map_width = 10;
+	var canvas_width = pixel_width * pixel_map_width;
+
+	// create new grout
+	var grout = new Grout({
+		'width': canvas_width,
+		'height': canvas_width
+	});
+
+	// create pixel map for background
+	var background = grout.map('background');
+
+	// create pixel map for game pieces
+	var piece = grout.map('piece');
+
+	// return two dimensional array representing new game piece
+	function generate_piece() {
+
+		var piece = [];
+
+		piece[0] = [];
+		piece[0][0] = true;
+		piece[0][1] = true;
+		piece[1] = [];
+		piece[1][0] = true;
+		piece[1][1] = true;		
+
+		return piece;
+	}
+
+	function restart(background, piece) {
+
+		background.clear();
+	
+		// generate game piece
+		piece.overwrite(generate_piece());
+		
+		grout.draw_all();
+	}
+
+	restart(background, piece);
+
+	// animation loop
+	grout.animate(1000, function () {
+
+		piece = this.maps['piece'];
+
+		if (piece.margin_bottom()
+		  && !piece.check_if_shift_will_collide_with_pixels(0, 1, background.pixels)) {
+			piece.shift(0, 1);
+		}
+		else {
+
+			// add piece to background
+			background.stamp(piece.pixels);
+
+			// ADD: if piece top margin = 0, end game
+			if (piece.margin_top() == 0) {
+
+				alert('Game over');
+
+				restart(background, piece);
+			}
+			else {
+				
+				// generate game piece
+				piece.overwrite(generate_piece());
+			}
+		}
+	});
+}
+
+//demo();
 //pallette()
+groutris();
 
 </script>
 

@@ -50,19 +50,121 @@ Map.prototype = {
 		});
 	},
 
-	overwrite:function(new_pixels) {
+	check_if_shift_will_collide_with_pixels:function(shift_x, shift_y, pixels) {
+
+		var temp_map = new Map();
+		temp_map.pixels = this.pixels;
+		temp_map.shift(shift_x, shift_y);
+		if (temp_map.detect_collision_with(pixels)) {
+			return true;
+		}
+		
+		return false;
+	},
+
+	detect_collision_with:function(pixels) {
+
+		// hack: pass object as parameter so we can return value
+		function collision_object() {}
+		var collision = new collision_object();
+
+		params = {
+			'pixels': pixels,
+			'collision': collision,
+		};
+
+		params['collision'].value = false;
+
+		this.cycle_through_pixels(function(that, x, y, params) {
+
+			var other_pixels = params['pixels'];
+
+			if (!that.undefined_or_null(that.pixels[x])
+			  && !that.undefined_or_null(other_pixels[x])) {
+
+  				if (!that.undefined_or_null(that.pixels[x][y])
+  				  && !that.undefined_or_null(other_pixels[x][y])) {
+
+					if (that.pixels[x][y] && other_pixels[x][y]) {
+						params['collision'].value = true;
+					}
+  				}
+			}
+		});
+
+		return params['collision'].value;
+	},
+
+	margin_bottom:function() {
+		
+		var margin_vertical = this.margin_vertical();
+
+		return margin_vertical['bottom'];
+	},
+
+	margin_top:function() {
+		
+		var margin_vertical = this.margin_vertical();
+
+		return margin_vertical['top'];
+	},
+
+	// return bottom pixel margin of active pixels in map
+	margin_vertical:function() {
+
+		var margin_data = {}
+
+		var lowest_row = 0;
+		var lowest_row_with_pixel = 0;
+		var heighest_row = 999;
+		var heighest_row_with_pixel = 999;
+
+		// cycle through each column
+		for (var x in this.pixels) {
+			for (var y in this.pixels[x]) {
+				if (this.pixels[x][y] != undefined
+				  && this.pixels[x][y]) {
+					if (y > lowest_row_with_pixel) {
+						lowest_row_with_pixel = y;
+					}
+					if (y < heighest_row_with_pixel) {
+						heighest_row_with_pixel = y;
+					}
+				}
+				if (y < heighest_row) {
+					heighest_row = y;
+				}
+				if (y > lowest_row) {
+					lowest_row = y;
+				}
+			}
+		}
+		
+		return {
+			'bottom': lowest_row - lowest_row_with_pixel,
+			'top': heighest_row_with_pixel
+		}
+	},
+
+	stamp:function(new_pixels) {
 
 		params = {'new_pixels': new_pixels};
-
-		this.clear();
 
 		this.cycle_through_pixels(function(that, x, y, params) {
 
 			if (params['new_pixels'][x] != undefined
 			  && params['new_pixels'][x][y] != undefined) {
-				that.pixels[x][y] = params['new_pixels'][x][y];
+			  	if (params['new_pixels'][x][y]) {
+					that.pixels[x][y] = params['new_pixels'][x][y];
+			  	}
 			}
 		});
+	},
+
+	overwrite:function(new_pixels) {
+
+		this.clear();
+		this.stamp(new_pixels);
 	},
 
 	shift:function(x, y) {
@@ -94,10 +196,6 @@ Map.prototype = {
 
 			try {
 
-				//if (params['new'][x] == undefined) {
-				//  params['new'][x] = [];
-				//}
-
 				if (that.buffer[new_x] == undefined) {
 					that.buffer[new_x] = [];
 				}
@@ -107,11 +205,6 @@ Map.prototype = {
 			} catch(e) {
 				alert('b ' + new_x);
 				alert('b ' + new_y);
-				//eee();
-			}
-			
-			if(x == 0 && y ==0) {
-				//alert('2:' + that.pixels[0][0]);
 			}
 		});
 		
@@ -302,6 +395,14 @@ Grout.prototype = {
 
 		// activate click handler
 		this.canvas.addEventListener('mousedown', this.click_handler, false);
+
+		// activate keypress handler
+		//this.canvas.addEventListener('keydown', this.key_handler, false);
+	},
+
+	key_handler:function(event) {
+
+		alert('fff');
 	},
 
 	click_handler:function(event) {
@@ -317,7 +418,9 @@ Grout.prototype = {
 			pixel_x = Math.floor(relative_x / this.grout.maps[map].pixel_width);
 			pixel_y = Math.floor(relative_y / this.grout.maps[map].pixel_height);
 
-			this.grout.maps[map].click_logic(pixel_x, pixel_y);
+			if (this.grout.maps[map].click_logic) {
+				this.grout.maps[map].click_logic(pixel_x, pixel_y);
+			}
 		}
 
 		// execute global click logic
