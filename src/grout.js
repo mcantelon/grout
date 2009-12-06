@@ -50,6 +50,21 @@ Map.prototype = {
 		});
 	},
 
+	overwrite:function(new_pixels) {
+
+		params = {'new_pixels': new_pixels};
+
+		this.clear();
+
+		this.cycle_through_pixels(function(that, x, y, params) {
+
+			if (params['new_pixels'][x] != undefined
+			  && params['new_pixels'][x][y] != undefined) {
+				that.pixels[x][y] = params['new_pixels'][x][y];
+			}
+		});
+	},
+
 	shift:function(x, y) {
 
 		params = {
