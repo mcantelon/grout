@@ -195,6 +195,16 @@ function groutris() {
 		grout.draw_all();
 	}
 
+	grout.keypress(function(key) {
+
+		if (piece.margin_bottom()
+		  && !piece.check_if_shift_will_collide_with_pixels(0, 1, background.pixels)) {
+			piece.shift(0, 1);
+		}
+
+		//alert('k:' + key);
+	});
+
 	restart(background, piece);
 
 	// animation loop

@@ -396,13 +396,23 @@ Grout.prototype = {
 		// activate click handler
 		this.canvas.addEventListener('mousedown', this.click_handler, false);
 
+	},
+
+	keypress:function(logic) {
+
+		// store reference to object in document
+		document.grout = this;
+
+		// store keypress logic
+		this.keypress_logic = logic;
+
 		// activate keypress handler
-		//this.canvas.addEventListener('keydown', this.key_handler, false);
+		document.onkeydown = this.key_handler;
 	},
 
 	key_handler:function(event) {
 
-		alert('fff');
+		this.grout.keypress_logic(event.keyCode);
 	},
 
 	click_handler:function(event) {
