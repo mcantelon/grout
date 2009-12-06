@@ -164,6 +164,8 @@ function groutris() {
 		'height': canvas_width
 	});
 
+	grout.state['turns'] = 0;
+
 	// create pixel map for background
 	var background = grout.map('background');
 
@@ -197,41 +199,74 @@ function groutris() {
 
 	grout.keypress(function(key) {
 
-		if (piece.margin_bottom()
-		  && !piece.check_if_shift_will_collide_with_pixels(0, 1, background.pixels)) {
-			piece.shift(0, 1);
+		var margin_space;
+		var response;
+
+		var keycode_response = {
+			37: {
+				'shift_x': -1,
+				'shift_y': 0,
+				'margin_check_function': 'margin_left'
+			},
+			39: {
+				'shift_x': 1,
+				'shift_y': 0,
+				'margin_check_function': 'margin_right'
+			},
+			40: {
+				'shift_x': 0,
+				'shift_y': 1,
+				'margin_check_function': 'margin_bottom'
+			}
 		}
 
-		//alert('k:' + key);
+		for (keycode in keycode_response) {
+
+			response = keycode_response[keycode];
+			margin_space = piece[response['margin_check_function']]();
+
+			// shift piece if key is pressed and there is space to shift it
+			if (key == keycode
+			  && margin_space != 0
+			  && !piece.check_if_shift_will_collide_with_pixels(1, 0, background.pixels)
+			) {
+				piece.shift(response['shift_x'], response['shift_y']);
+			}
+		}
 	});
 
 	restart(background, piece);
 
 	// animation loop
-	grout.animate(1000, function () {
+	grout.animate(100, function () {
 
-		piece = this.maps['piece'];
+		this.state['turns']++;
 
-		if (piece.margin_bottom()
-		  && !piece.check_if_shift_will_collide_with_pixels(0, 1, background.pixels)) {
-			piece.shift(0, 1);
-		}
-		else {
+		if (this.state['turns'] % 10 == 0) {
 
-			// add piece to background
-			background.stamp(piece.pixels);
+			piece = this.maps['piece'];
 
-			// ADD: if piece top margin = 0, end game
-			if (piece.margin_top() == 0) {
-
-				alert('Game over');
-
-				restart(background, piece);
+			if (piece.margin_bottom()
+			  && !piece.check_if_shift_will_collide_with_pixels(0, 1, background.pixels)) {
+				piece.shift(0, 1);
 			}
 			else {
-				
-				// generate game piece
-				piece.overwrite(generate_piece());
+
+				// add piece to background
+				background.stamp(piece.pixels);
+
+				// ADD: if piece top margin = 0, end game
+				if (piece.margin_top() == 0) {
+
+					alert('Game over');
+
+					restart(background, piece);
+				}
+				else {
+		
+					// generate game piece
+					piece.overwrite(generate_piece());
+				}
 			}
 		}
 	});

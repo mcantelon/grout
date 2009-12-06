@@ -109,7 +109,7 @@ Map.prototype = {
 		return margin_vertical['top'];
 	},
 
-	// return bottom pixel margin of active pixels in map
+	// return vertical pixel margins of active pixels in map
 	margin_vertical:function() {
 
 		var margin_data = {}
@@ -143,6 +143,57 @@ Map.prototype = {
 		return {
 			'bottom': lowest_row - lowest_row_with_pixel,
 			'top': heighest_row_with_pixel
+		}
+	},
+
+	margin_left:function() {
+		
+		var margin_horizontal = this.margin_horizontal();
+
+		return margin_horizontal['left'];
+	},
+
+	margin_right:function() {
+		
+		var margin_horizontal = this.margin_horizontal();
+
+		return margin_horizontal['right'];
+	},
+
+	// return horizontal pixel margins of active pixels in map
+	margin_horizontal:function() {
+
+		var margin_data = {}
+
+		var leftmost_row = 999;
+		var leftmost_row_with_pixel = 999;
+		var rightmost_row = 0;
+		var rightmost_row_with_pixel = 0;
+
+		// cycle through each column
+		for (var x in this.pixels) {
+			for (var y in this.pixels[x]) {
+				if (this.pixels[x][y] != undefined
+				  && this.pixels[x][y]) {
+					if (x > rightmost_row_with_pixel) {
+						rightmost_row_with_pixel = x;
+					}
+					if (x < leftmost_row_with_pixel) {
+						leftmost_row_with_pixel = x;
+					}
+				}
+				if (x > rightmost_row) {
+					rightmost_row = x;
+				}
+				//if (x > rightmost_row) {
+				//	leftmost_row = x;
+				//}
+			}
+		}
+
+		return {
+			'left': leftmost_row_with_pixel,
+			'right': rightmost_row - rightmost_row_with_pixel
 		}
 	},
 
@@ -180,31 +231,34 @@ Map.prototype = {
 
 		this.cycle_through_pixels(function(that, x, y, params) {
 
-			pixel = params['original'][x][y];
+			if (params['original'][x] != undefined) {
 
-			// if attempting to shift pixel beyond map border, wrap
-			new_x = x + params['shift_x'];
-			if (new_x > (that.pixels.length - 1)) {
-				new_x = new_x - that.pixels.length;
-			}
+				pixel = params['original'][x][y];
 
-			// if attempting to shift pixel beyond map border, wrap
-			new_y = y + params['shift_y'];
-			if (new_y > (that.pixels[x].length - 1)) {
-				new_y = new_y - that.pixels[x].length;
-			}
-
-			try {
-
-				if (that.buffer[new_x] == undefined) {
-					that.buffer[new_x] = [];
+				// if attempting to shift pixel beyond map border, wrap
+				new_x = x + params['shift_x'];
+				if (new_x > (that.pixels.length - 1)) {
+					new_x = new_x - that.pixels.length;
 				}
 
-				that.buffer[new_x][new_y] = pixel;
+				// if attempting to shift pixel beyond map border, wrap
+				new_y = y + params['shift_y'];
+				if (new_y > (that.pixels[x].length - 1)) {
+					new_y = new_y - that.pixels[x].length;
+				}
 
-			} catch(e) {
-				alert('b ' + new_x);
-				alert('b ' + new_y);
+				try {
+
+					if (that.buffer[new_x] == undefined) {
+						that.buffer[new_x] = [];
+					}
+
+					that.buffer[new_x][new_y] = pixel;
+
+				} catch(e) {
+					alert('b ' + new_x);
+					alert('b ' + new_y);
+				}
 			}
 		});
 		
@@ -218,40 +272,29 @@ Map.prototype = {
 			var real_x = x * that.pixel_width;
 			var real_y = y * that.pixel_width;
 
-			if (that.pixels[x][y] == true) {
+			if (that.pixels[x] != undefined) {
 
-				that.parent.ctx.fillStyle = 'black';
-			}
-			else if (that.pixels[x][y]) {
+				if (that.pixels[x][y] == true) {
 
-				that.parent.ctx.fillStyle = that.pixels[x][y];
-			}
+					that.parent.ctx.fillStyle = 'black';
+				}
+				else if (that.pixels[x][y]) {
 
-			if (that.pixels[x][y]) {
+					that.parent.ctx.fillStyle = that.pixels[x][y];
+				}
 
-				// hide canvas errors
-				try {
-					that.parent.ctx.fillRect(
-						real_x,
-						real_y,
-						that.pixel_width,
-						that.pixel_height
-					);
-				} catch(e) {}
-			}
-			else {
+				if (that.pixels[x][y]) {
 
-				/*
-				// hide canvas errors
-				try {
-					that.parent.ctx.clearRect(
-						real_x,
-						real_y,
-						that.pixel_width,
-						that.pixel_height
-					);
-				} catch(e) {}
-				*/
+					// hide canvas errors
+					try {
+						that.parent.ctx.fillRect(
+							real_x,
+							real_y,
+							that.pixel_width,
+							that.pixel_height
+						);
+					} catch(e) {}
+				}
 			}
 		});
 	},
@@ -395,7 +438,6 @@ Grout.prototype = {
 
 		// activate click handler
 		this.canvas.addEventListener('mousedown', this.click_handler, false);
-
 	},
 
 	keypress:function(logic) {
