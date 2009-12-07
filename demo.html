@@ -172,7 +172,7 @@ function groutris() {
 	// create pixel map for game pieces
 	var piece = grout.map('piece');
 
-	// return two dimensional array representing new game piece
+	// game piece generation logic
 	function generate_piece() {
 
 		var piece = [];
@@ -187,6 +187,7 @@ function groutris() {
 		return piece;
 	}
 
+	// restart logic
 	function restart(background, piece) {
 
 		background.clear();
@@ -197,10 +198,15 @@ function groutris() {
 		grout.draw_all();
 	}
 
+	// set up game
+	restart(background, piece);
+
+	// set up keyboard handling
 	grout.keypress(function(key) {
 
 		var margin_space;
 		var response;
+		var will_collide_with_background;
 
 		var keycode_response = {
 			37: {
@@ -223,30 +229,50 @@ function groutris() {
 		for (keycode in keycode_response) {
 
 			response = keycode_response[keycode];
+
+			// execute appropriate piece method to check space between piece and map edge
 			margin_space = piece[response['margin_check_function']]();
 
-			// shift piece if key is pressed and there is space to shift it
+			// check to see if piece, when shifted, would collide with the background
+			will_collide_with_background = piece.check_if_shift_will_collide_with_pixels(
+				response['shift_x'],
+				response['shift_y'],
+				background.pixels
+			)
+
+			// shift piece if key is pressed and there is space to shift it to
 			if (key == keycode
 			  && margin_space != 0
-			  && !piece.check_if_shift_will_collide_with_pixels(1, 0, background.pixels)
+			  && !will_collide_with_background
 			) {
 				piece.shift(response['shift_x'], response['shift_y']);
+			}
+			else if (key == keycode && keycode == 39) {
+				//piece.margin_horizontal(true);
+				//alert('MS:' + margin_space);
+				//alert('PWC:' + piece.check_if_shift_will_collide_with_pixels(1, 0, background.pixels));
 			}
 		}
 	});
 
-	restart(background, piece);
-
-	// animation loop
+	// enter main loop
 	grout.animate(100, function () {
 
 		this.state['turns']++;
+
+		/*
+		// cycle through stack of shifts to try, then apply
+		for (shift as shift_schedule) {
+			alert('SX:' + shift['x'] +/SY:' + shift['y']);
+		}
+		// empty stack
+		*/
 
 		if (this.state['turns'] % 10 == 0) {
 
 			piece = this.maps['piece'];
 
-			if (piece.margin_bottom()
+			if (piece.margin_bottom() != 0
 			  && !piece.check_if_shift_will_collide_with_pixels(0, 1, background.pixels)) {
 				piece.shift(0, 1);
 			}
@@ -255,7 +281,7 @@ function groutris() {
 				// add piece to background
 				background.stamp(piece.pixels);
 
-				// ADD: if piece top margin = 0, end game
+				// if piece that has just dropped is at top of map, end game
 				if (piece.margin_top() == 0) {
 
 					alert('Game over');

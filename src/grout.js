@@ -161,7 +161,7 @@ Map.prototype = {
 	},
 
 	// return horizontal pixel margins of active pixels in map
-	margin_horizontal:function() {
+	margin_horizontal:function(debug) {
 
 		var margin_data = {}
 
@@ -173,6 +173,7 @@ Map.prototype = {
 		// cycle through each column
 		for (var x in this.pixels) {
 			for (var y in this.pixels[x]) {
+
 				if (this.pixels[x][y] != undefined
 				  && this.pixels[x][y]) {
 					if (x > rightmost_row_with_pixel) {
@@ -182,18 +183,21 @@ Map.prototype = {
 						leftmost_row_with_pixel = x;
 					}
 				}
+
 				if (x > rightmost_row) {
 					rightmost_row = x;
 				}
-				//if (x > rightmost_row) {
-				//	leftmost_row = x;
-				//}
 			}
+		}
+
+		if (debug) {
+			alert('RR:' + rightmost_row);
+			alert(rightmost_row_with_pixel);
 		}
 
 		return {
 			'left': leftmost_row_with_pixel,
-			'right': rightmost_row - rightmost_row_with_pixel
+			'right': (this.pixel_width - 1) - rightmost_row_with_pixel
 		}
 	},
 
@@ -237,13 +241,15 @@ Map.prototype = {
 
 				// if attempting to shift pixel beyond map border, wrap
 				new_x = x + params['shift_x'];
-				if (new_x > (that.pixels.length - 1)) {
+				//if (new_x > (that.pixels.length - 1)) {
+				if (new_x > (that.pixels.width - 1)) {
 					new_x = new_x - that.pixels.length;
 				}
 
 				// if attempting to shift pixel beyond map border, wrap
 				new_y = y + params['shift_y'];
-				if (new_y > (that.pixels[x].length - 1)) {
+				//if (new_y > (that.pixels[x].length - 1)) {
+				if (new_y > (that.height - 1)) {
 					new_y = new_y - that.pixels[x].length;
 				}
 
