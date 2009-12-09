@@ -182,9 +182,35 @@ function groutris() {
 		piece[0][1] = true;
 		piece[1] = [];
 		piece[1][0] = true;
-		piece[1][1] = true;		
+		piece[1][1] = false;
+		//piece[1][1] = true;		
+
+		number_of_rotations = Math.floor(Math.random()*4);
+
+		for (var i = 0; i < number_of_rotations; i++) {
+			piece = rotate(piece, 2);		
+		}
 
 		return piece;
+	}
+
+	// rotation logic - this should be incorprated into engine
+	function rotate(pixels, width) {
+
+		var temp = [];
+		var temp_x;
+
+		for(var i=0; i < width; i++) {
+			for(var j=0; j < width; j++) {
+				temp_x = (width - 1) - j;
+				if (temp[temp_x] == undefined) {
+					temp[temp_x] = [];
+				}
+				temp[temp_x][i]= pixels[i][j];
+			}
+		}
+		
+		return temp;
 	}
 
 	// restart logic
@@ -226,6 +252,13 @@ function groutris() {
 			}
 		}
 
+		if (key == 38) {
+
+			piece.pixels = rotate(piece.pixels, 4);
+
+			return;
+		}
+
 		for (keycode in keycode_response) {
 
 			response = keycode_response[keycode];
@@ -247,11 +280,6 @@ function groutris() {
 			) {
 				piece.shift(response['shift_x'], response['shift_y']);
 			}
-			else if (key == keycode && keycode == 39) {
-				//piece.margin_horizontal(true);
-				//alert('MS:' + margin_space);
-				//alert('PWC:' + piece.check_if_shift_will_collide_with_pixels(1, 0, background.pixels));
-			}
 		}
 	});
 
@@ -259,14 +287,6 @@ function groutris() {
 	grout.animate(100, function () {
 
 		this.state['turns']++;
-
-		/*
-		// cycle through stack of shifts to try, then apply
-		for (shift as shift_schedule) {
-			alert('SX:' + shift['x'] +/SY:' + shift['y']);
-		}
-		// empty stack
-		*/
 
 		if (this.state['turns'] % 10 == 0) {
 

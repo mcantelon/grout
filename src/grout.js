@@ -1,8 +1,39 @@
+// Base class contains helpers
+var Base = function(params) {
+}
+
+Base.prototype = {
+
+	mixin:function(name_and_definition_hash) {
+
+		for(property_name in name_and_definition_hash) {
+			this[property_name] = name_and_definition_hash[property_name];
+		}
+	},
+
+	doc_get:function(id) {
+		return document.getElementById(id);
+	},
+
+	merge:function(sent, preset) {
+		return (this.undefined_or_null(sent)) ? preset : sent;
+	},
+
+	undefined_or_null:function(value) {
+		return value == undefined || value == null;
+	}
+}
+
+// Map class deals with pixel maps
 var Map = function (params) {
 	this.initialize(params);
 }
 
-Map.prototype = {
+// Map extends Base
+Map.prototype = new Base();
+
+// Map mixins
+Map.prototype.mixin({
 
 	initialize:function(params) {
 
@@ -363,30 +394,19 @@ Map.prototype = {
 
 		// activate click handler
 		this.parent.canvas.addEventListener('mousedown', this.parent.click_handler, false);
-	},
-	
-	//
-	// Helpers
-	//
-
-	doc_get:function(id) {
-		return document.getElementById(id);
-	},
-
-	merge:function(sent, preset) {
-		return (this.undefined_or_null(sent)) ? preset : sent;
-	},
-
-	undefined_or_null:function(value) {
-		return value == undefined || value == null;
 	}
-}
+});
 
+// Grout class manages big picture
 var Grout = function (params) {
 	this.initialize(params);
 }
 
-Grout.prototype = {
+// Grout extends Base
+Grout.prototype = new Base();
+
+// Grout mixins
+Grout.prototype.mixin({
 
 	initialize:function(params) {
 
@@ -521,4 +541,4 @@ Grout.prototype = {
 	undefined_or_null:function(value) {
 		return value == undefined || value == null;
 	}
-}
+});
