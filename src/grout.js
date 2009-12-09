@@ -24,18 +24,10 @@ Base.prototype = {
 	}
 }
 
-// Map class deals with pixel maps
-var Map = function (params) {
-	this.initialize(params);
-}
+// Has_Pixels mixin defines logic common to sprites and maps
+var Has_Pixels = {
 
-// Map extends Base
-Map.prototype = new Base();
-
-// Map mixins
-Map.prototype.mixin({
-
-	initialize:function(params) {
+	initialize_resources:function(params) {
 
 		params = typeof(params) != 'undefined' ? params : {};
 
@@ -54,10 +46,6 @@ Map.prototype.mixin({
 		this.clear(); // initialize pixel area
 	},
 
-	//
-	// Pixel-wrangling
-	//
-
 	cycle_through_pixels:function(logic) {
 
 		for (x = 0; x < this.width; x++) {
@@ -65,6 +53,34 @@ Map.prototype.mixin({
 				// params is optional, to pass ad-hoc stuff through
 				params = typeof(params) != 'undefined' ? params : {};
 				logic(this, x, y, params);
+			}
+		}
+	},
+
+	draw_common:function(that, x, y, real_x, real_y) {
+
+		if (that.pixels[x] != undefined) {
+
+			if (that.pixels[x][y] == true) {
+
+				that.parent.ctx.fillStyle = 'black';
+			}
+			else if (that.pixels[x][y]) {
+
+				that.parent.ctx.fillStyle = that.pixels[x][y];
+			}
+
+			if (that.pixels[x][y]) {
+
+				// hide canvas errors
+				try {
+					that.parent.ctx.fillRect(
+						real_x,
+						real_y,
+						that.pixel_width,
+						that.pixel_height
+					);
+				} catch(e) {}
 			}
 		}
 	},
@@ -79,6 +95,57 @@ Map.prototype.mixin({
 
 			that.pixels[x][y] = false;
 		});
+	}
+		
+};
+
+// Sprite class deals with floating pixel maps
+var Sprite = function (params) {
+	this.initialize(params);
+}
+
+// Sprite extends Base
+Sprite.prototype = new Base();
+
+// Sprite mixins
+Sprite.prototype.mixin(Has_Pixels);
+Sprite.prototype.mixin({
+
+	initialize:function(params) {
+		this.initialize_resources(params);
+
+		this.offset_x = this.merge(params.offset_x, 0);
+		alert('O:' + this.offset_x);
+		this.offset_y = this.merge(params.offset_y, 0);		
+	},
+
+	draw:function() {
+
+		this.cycle_through_pixels(function(that, x, y, params) {
+
+			var real_x = (x + that.offset_x) * that.pixel_width;
+			var real_y = (y + that.offset_y) * that.pixel_width;
+
+			that.draw_common(that, x, y, real_x, real_y);
+		});
+	}
+
+});
+
+// Map class deals with pixel maps
+var Map = function (params) {
+	this.initialize(params);
+}
+
+// Map extends Base
+Map.prototype = new Base();
+
+// Map mixins
+Map.prototype.mixin(Has_Pixels);
+Map.prototype.mixin({
+
+	initialize:function(params) {
+		this.initialize_resources(params);
 	},
 
 	check_if_shift_will_collide_with_pixels:function(shift_x, shift_y, pixels) {
@@ -309,30 +376,7 @@ Map.prototype.mixin({
 			var real_x = x * that.pixel_width;
 			var real_y = y * that.pixel_width;
 
-			if (that.pixels[x] != undefined) {
-
-				if (that.pixels[x][y] == true) {
-
-					that.parent.ctx.fillStyle = 'black';
-				}
-				else if (that.pixels[x][y]) {
-
-					that.parent.ctx.fillStyle = that.pixels[x][y];
-				}
-
-				if (that.pixels[x][y]) {
-
-					// hide canvas errors
-					try {
-						that.parent.ctx.fillRect(
-							real_x,
-							real_y,
-							that.pixel_width,
-							that.pixel_height
-						);
-					} catch(e) {}
-				}
-			}
+			that.draw_common(that, x, y, real_x, real_y);
 		});
 	},
 
@@ -413,9 +457,10 @@ Grout.prototype.mixin({
 		params = typeof(params) != 'undefined' ? params : {};
 
 		this.initialize_canvas(params);
-		
-		this.maps  = {};
-		this.state = {};
+
+		this.maps    = {};
+		this.sprites = {};
+		this.state   = {};
 	},
 
 	map:function(name) {
@@ -426,6 +471,16 @@ Grout.prototype.mixin({
 		}
 			
 		return this.maps[name];
+	},
+
+	sprite:function(name, params) {
+
+		if (!this.sprites[name]) {
+			this.sprites[name] = new Sprite(params);
+			this.sprites[name].parent = this;
+		}
+			
+		return this.sprites[name];
 	},
 
 	initialize_canvas:function(params) {
@@ -511,6 +566,10 @@ Grout.prototype.mixin({
 
 		for (var map in this.maps) {
 			this.maps[map].draw();
+		}
+
+		for (var sprite in this.sprites) {
+			this.sprites[sprite].draw();
 		}
 	},
 

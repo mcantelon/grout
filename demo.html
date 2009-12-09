@@ -172,6 +172,22 @@ function groutris() {
 	// create pixel map for game pieces
 	var piece = grout.map('piece');
 
+	var test_sprite = grout.sprite('test_sprite', {
+		'width': 2,
+		'height': 2,
+		'offset_x': 6,
+		'offset_y': 2
+	});
+
+	test_sprite.pixels[0] = [];
+	test_sprite.pixels[0][0] = true;
+	test_sprite.pixels[0][1] = true;
+	test_sprite.pixels[1] = [];
+	test_sprite.pixels[1][0] = true;
+	test_sprite.pixels[1][1] = true;
+
+	//test_sprite.draw();
+
 	// game piece generation logic
 	function generate_piece() {
 
