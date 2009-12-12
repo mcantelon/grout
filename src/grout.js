@@ -29,7 +29,8 @@ var Has_Pixels = {
 
 	initialize_resources:function(params) {
 
-		params = typeof(params) != 'undefined' ? params : {};
+		params = this.merge(params, {});
+		//params = typeof(params) != 'undefined' ? params : {};
 
 		this.width  = this.merge(params.width, 10);
 		this.height = this.merge(params.height, 10);
@@ -95,8 +96,124 @@ var Has_Pixels = {
 
 			that.pixels[x][y] = false;
 		});
-	}
+	},
+
+	margin_vertical_data:function(pixels) {
+
+		var lowest_row = 0;
+		var lowest_row_with_pixel = 0;
+		var highest_row = 999;
+		var highest_row_with_pixel = 999;
+
+		// cycle through each column
+		for (var x = 0; x < pixels.length; x++) {
+			
+			if (pixels[x] != undefined) {
+
+				for (var y = 0; y < pixels[x].length; y++) {
+					
+					if (pixels[x][y] != undefined
+					  && pixels[x][y]) {
+						if (y > lowest_row_with_pixel) {
+							lowest_row_with_pixel = y;
+						}
+						if (y < highest_row_with_pixel) {
+							highest_row_with_pixel = y;
+						}
+					}
+					if (y < highest_row) {
+						highest_row = y;
+					}
+					if (y > lowest_row) {
+						lowest_row = y;
+					}
+				}
+			}
+		}
+
+		return {
+			'bottom': lowest_row - lowest_row_with_pixel,
+			'top': highest_row_with_pixel
+		}
+	},
+
+	margin_horizontal_data:function(pixels) {
+
+		//var margin_data = {}
+
+		var leftmost_row = 999;
+		var leftmost_row_with_pixel = 999;
+		var rightmost_row = 0;
+		var rightmost_row_with_pixel = 0;
+
+		// cycle through each column
+		for (var x in pixels) {
+			for (var y in pixels[x]) {
+
+				if (pixels[x][y] != undefined
+				  && pixels[x][y]) {
+					if (x > rightmost_row_with_pixel) {
+						rightmost_row_with_pixel = x;
+					}
+					if (x < leftmost_row_with_pixel) {
+						leftmost_row_with_pixel = x;
+					}
+				}
+
+				if (x > rightmost_row) {
+					rightmost_row = x;
+				}
+			}
+		}
+
+		alert(this.pixel_width);
+
+		return {
+			'left': leftmost_row_with_pixel,
+			'right': (this.pixel_width - 1) - rightmost_row_with_pixel
+		}
+	},
+
+	detect_collision_with_pixels:function(pixels, offset_x, offset_y) {
+
+		offset_x = this.merge(offset_x, 0);
+		offset_y = this.merge(offset_y, 0);
+
+		// hack: pass object as parameter so we can return value
+		function collision_object() {}
+		var collision = new collision_object();
+
+		params = {
+			'pixels': pixels,
+			'collision': collision,
+			'offset_x': offset_x,
+			'offset_y': offset_y
+		};
+
+		params['collision'].value = false;
+
+		this.cycle_through_pixels(function(that, x, y, params) {
+
+			var other_pixels = params['pixels'];
+			var other_x = x + params['offset_x'];
+			var other_y = y + params['offset_y'];
+
+			if (!that.undefined_or_null(that.pixels[x])
+			  && !that.undefined_or_null(other_pixels[other_x])) {
+
+  				if (!that.undefined_or_null(that.pixels[x][y])
+  				  && !that.undefined_or_null(other_pixels[other_x][other_y])) {
+
+					if (that.pixels[x][y] && other_pixels[other_x][other_y]) {
+						params['collision'].value = true;
+					}
+  				}
+			}
+		});
 		
+		return params['collision'].value;
+	}
+
 };
 
 // Sprite class deals with floating pixel maps
@@ -115,7 +232,6 @@ Sprite.prototype.mixin({
 		this.initialize_resources(params);
 
 		this.offset_x = this.merge(params.offset_x, 0);
-		alert('O:' + this.offset_x);
 		this.offset_y = this.merge(params.offset_y, 0);		
 	},
 
@@ -128,6 +244,50 @@ Sprite.prototype.mixin({
 
 			that.draw_common(that, x, y, real_x, real_y);
 		});
+	},
+
+	// bottom margin in relation to some map
+	margin_vertical:function(map) {
+
+		//alert(this.pixels);
+
+		var margin_data = this.margin_vertical_data(this.pixels);
+
+		return {
+			'top': (this.offset_y + margin_data['top']),
+			'bottom':  map.pixel_height - (this.offset_y + this.height - margin_data['bottom'])
+		}
+	},
+
+	margin_top:function(map) {
+
+		var margin_data = this.margin_vertical(map);
+
+		return margin_data['top'];
+	},
+
+	margin_bottom:function(map) {
+
+		var margin_data = this.margin_vertical(map);
+
+		return margin_data['bottom'];
+	},
+	
+	check_if_move_will_collide_with_pixels:function(offset_x, offset_y, pixels) {
+
+		return this.detect_collision_with_pixels(pixels, this.offset_x + offset_x, this.offset_y + offset_y);
+
+		/*
+		var temp_map = new Map();
+		temp_map.pixels = this.pixels;
+		temp_map.shift
+		(shift_x, shift_y);
+		if (temp_map.detect_collision_with(pixels)) {
+			return true;
+		}
+		
+		return false;
+		*/
 	}
 
 });
@@ -161,36 +321,8 @@ Map.prototype.mixin({
 	},
 
 	detect_collision_with:function(pixels) {
-
-		// hack: pass object as parameter so we can return value
-		function collision_object() {}
-		var collision = new collision_object();
-
-		params = {
-			'pixels': pixels,
-			'collision': collision,
-		};
-
-		params['collision'].value = false;
-
-		this.cycle_through_pixels(function(that, x, y, params) {
-
-			var other_pixels = params['pixels'];
-
-			if (!that.undefined_or_null(that.pixels[x])
-			  && !that.undefined_or_null(other_pixels[x])) {
-
-  				if (!that.undefined_or_null(that.pixels[x][y])
-  				  && !that.undefined_or_null(other_pixels[x][y])) {
-
-					if (that.pixels[x][y] && other_pixels[x][y]) {
-						params['collision'].value = true;
-					}
-  				}
-			}
-		});
-
-		return params['collision'].value;
+		
+		return this.detect_collision_with_pixels(pixels);
 	},
 
 	margin_bottom:function() {
@@ -210,38 +342,9 @@ Map.prototype.mixin({
 	// return vertical pixel margins of active pixels in map
 	margin_vertical:function() {
 
-		var margin_data = {}
-
-		var lowest_row = 0;
-		var lowest_row_with_pixel = 0;
-		var heighest_row = 999;
-		var heighest_row_with_pixel = 999;
-
-		// cycle through each column
-		for (var x in this.pixels) {
-			for (var y in this.pixels[x]) {
-				if (this.pixels[x][y] != undefined
-				  && this.pixels[x][y]) {
-					if (y > lowest_row_with_pixel) {
-						lowest_row_with_pixel = y;
-					}
-					if (y < heighest_row_with_pixel) {
-						heighest_row_with_pixel = y;
-					}
-				}
-				if (y < heighest_row) {
-					heighest_row = y;
-				}
-				if (y > lowest_row) {
-					lowest_row = y;
-				}
-			}
-		}
+		var margin_data = this.margin_vertical_data(this.pixels);
 		
-		return {
-			'bottom': lowest_row - lowest_row_with_pixel,
-			'top': heighest_row_with_pixel
-		}
+		return margin_data;
 	},
 
 	margin_left:function() {
@@ -259,9 +362,9 @@ Map.prototype.mixin({
 	},
 
 	// return horizontal pixel margins of active pixels in map
-	margin_horizontal:function(debug) {
+	margin_horizontal:function() {
 
-		var margin_data = {}
+		//var margin_data = {}
 
 		var leftmost_row = 999;
 		var leftmost_row_with_pixel = 999;
@@ -288,27 +391,29 @@ Map.prototype.mixin({
 			}
 		}
 
-		if (debug) {
-			alert('RR:' + rightmost_row);
-			alert(rightmost_row_with_pixel);
-		}
-
 		return {
 			'left': leftmost_row_with_pixel,
 			'right': (this.pixel_width - 1) - rightmost_row_with_pixel
 		}
 	},
 
-	stamp:function(new_pixels) {
+	stamp:function(new_pixels, offset_x, offset_y) {
 
-		params = {'new_pixels': new_pixels};
+		offset_x = typeof(offset_x) != 'undefined' ? offset_x : 0;
+		offset_y = typeof(offset_y) != 'undefined' ? offset_y : 0;
+
+		params = {
+			'new_pixels': new_pixels,
+			'offset_x':   offset_x,
+			'offset_y':   offset_y
+		};
 
 		this.cycle_through_pixels(function(that, x, y, params) {
 
 			if (params['new_pixels'][x] != undefined
 			  && params['new_pixels'][x][y] != undefined) {
 			  	if (params['new_pixels'][x][y]) {
-					that.pixels[x][y] = params['new_pixels'][x][y];
+					that.pixels[x + params['offset_x']][y + params['offset_y']] = params['new_pixels'][x][y];
 			  	}
 			}
 		});
@@ -339,14 +444,14 @@ Map.prototype.mixin({
 
 				// if attempting to shift pixel beyond map border, wrap
 				new_x = x + params['shift_x'];
-				//if (new_x > (that.pixels.length - 1)) {
+
 				if (new_x > (that.pixels.width - 1)) {
 					new_x = new_x - that.pixels.length;
 				}
 
 				// if attempting to shift pixel beyond map border, wrap
 				new_y = y + params['shift_y'];
-				//if (new_y > (that.pixels[x].length - 1)) {
+
 				if (new_y > (that.height - 1)) {
 					new_y = new_y - that.pixels[x].length;
 				}
@@ -454,7 +559,8 @@ Grout.prototype.mixin({
 
 	initialize:function(params) {
 
-		params = typeof(params) != 'undefined' ? params : {};
+		this.merge(params.width, 10);
+		//params = typeof(params) != 'undefined' ? params : {};
 
 		this.initialize_canvas(params);
 
@@ -487,8 +593,8 @@ Grout.prototype.mixin({
 
 		this.canvas_id = this.merge(params.canvas_id, 'canvas');
 		this.canvas    = this.doc_get(this.canvas_id);
-		this.width = this.merge(params.width, 'width');
-		this.height = this.merge(params.height, 'height');
+		this.width     = this.merge(params.width, 'width');
+		this.height    = this.merge(params.height, 'height');
 
 		// write canvas to document
 		if (!this.canvas) {
@@ -583,21 +689,5 @@ Grout.prototype.mixin({
 		this.draw_all();
 
 		setTimeout('document.getElementById("' + this.canvas_id + '").grout.animate(' + speed + ')', speed);
-	},
-
-	//
-	// Helpers
-	//
-	
-	doc_get:function(id) {
-		return document.getElementById(id);
-	},
-
-	merge:function(sent, preset) {
-		return (this.undefined_or_null(sent)) ? preset : sent;
-	},
-
-	undefined_or_null:function(value) {
-		return value == undefined || value == null;
 	}
 });

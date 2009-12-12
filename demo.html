@@ -176,9 +176,10 @@ function groutris() {
 		'width': 2,
 		'height': 2,
 		'offset_x': 6,
-		'offset_y': 2
+		'offset_y': 0
 	});
 
+	test_sprite.pixels = [];
 	test_sprite.pixels[0] = [];
 	test_sprite.pixels[0][0] = true;
 	test_sprite.pixels[0][1] = true;
@@ -186,7 +187,18 @@ function groutris() {
 	test_sprite.pixels[1][0] = true;
 	test_sprite.pixels[1][1] = true;
 
-	//test_sprite.draw();
+	/*
+	for(x in test_sprite.pixels) {
+		alert(x);
+		alert('TX:' + (typeof (x + 0)));
+		for(y in test_sprite.pixels[x]) {
+			alert('TY:' + (typeof y));
+		}
+	}
+	ddd(0);
+	*/
+
+	test_sprite.draw();
 
 	// game piece generation logic
 	function generate_piece() {
@@ -305,6 +317,19 @@ function groutris() {
 		this.state['turns']++;
 
 		if (this.state['turns'] % 10 == 0) {
+
+			test = this.sprites['test_sprite'];
+			
+			if (test.margin_bottom(background) > 0
+			  && !test.check_if_move_will_collide_with_pixels(0, 1, background.pixels)) {
+				//alert(test.margin_top(background));
+				test.offset_y++;
+			}
+			else {
+				background.stamp(test.pixels, test.offset_x, test.offset_y);
+
+				test.offset_y = 0;
+			}
 
 			piece = this.maps['piece'];
 
