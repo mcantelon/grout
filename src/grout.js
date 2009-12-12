@@ -212,8 +212,34 @@ var Has_Pixels = {
 		});
 		
 		return params['collision'].value;
-	}
+	},
+	
+	rotate:function() {
 
+		var temp = [];
+		var temp_x;
+
+		if (this.width <= this.height) {
+			width = this.width;
+		}
+		else {
+			width = this.height;
+		}
+
+		for(var i=0; i < width; i++) {
+			for(var j=0; j < width; j++) {
+				temp_x = (width - 1) - j;
+				if (temp[temp_x] == undefined) {
+					temp[temp_x] = [];
+				}
+				temp[temp_x][i]= this.pixels[i][j];
+			}
+		}
+
+		this.pixels = temp;
+
+		//return temp;
+	}
 };
 
 // Sprite class deals with floating pixel maps

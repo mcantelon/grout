@@ -222,25 +222,6 @@ function groutris() {
 		return piece;
 	}
 
-	// rotation logic - this should be incorprated into engine
-	function rotate(pixels, width) {
-
-		var temp = [];
-		var temp_x;
-
-		for(var i=0; i < width; i++) {
-			for(var j=0; j < width; j++) {
-				temp_x = (width - 1) - j;
-				if (temp[temp_x] == undefined) {
-					temp[temp_x] = [];
-				}
-				temp[temp_x][i]= pixels[i][j];
-			}
-		}
-		
-		return temp;
-	}
-
 	// restart logic
 	function restart(background, piece) {
 
@@ -281,9 +262,7 @@ function groutris() {
 		}
 
 		if (key == 38) {
-
-			piece.pixels = rotate(piece.pixels, 4);
-
+			piece.rotate();
 			return;
 		}
 
