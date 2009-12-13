@@ -147,30 +147,42 @@ var Has_Pixels = {
 		var rightmost_row_with_pixel = 0;
 
 		// cycle through each column
-		for (var x in pixels) {
-			for (var y in pixels[x]) {
+		for (var x = 0; x < pixels.length; x++) {
+			
+			if (pixels[x] != undefined) {
 
-				if (pixels[x][y] != undefined
-				  && pixels[x][y]) {
-					if (x > rightmost_row_with_pixel) {
-						rightmost_row_with_pixel = x;
-					}
-					if (x < leftmost_row_with_pixel) {
-						leftmost_row_with_pixel = x;
-					}
-				}
+				for (var y = 0; y < pixels[x].length; y++) {
 
-				if (x > rightmost_row) {
-					rightmost_row = x;
+		// cycle through each column
+		//for (var x in pixels) {
+		//	for (var y in pixels[x]) {
+
+					if (pixels[x][y] != undefined
+					  && pixels[x][y]) {
+
+						if (x > rightmost_row_with_pixel) {
+							rightmost_row_with_pixel = x;
+						}
+
+						if (x < leftmost_row_with_pixel) {
+							leftmost_row_with_pixel = x;
+						}
+					}
+
+					if (x > rightmost_row) {
+						rightmost_row = x;
+					}
 				}
 			}
 		}
 
-		alert(this.pixel_width);
+		//alert('L:' + leftmost_row_with_pixel);
+		//alert('RR:' + rightmost_row_with_pixel);
+		//alert('RR2:' + typeof ((this.width - 1) - rightmost_row_with_pixel));
 
 		return {
 			'left': leftmost_row_with_pixel,
-			'right': (this.pixel_width - 1) - rightmost_row_with_pixel
+			'right': (this.width - 1) - rightmost_row_with_pixel
 		}
 	},
 
@@ -239,6 +251,34 @@ var Has_Pixels = {
 		this.pixels = temp;
 
 		//return temp;
+	},
+
+	overwrite:function(new_pixels) {
+
+		this.clear();
+		this.stamp(new_pixels);
+	},
+
+	stamp:function(new_pixels, offset_x, offset_y) {
+
+		offset_x = typeof(offset_x) != 'undefined' ? offset_x : 0;
+		offset_y = typeof(offset_y) != 'undefined' ? offset_y : 0;
+
+		params = {
+			'new_pixels': new_pixels,
+			'offset_x':   offset_x,
+			'offset_y':   offset_y
+		};
+
+		this.cycle_through_pixels(function(that, x, y, params) {
+
+			if (params['new_pixels'][x] != undefined
+			  && params['new_pixels'][x][y] != undefined) {
+			  	if (params['new_pixels'][x][y]) {
+					that.pixels[x + params['offset_x']][y + params['offset_y']] = params['new_pixels'][x][y];
+			  	}
+			}
+		});
 	}
 };
 
@@ -285,6 +325,38 @@ Sprite.prototype.mixin({
 		}
 	},
 
+	// bottom margin in relation to some map
+	margin_horizontal:function(map) {
+
+		var margin_data = this.margin_horizontal_data(this.pixels);
+
+		//alert('ML:' + margin_data['left']);
+		//alert('MR:' + margin_data['right']);
+
+		//alert('R1' + margin_data['right']);
+		//ddd();
+		//alert('R2:' + (map.width - (this.offset_x + this.width - margin_data['right'])));
+
+		return {
+			'left': (this.offset_x + margin_data['left']),
+			'right':  map.width - (this.offset_x + this.width - margin_data['right'])
+		}
+	},
+
+	margin_left:function(map) {
+		
+		var margin_horizontal = this.margin_horizontal(map);
+
+		return margin_horizontal['left'];
+	},
+
+	margin_right:function(map) {
+		
+		var margin_horizontal = this.margin_horizontal(map);
+
+		return margin_horizontal['right'];
+	},
+
 	margin_top:function(map) {
 
 		var margin_data = this.margin_vertical(map);
@@ -298,7 +370,14 @@ Sprite.prototype.mixin({
 
 		return margin_data['bottom'];
 	},
-	
+
+	// should we let it move to negative, etc.? i guess... or make it an option
+	move:function(offset_x, offset_y) {
+
+		this.offset_x = this.offset_x + offset_x;
+		this.offset_y = this.offset_y + offset_y;
+	},
+
 	check_if_move_will_collide_with_pixels:function(offset_x, offset_y, pixels) {
 
 		return this.detect_collision_with_pixels(pixels, this.offset_x + offset_x, this.offset_y + offset_y);
@@ -421,34 +500,6 @@ Map.prototype.mixin({
 			'left': leftmost_row_with_pixel,
 			'right': (this.pixel_width - 1) - rightmost_row_with_pixel
 		}
-	},
-
-	stamp:function(new_pixels, offset_x, offset_y) {
-
-		offset_x = typeof(offset_x) != 'undefined' ? offset_x : 0;
-		offset_y = typeof(offset_y) != 'undefined' ? offset_y : 0;
-
-		params = {
-			'new_pixels': new_pixels,
-			'offset_x':   offset_x,
-			'offset_y':   offset_y
-		};
-
-		this.cycle_through_pixels(function(that, x, y, params) {
-
-			if (params['new_pixels'][x] != undefined
-			  && params['new_pixels'][x][y] != undefined) {
-			  	if (params['new_pixels'][x][y]) {
-					that.pixels[x + params['offset_x']][y + params['offset_y']] = params['new_pixels'][x][y];
-			  	}
-			}
-		});
-	},
-
-	overwrite:function(new_pixels) {
-
-		this.clear();
-		this.stamp(new_pixels);
 	},
 
 	shift:function(x, y) {
