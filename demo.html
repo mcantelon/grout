@@ -212,6 +212,31 @@ function groutris() {
 		grout.draw_all();
 	}
 
+	// find full rows
+	function find_full_rows(background) {
+
+		var empty_pixel_found;
+		var full_rows = [];
+
+		for(var y = 0; y < background.height; y++) {
+
+			empty_pixel_found = false;
+
+			for (var x =0; x < background.width; x++) {
+
+				if (!background.pixels[x][y]) {
+					empty_pixel_found = true;
+				}
+			}
+
+			if (!empty_pixel_found) {
+				full_rows.push(y);
+			}
+		}
+
+		return full_rows;
+	}
+
 	// set up game
 	restart(background, piece);
 
@@ -272,6 +297,8 @@ function groutris() {
 	// enter main loop
 	grout.animate(100, function () {
 
+		var full_rows;
+
 		this.state['turns']++;
 
 		if (this.state['turns'] % 10 == 0) {
@@ -295,6 +322,17 @@ function groutris() {
 					restart(background, piece);
 				}
 				else {
+
+					full_rows = find_full_rows(background);
+
+					for (var i = 0; i < full_rows.length; i++) {
+
+						pixels_above_full_row = background.copy_pixel_row_range(0, full_rows[i] - 1);
+
+						background.clear_range(0, 0, background.width - 1, full_rows[i] + 1);
+
+						background.stamp(pixels_above_full_row, 0, 1);
+					}
 
 					piece.offset_y = 0;
 					// generate game piece

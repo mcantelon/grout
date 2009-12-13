@@ -261,24 +261,97 @@ var Has_Pixels = {
 
 	stamp:function(new_pixels, offset_x, offset_y) {
 
-		offset_x = typeof(offset_x) != 'undefined' ? offset_x : 0;
-		offset_y = typeof(offset_y) != 'undefined' ? offset_y : 0;
+		offset_x = this.merge(offset_x, 0);
+		offset_y = this.merge(offset_y, 0);
+
+		//alert('OY:' + offset_y);
 
 		params = {
 			'new_pixels': new_pixels,
 			'offset_x':   offset_x,
-			'offset_y':   offset_y
+			'offset_y':   offset_y,
+			'count': 0
 		};
 
 		this.cycle_through_pixels(function(that, x, y, params) {
 
+			if (params['offset_y'] == 1) {
+				//alert('X:' + x + '/Y:' + y);
+			}
+
 			if (params['new_pixels'][x] != undefined
 			  && params['new_pixels'][x][y] != undefined) {
-			  	if (params['new_pixels'][x][y]) {
+				if (params['new_pixels'][x][y]) {
 					that.pixels[x + params['offset_x']][y + params['offset_y']] = params['new_pixels'][x][y];
+					params['count']++;
 			  	}
 			}
 		});
+
+		//alert('C:' + params['count']);
+
+	},
+
+	count_pixels:function(start_x, start_y, end_x, end_y) {
+
+		params = {
+			'count': 0
+		}
+
+		this.cycle_through_pixels(function(that, x, y, params) {
+				
+			if (!that.undefined_or_null(that.pixels[x][y])
+			  && that.pixels[x][y]
+			) {
+				params['count']++;
+			}
+		});
+
+		return params['count'];
+	},
+
+	clear_range:function(start_x, start_y, end_x, end_y) {
+
+		//alert('start');
+		for(var x = start_x; x <= end_x; x++) {
+
+			if (!this.undefined_or_null(this.pixels[x])) {
+
+				for (var y = start_y; y < end_y; y++) {
+
+					this.pixels[x][y] = false;
+				}
+			}
+		}
+		//alert(cleared);
+	},
+
+	copy_pixel_row_range:function(start_y, end_y) {
+
+		var new_y_count = 0;
+		var new_pixels = [];
+
+		for (var y = start_y; y <= end_y; y++) {
+
+			//alert('YC:' + y);
+
+			//new_pixels[new_y_count] = [];
+
+			for (var x = 0; x <= this.pixels[y].length; x++) {
+
+				if (this.undefined_or_null(new_pixels[x])) {
+					new_pixels[x] = [];
+				}
+
+				if (!this.undefined_or_null(this.pixels[x])) {
+					new_pixels[x][new_y_count] = this.pixels[x][y];
+				}
+			}
+
+			new_y_count++;
+		}
+
+		return new_pixels;
 	}
 };
 
