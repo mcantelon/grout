@@ -312,18 +312,16 @@ var Has_Pixels = {
 
 	clear_range:function(start_x, start_y, end_x, end_y) {
 
-		//alert('start');
 		for(var x = start_x; x <= end_x; x++) {
 
 			if (!this.undefined_or_null(this.pixels[x])) {
 
-				for (var y = start_y; y < end_y; y++) {
+				for (var y = start_y; y <= end_y; y++) {
 
 					this.pixels[x][y] = false;
 				}
 			}
 		}
-		//alert(cleared);
 	},
 
 	copy_pixel_row_range:function(start_y, end_y) {

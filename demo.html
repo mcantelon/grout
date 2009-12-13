@@ -327,14 +327,19 @@ function groutris() {
 
 					for (var i = 0; i < full_rows.length; i++) {
 
+						// copy up to the row before the full row
 						pixels_above_full_row = background.copy_pixel_row_range(0, full_rows[i] - 1);
 
-						background.clear_range(0, 0, background.width - 1, full_rows[i] + 1);
+						// clear up to the full row
+						background.clear_range(0, 0, background.width - 1, full_rows[i]);
 
+						// stamp the copy onto the background, shifted down 1 pixel
 						background.stamp(pixels_above_full_row, 0, 1);
 					}
 
+					// move piece to the top
 					piece.offset_y = 0;
+
 					// generate game piece
 					//piece.overwrite(generate_piece());
 				}
