@@ -173,8 +173,8 @@ function groutris() {
 	//var piece = grout.map('piece');
 
 	var piece = grout.sprite('piece', {
-		'width': 2,
-		'height': 2,
+		'width': 5,
+		'height': 5,
 		'offset_x': 6,
 		'offset_y': 0
 	});
@@ -266,7 +266,23 @@ function groutris() {
 		}
 
 		if (key == 38) {
-			piece.rotate();
+
+			// create throwaway piece to test for validity of rotate
+			var temp_piece = new Sprite();
+
+			temp_piece.width    = piece.width;
+			temp_piece.height   = piece.height;
+			temp_piece.offset_x = piece.offset_x;
+			temp_piece.offset_y = piece.offset_y;
+			temp_piece.pixels   = piece.pixels;
+
+			temp_piece.rotate();
+
+			// need to also check for collision
+			if (!temp_piece.outside_of_map(background)
+			  && !temp_piece.detect_collision_with_map(background)) {
+				piece.pixels = temp_piece.pixels;
+			}
 			return;
 		}
 
@@ -307,7 +323,7 @@ function groutris() {
 
 			if (piece.margin_bottom(background) != 0
 			  && !piece.check_if_move_will_collide_with_pixels(0, 1, background.pixels)) {
-				piece.move(0, 1);
+				//piece.move(0, 1);
 			}
 			else {
 

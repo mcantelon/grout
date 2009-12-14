@@ -366,6 +366,9 @@ Sprite.prototype.mixin(Has_Pixels);
 Sprite.prototype.mixin({
 
 	initialize:function(params) {
+
+		var params = this.merge(params, {});
+
 		this.initialize_resources(params);
 
 		this.offset_x = this.merge(params.offset_x, 0);
@@ -414,6 +417,34 @@ Sprite.prototype.mixin({
 		}
 	},
 
+	outside_of_map:function(map) {
+
+		var outside_horizontally = this.outside_of_map_horizontally(map);
+		var outside_vertically   = this.outside_of_map_vertically(map);
+
+		return outside_horizontally || outside_vertically;
+	},
+
+	outside_of_map_horizontally:function(map) {
+
+		var margin_horizontal = this.margin_horizontal(map);
+
+		var past_left_edge  = this.offset_x < 0;
+		var past_right_edge = ((this.offset_x + this.width - margin_horizontal['right']) > map.width);
+
+		return past_left_edge || past_right_edge;
+	},
+
+	outside_of_map_vertically:function(map) {
+
+		var margin_vertical = this.margin_vertical(map);
+
+		var past_top    = this.offset_y < 0;
+		var past_bottom = this.offset_y + this.height - margin_vertical['bottom'] > map.height;
+
+		return past_top || past_bottom;
+	},
+
 	margin_left:function(map) {
 		
 		var margin_horizontal = this.margin_horizontal(map);
@@ -452,20 +483,12 @@ Sprite.prototype.mixin({
 	check_if_move_will_collide_with_pixels:function(offset_x, offset_y, pixels) {
 
 		return this.detect_collision_with_pixels(pixels, this.offset_x + offset_x, this.offset_y + offset_y);
+	},
 
-		/*
-		var temp_map = new Map();
-		temp_map.pixels = this.pixels;
-		temp_map.shift
-		(shift_x, shift_y);
-		if (temp_map.detect_collision_with(pixels)) {
-			return true;
-		}
+	detect_collision_with_map:function(map) {
 		
-		return false;
-		*/
+		return this.detect_collision_with_pixels(map.pixels, this.offset_x, this.offset_y);
 	}
-
 });
 
 // Map class deals with pixel maps

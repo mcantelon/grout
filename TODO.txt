@@ -1,11 +1,6 @@
-maps:
-x, y <- virtual pixels
-offset_x <- real
-offset_y <- real
+-add way to shift pixels (like real pixels for scrolling)
 
--make sure margin_top works
-
--right shift bug (after shifting left a bunch of times won't shift right)
+-can we stick reference to groutris in document rather than document AND canvas?
 
 High:
 -have grout create canvas tag itself (with optional override)
