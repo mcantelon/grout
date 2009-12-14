@@ -261,6 +261,7 @@ var Has_Pixels = {
 
 	stamp:function(new_pixels, offset_x, offset_y) {
 
+		new_pixels = this.merge(new_pixels, []);
 		offset_x = this.merge(offset_x, 0);
 		offset_y = this.merge(offset_y, 0);
 
