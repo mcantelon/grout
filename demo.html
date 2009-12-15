@@ -1,0 +1,164 @@
+<html>
+
+<head>
+  <title>Demo</title>
+  <script type="text/javascript" src="src/grout.js"></script>
+</head>
+
+<style>
+
+#content {
+	text-align: center;
+}
+canvas {
+	align: center;
+	border: 1px solid red;
+}
+
+</style>
+
+<body>
+
+<div id='content'>
+
+<script>
+
+function pallette() {
+
+	// http://stackoverflow.com/questions/57803/how-to-convert-decimal-to-hex-in-javascript
+	function decimalToHex(d, padding) {
+
+		var hex = Number(d).toString(16);		
+		padding = typeof (padding) === "undefined" || padding === null ? padding = 2 : padding;
+
+		while (hex.length < padding) {
+			hex = "0" + hex;
+		}
+
+		return hex;
+	}
+
+	var grout = []
+
+    for (r = 0; r < 16; r++) {
+
+		// create new screen
+		grout[r] = new Grout({
+			'canvas_id': 'pallette_' + r,
+			'width': 16,
+			'height': 16
+		});
+
+		for (g = 0; g < 16; g++) {
+			for (b = 0; b < 16; b++) {
+
+				red   = decimalToHex(r * 16);
+				green = decimalToHex(g * 16);
+				blue  = decimalToHex(b * 16);
+
+				color = '#' + red + green + blue;
+				//alert(grout[r]);
+				grout[r].pixels[g][b] = color;
+			}
+		}
+
+		// draw pallette
+		grout[r].draw();
+
+		// add color display
+		document.write('<p><input id="color_' + r + '"></p>');
+
+		// store value of r for reference in click logic
+		grout[r].r = r;
+
+		// set click logic
+		grout[r].click(function (x, y) {
+			this.doc_get('color_' + this.r).setAttribute('value', this.pixels[x][y]);
+		});
+    }
+}
+
+function demo() {
+
+	// create new grout
+	var grout = new Grout({
+		'width': 300,
+		'height': 300
+	});
+
+	// create pixel map
+	map = grout.map('face');
+	map.pixels[1][1] = true;
+	map.pixels[3][1] = true;
+	map.poke(1, 4);
+	map.poke([[2, 5], [3, 4]]);
+
+	// set click logic for pixel map
+	map.click(function (x, y) {
+
+		// toggle virtual pixel
+		this.toggle(x, y);
+
+		// refresh pixel display
+		this.draw();
+	});
+
+	// create pixel map
+	map = grout.map('dot');
+	map.pixels[0][0] = true;
+
+	// ad-hoc map state info can be stored in the state hash
+	map.state['x'] = 0;
+
+	// set global click logic
+	grout.click(function (x, y) {
+
+		// global click gets real pixel coordinates
+		alert('You clicked x=' + x + ', y=' + y);
+	});
+
+	// animation loop
+	grout.animate(100, function () {
+
+		//
+		// animate face
+		//
+
+		var face = this.maps['face']
+
+		// "zoom" in
+		face.pixel_height = face.pixel_width = (face.pixel_width < 50) ?
+			face.pixel_width + 1 : 1;
+
+		// open mouth in fear
+		face.pixels[2][3] = face.pixel_width > 30 ? true : false;
+
+		// flash eyes
+		face.pixels[1][1] = face.pixels[3][1] = !face.pixels[3][1];
+
+		//
+		// animate dot
+		//
+		
+		var dot = this.maps['dot'];
+
+		//alert('-1:' + dot.pixels[0][0]);
+		dot.shift(1, 0);
+		//alert(dot.pixels[1][0]);
+
+		//dot.pixels[dot.state['x']][0] = false
+		//dot.state['x'] = dot.state['x'] < 9 ? dot.state['x'] + 1 : 1;
+		//dot.pixels[dot.state['x']][0] = true
+	});
+}
+
+//demo();
+//pallette()
+groutris();
+
+</script>
+
+</div id='content'>
+
+</body>
+</html>

@@ -35,6 +35,9 @@ var Has_Pixels = {
 		this.width  = this.merge(params.width, 10);
 		this.height = this.merge(params.height, 10);
 
+alert('P:' + params.height);
+alert('H:' + this.height);
+
 		this.pixel_width  = this.merge(params.pixel_width, 10);
 		this.pixel_height = this.merge(params.pixel_height, 10);
 
@@ -741,10 +744,12 @@ Grout.prototype.mixin({
 		this.state   = {};
 	},
 
-	map:function(name) {
+	map:function(name, params) {
+
+		this.merge(params, {});
 
 		if (!this.maps[name]) {
-			this.maps[name] = new Map();
+			this.maps[name] = new Map(params);
 			this.maps[name].parent = this;
 		}
 			
@@ -752,6 +757,8 @@ Grout.prototype.mixin({
 	},
 
 	sprite:function(name, params) {
+
+		this.merge(params, {});
 
 		if (!this.sprites[name]) {
 			this.sprites[name] = new Sprite(params);
@@ -861,5 +868,51 @@ Grout.prototype.mixin({
 		this.draw_all();
 
 		setTimeout('document.getElementById("' + this.canvas_id + '").grout.animate(' + speed + ')', speed);
+	},
+	
+	make_sprite:function(sprite_string) {
+
+		var sprite_rows = [];
+
+		// normalize whitespace
+		sprite_string = sprite_string.replace(/[\n\r\t]/g, ' ');
+
+		// reduce multiple contigous spaces to single spaces
+		while(sprite_string.indexOf('  ') != -1) {
+			sprite_string = sprite_string.replace('  ', ' ');
+		}
+
+		// separate into raw rows, separated by spaces
+		raw_rows = sprite_string.split(" ");
+
+		// get rid of blank rows
+		var y = 0;
+		for (var i = 0; i < raw_rows.length; i++) {
+			row = raw_rows[i].replace(' ', '');
+			if (row.length > 0) {
+				sprite_rows[y] = raw_rows[i];
+				y++;
+			}
+		}
+
+		// create pixel array from string
+		var y = 0;
+		pixels = [];
+		for (var y = 0; y < sprite_rows.length; y++) {
+			for (var x = 0; x < sprite_rows[y].length; x++) {
+
+				if (this.undefined_or_null(pixels[x])) {
+					pixels[x] = [];
+				}
+
+				if (sprite_rows[y][x] == '.') {
+					pixels[x][y] = false;
+				} else {
+					pixels[x][y] = true;
+				}
+			}
+		}
+
+		return pixels;
 	}
 });
