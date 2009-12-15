@@ -39,8 +39,8 @@ function groutris() {
 
 	// create pixel map for background
 	var background = grout.map('background', {
-		'width': grout.width,
-		'height': grout.height
+		'width': pixel_map_width,
+		'height': pixel_map_width * 2
 	});
 
 	// create pixel map for game pieces
@@ -237,6 +237,8 @@ function groutris() {
 
 			piece = this.sprites['piece'];
 
+alert(piece.margin_bottom(background));
+
 			if (piece.margin_bottom(background) != 0
 			  && !piece.check_if_move_will_collide_with_pixels(0, 1, background.pixels)) {
 				piece.move(0, 1);
@@ -256,22 +258,6 @@ function groutris() {
 				else {
 
 					shift_full_rows_down(background);
-
-					/*
-					full_rows = find_full_rows(background);
-
-					for (var i = 0; i < full_rows.length; i++) {
-
-						// copy up to the row before the full row
-						pixels_above_full_row = background.copy_pixel_row_range(0, full_rows[i] - 1);
-
-						// clear up to the full row
-						background.clear_range(0, 0, background.width - 1, full_rows[i]);
-
-						// stamp the copy onto the background, shifted down 1 pixel
-						background.stamp(pixels_above_full_row, 0, 1);
-					}
-					*/
 
 					reset_piece(piece, grout);
 				}

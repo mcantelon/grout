@@ -35,9 +35,6 @@ var Has_Pixels = {
 		this.width  = this.merge(params.width, 10);
 		this.height = this.merge(params.height, 10);
 
-alert('P:' + params.height);
-alert('H:' + this.height);
-
 		this.pixel_width  = this.merge(params.pixel_width, 10);
 		this.pixel_height = this.merge(params.pixel_height, 10);
 
@@ -407,13 +404,6 @@ Sprite.prototype.mixin({
 	margin_horizontal:function(map) {
 
 		var margin_data = this.margin_horizontal_data(this.pixels);
-
-		//alert('ML:' + margin_data['left']);
-		//alert('MR:' + margin_data['right']);
-
-		//alert('R1' + margin_data['right']);
-		//ddd();
-		//alert('R2:' + (map.width - (this.offset_x + this.width - margin_data['right'])));
 
 		return {
 			'left': (this.offset_x + margin_data['left']),
