@@ -161,13 +161,16 @@ function groutris() {
 	// create new grout
 	var grout = new Grout({
 		'width': canvas_width,
-		'height': canvas_width
+		'height': canvas_width * 2
 	});
 
 	grout.state['turns'] = 0;
 
 	// create pixel map for background
-	var background = grout.map('background');
+	var background = grout.map('background', {
+		'width': grout.width,
+		'height': grout.height
+	});
 
 	// create pixel map for game pieces
 	//var piece = grout.map('piece');
@@ -180,19 +183,18 @@ function groutris() {
 	});
 
 	// game piece generation logic
-	function generate_piece() {
+	function generate_piece(grout) {
 
 		var random_piece = Math.floor(Math.random() * 2);
 
 		var piece = [];
 
-		piece[0] = [];
-		piece[0][0] = [];
-		piece[0][0][0] = true;
-		piece[0][0][1] = true;
-		piece[0][1] = [];
-		piece[0][1][0] = true;
-		piece[0][1][1] = false;
+	  	piece[0] = grout.make_sprite(" \
+    		.... \
+    		*... \
+    		**** \
+    		.... \
+  		");
 
 		piece[1] = [];
 		//piece[1][0][0] = true;
@@ -211,24 +213,24 @@ function groutris() {
 	}
 
 	// restart logic
-	function restart(background, piece) {
+	function restart(background, piece, grout) {
 
 		background.clear();
 
-		reset_piece(piece);
+		reset_piece(piece, grout);
 
 		grout.draw_all();
 	}
 
 	// create new piece logic
-	function reset_piece(piece) {
+	function reset_piece(piece, grout) {
 
 		// move piece to the top center
 		piece.offset_x = 4;
 		piece.offset_y = 0;
 
 		// generate random piece
-		piece.overwrite(generate_piece());
+		piece.overwrite(generate_piece(grout));
 
 		// randomly rotate
 		var number_of_rotations = Math.floor(Math.random() * 4);
@@ -281,7 +283,7 @@ function groutris() {
 	}
 
 	// set up game
-	restart(background, piece);
+	restart(background, piece, grout);
 
 	// set up keyboard handling
 	grout.keypress(function(key) {
@@ -400,7 +402,7 @@ function groutris() {
 					}
 					*/
 
-					reset_piece(piece);
+					reset_piece(piece, grout);
 				}
 			}
 		}
