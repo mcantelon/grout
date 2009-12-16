@@ -336,13 +336,14 @@ var Has_Pixels = {
 
 			//new_pixels[new_y_count] = [];
 
-			for (var x = 0; x <= this.pixels[y].length; x++) {
+			for (var x = 0; x <= this.pixels.length; x++) {
 
 				if (this.undefined_or_null(new_pixels[x])) {
 					new_pixels[x] = [];
 				}
 
-				if (!this.undefined_or_null(this.pixels[x])) {
+				if (!this.undefined_or_null(this.pixels[x])
+				  && !this.undefined_or_null(this.pixels[x][y])) {
 					new_pixels[x][new_y_count] = this.pixels[x][y];
 				}
 			}
