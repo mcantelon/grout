@@ -396,7 +396,7 @@ Sprite.prototype.mixin({
 
 		return {
 			'top': (this.offset_y + margin_data['top']),
-			'bottom':  map.pixel_height - (this.offset_y + this.height - margin_data['bottom'])
+			'bottom':  map.height - (this.offset_y + this.height - margin_data['bottom'])
 		}
 	},
 

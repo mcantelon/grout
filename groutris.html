@@ -237,8 +237,6 @@ function groutris() {
 
 			piece = this.sprites['piece'];
 
-alert(piece.margin_bottom(background));
-
 			if (piece.margin_bottom(background) != 0
 			  && !piece.check_if_move_will_collide_with_pixels(0, 1, background.pixels)) {
 				piece.move(0, 1);
