@@ -56,8 +56,6 @@ function groutris() {
 	// game piece generation logic
 	function generate_piece(grout) {
 
-		var random_piece = Math.floor(Math.random() * 2);
-
 		var piece = [];
 
 	  	piece[0] = grout.make_sprite(" \
@@ -67,18 +65,25 @@ function groutris() {
     		.... \
   		");
 
-		piece[1] = [];
-		//piece[1][0][0] = true;
+		piece[1] = grout.make_sprite(" \
+			.... \
+			**** \
+			.... \
+			.... \
+		");
 
-		piece[1][0] = [];
-		piece[1][1] = [];
-		piece[1][2] = [];
-		piece[1][3] = [];
+		piece[2] = grout.make_sprite(" \
+			** \
+			** \
+		");
 
-		piece[1][0][2] = true;
-		piece[1][1][2] = true;
-		piece[1][2][2] = true;
-		piece[1][3][2] = true;
+		piece[3] = grout.make_sprite(" \
+			... \
+			**. \
+			.** \
+		");
+
+		var random_piece = Math.floor(Math.random() * piece.length);
 
 		return piece[random_piece];
 	}
