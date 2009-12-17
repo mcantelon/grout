@@ -88,6 +88,8 @@ var Has_Pixels = {
 
 	clear:function() {
 
+		this.pixels = []
+
 		this.cycle_through_pixels(function(that, x, y, params) {
 				
 			if (that.undefined_or_null(that.pixels[x])) {
