@@ -12,12 +12,13 @@
 }
 canvas {
 	align: center;
-	border: 1px solid red;
+	border: 1px solid #666;
+	background-color: #222;
 }
 
 </style>
 
-<body>
+<body style='background-color: #444'>
 
 <div id='content'>
 
@@ -56,36 +57,53 @@ function groutris() {
 	// game piece generation logic
 	function generate_piece(grout) {
 
-		var piece = [];
+		var color_codes = {
+			'C': 'cyan',
+			'B': 'blue',
+			'O': 'orange',
+			'Y': 'yellow',
+			'G': 'green',
+			'P': 'purple',
+			'R': 'red'
+		}
 
-	  	piece[0] = grout.make_sprite(" \
-    		.... \
-    		*... \
-    		**** \
-    		.... \
-  		");
+		var pieces = [
 
-		piece[1] = grout.make_sprite(" \
-			.... \
-			**** \
-			.... \
-			.... \
-		");
+			{'shape': " \
+    			.... \
+    			B... \
+    			BBBB \
+    			.... \
+  			"},
 
-		piece[2] = grout.make_sprite(" \
-			** \
-			** \
-		");
+			{'shape': " \
+				.... \
+				CCCC \
+				.... \
+				.... \
+  			"},
 
-		piece[3] = grout.make_sprite(" \
-			... \
-			**. \
-			.** \
-		");
+			{'shape': " \
+				YY \
+				YY \
+  			"},
 
-		var random_piece = Math.floor(Math.random() * piece.length);
+			{'shape': " \
+				... \
+				GG. \
+				.GG \
+  			"},
 
-		return piece[random_piece];
+			{'shape': " \
+				.P. \
+				PPP \
+				... \
+  			"}
+  		];
+
+		var random_piece = Math.floor(Math.random() * pieces.length);
+
+		return grout.make_sprite(pieces[random_piece].shape, color_codes);
 	}
 
 	// restart logic

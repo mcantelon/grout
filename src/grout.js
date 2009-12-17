@@ -861,7 +861,9 @@ Grout.prototype.mixin({
 		setTimeout('document.getElementById("' + this.canvas_id + '").grout.animate(' + speed + ')', speed);
 	},
 	
-	make_sprite:function(sprite_string) {
+	make_sprite:function(sprite_string, color_codes) {
+
+		var color_codes = this.merge(color_codes, {});
 
 		var sprite_rows = [];
 
@@ -899,7 +901,12 @@ Grout.prototype.mixin({
 				if (sprite_rows[y][x] == '.') {
 					pixels[x][y] = false;
 				} else {
-					pixels[x][y] = true;
+					if (sprite_rows[y][x] == '*') {
+						pixels[x][y] = true;
+					} else {
+						color_code = sprite_rows[y][x];
+						pixels[x][y] = color_codes[color_code];
+					}
 				}
 			}
 		}
