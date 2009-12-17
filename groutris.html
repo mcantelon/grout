@@ -10,6 +10,7 @@
 #content {
 	text-align: center;
 }
+
 canvas {
 	align: center;
 	border: 1px solid #666;
@@ -57,6 +58,7 @@ function groutris() {
 	// game piece generation logic
 	function generate_piece(grout) {
 
+		// define color pallette for pieces
 		var color_codes = {
 			'C': 'cyan',
 			'B': 'blue',
@@ -67,6 +69,7 @@ function groutris() {
 			'R': 'red'
 		}
 
+		// we define a square of pixels so rotation is easy
 		var pieces = [
 
 			" \
@@ -114,8 +117,10 @@ function groutris() {
   			"
   		];
 
+		// pick a random piece
 		var random_piece = Math.floor(Math.random() * pieces.length);
 
+		// return the piece as a matrix of pixels
 		return grout.make_sprite(pieces[random_piece], color_codes);
 	}
 
@@ -136,15 +141,26 @@ function groutris() {
 		piece.offset_x = 4;
 		piece.offset_y = 0;
 
-		// generate random piece
-		piece.overwrite(generate_piece(grout));
+		// To-do: make it start flush with the top and properly centered
 
+		// generate random piece
+		new_shape = generate_piece(grout);
+
+		// size piece according to shape size, assuming shape is square
+		piece.width  = new_shape.length;
+		piece.height = new_shape.length;
+
+		// set pixels in piece to new shape
+		piece.overwrite(new_shape);
+
+		/*
 		// randomly rotate
 		var number_of_rotations = Math.floor(Math.random() * 4);
 
 		for (var i = 0; i < number_of_rotations; i++) {
 			piece.rotate();
 		}
+		*/
 	}
 
 	// find full rows
