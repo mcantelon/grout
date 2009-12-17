@@ -69,54 +69,54 @@ function groutris() {
 
 		var pieces = [
 
-			{'shape': " \
-    			.... \
-    			B... \
-    			BBBB \
-    			.... \
-  			"},
+			" \
+    		.... \
+    		B... \
+    		BBBB \
+    		.... \
+  			",
 
-			{'shape': " \
-    			.... \
-    			...O \
-    			OOOO \
-    			.... \
-  			"},
+			" \
+    		.... \
+    		...O \
+    		OOOO \
+    		.... \
+  			",
 
-			{'shape': " \
-				.... \
-				CCCC \
-				.... \
-				.... \
-  			"},
+			" \
+			.... \
+			CCCC \
+			.... \
+			.... \
+  			",
 
-			{'shape': " \
-				YY \
-				YY \
-  			"},
+			" \
+			YY \
+			YY \
+  			",
 
-			{'shape': " \
-				... \
-				RR. \
-				.RR \
-  			"},
+			" \
+			... \
+			RR. \
+			.RR \
+  			",
 
-			{'shape': " \
-				... \
-				.GG \
-				GG. \
-  			"},
+			" \
+			... \
+			.GG \
+			GG. \
+  			",
 
-			{'shape': " \
-				.P. \
-				PPP \
-				... \
-  			"}
+			" \
+			.P. \
+			PPP \
+			... \
+  			"
   		];
 
 		var random_piece = Math.floor(Math.random() * pieces.length);
 
-		return grout.make_sprite(pieces[random_piece].shape, color_codes);
+		return grout.make_sprite(pieces[random_piece], color_codes);
 	}
 
 	// restart logic
