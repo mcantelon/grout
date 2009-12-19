@@ -409,7 +409,7 @@ Sprite.prototype.mixin({
 		var margin_data = this.margin_horizontal_data(this.pixels);
 
 		return {
-			'left': (this.offset_x + margin_data['left']),
+			'left':   (this.offset_x + margin_data['left']),
 			'right':  map.width - (this.offset_x + this.width - margin_data['right'])
 		}
 	},
@@ -450,7 +450,7 @@ Sprite.prototype.mixin({
 	},
 
 	margin_right:function(map) {
-		
+
 		var margin_horizontal = this.margin_horizontal(map);
 
 		return margin_horizontal['right'];
@@ -589,7 +589,7 @@ Map.prototype.mixin({
 
 		return {
 			'left': leftmost_row_with_pixel,
-			'right': (this.pixel_width - 1) - rightmost_row_with_pixel
+			'right': (this.width - 1) - rightmost_row_with_pixel
 		}
 	},
 
