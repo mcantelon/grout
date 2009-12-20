@@ -60,31 +60,31 @@ function blood_funnel() {
 		// up arrow key triggers rotation
 		if (key == 32) {
 
-			// get next bullet ID
-			if (grout.state['bullet_id'] == undefined) {
+			// only let player have 5 bullets in motion
+			if (grout.state['bullets_in_motion'] == undefined
+			  || grout.state['bullets_in_motion'].length < 5) {
 
-				grout.state['bullet_id'] = 1
+				// get next bullet ID
+				grout.state['bullet_id'] = (grout.state['bullet_id'] == undefined)
+				  ? 1
+				  : grout.state['bullet_id'] + 1;
+
+				// create new bullet sprite corresponding to ID
+				var bullet_id = 'bullet_' + grout.state['bullet_id']
+				var bullet = grout.sprite(bullet_id);
+				bullet.pixels = grout.make_sprite("*");
+				bullet.offset_x = ship.offset_x + 2;
+				bullet.offset_y = ship.offset_y;
+
+				// add bullet ID to list 
+				if (grout.state['bullets_in_motion'] == undefined) {
+
+					grout.state['bullets_in_motion'] = [];
+				}
+
+				// note that bullet is in motion
+				grout.state['bullets_in_motion'].push(bullet_id);
 			}
-			else {
-
-				grout.state['bullet_id']++;
-			}
-
-			// create new bullet sprite corresponding to ID
-			var bullet_id = 'bullet_' + grout.state['bullet_id']
-			var bullet = grout.sprite(bullet_id);
-			bullet.pixels = grout.make_sprite("*");
-			bullet.offset_x = ship.offset_x + 2;
-			bullet.offset_y = ship.offset_y - 1;
-
-			// add bullet ID to list 
-			if (grout.state['bullets_in_motion'] == undefined) {
-
-				grout.state['bullets_in_motion'] = [];
-			}
-
-			// note that bullet is in motion
-			grout.state['bullets_in_motion'].push(bullet_id);
 		}
 
 		// handle movement via arrow keys
@@ -102,45 +102,6 @@ function blood_funnel() {
 				background.pixels
 			);
 
-			// create new bullet
-			if (keycode == 32) {
-
-				/*
-				alert('meh');
-
-				// get next bullet ID
-				if (grout.state['bullet_id'] == undefined) {
-
-					grout.state['bullet_id'] = 1
-				}
-				else {
-
-					grout.state['bullet_id']++;
-				}
-
-				alert('AAAABID:' + grout.state['bullet_id']);
-
-				// create new bullet sprite corresponding to ID
-				var bullet_id = 'bullet_' + grout.state['bullet_id']
-				var bullet = grout.sprite(bullet_id);
-				bullet.pixels = grout.make_sprite('*');
-
-				alert('bb');
-
-				// add bullet ID to list 
-				if (grout.state['bullets_in_motion'] == undefined) {
-
-					grout.state['bullets_in_motion'] = [];
-				}
-
-				alert('cc');
-
-				alert('dddd ' + bullet_id);
-				// note that bullet is in motion
-				grout.state['bullets_in_motion'].push(bullet_id);
-				*/
-			}
-
 			// shift piece if key is pressed and there is space to shift it to
 			if (key == keycode
 			  && margin_space != 0
@@ -156,31 +117,43 @@ function blood_funnel() {
 	// enter main loop
 	grout.animate(100, function () {
 
+		move_bullets(this);
+	});
+}
+
+function move_bullets(grout) {
+
 		var bullet;
+		var bullets_still_in_motion;
+		var bullet_id;
 
-		if (this.state['bullets_in_motion'] != undefined) {
+		if (grout.state['bullets_in_motion'] != undefined) {
 
-			for (var i = 0; i < this.state['bullets_in_motion'].length; i++) {
+			// after cycling through array of bullets in motion, we'll remove dead bullets
+			bullets_still_in_motion = [];
 
-				var bullet_id = this.state['bullets_in_motion'][i];
+			for (var i = 0; i < grout.state['bullets_in_motion'].length; i++) {
 
-				if (bullet_id != null) {
+				bullet_id = grout.state['bullets_in_motion'][i];
 
-					bullet = this.sprites[bullet_id];
-					
-					if (bullet != undefined) {
+				bullet = grout.sprites[bullet_id];
+	
+				if (bullet != undefined) {
 
-						if (bullet.offset_y > 0) {
-							bullet.move(0, -1);
-						}
-						else {
-							this.state['bullets_in_motion'][i] = null;
-						}
+					if (bullet.offset_y > 0) {
+
+						bullet.move(0, -1);
+						bullets_still_in_motion.push(bullet_id);
+					}
+					else {
+
+						delete grout.sprites[bullet_id];
 					}
 				}
 			}
+
+			grout.state['bullets_in_motion'] = bullets_still_in_motion;
 		}
-	});
 }
 
 // restart logic
