@@ -840,7 +840,7 @@ Grout.prototype.mixin({
 
 	draw_all:function() {
 
-		this.ctx.clearRect(0,0,300,300);
+		this.ctx.clearRect(0, 0, this.width, this.height);
 
 		for (var map in this.maps) {
 			this.maps[map].draw();
