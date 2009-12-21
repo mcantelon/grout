@@ -82,9 +82,14 @@ function blood_funnel() {
 	restart(background, ship, grout);
 
 	// enter main loop
-	grout.animate(100, function () {
+	grout.animate(50, function () {
 
-		move_bankers(this);
+		this.state['turns']++;
+
+		if (this.state['turns'] % 10 == 0) {
+
+			move_bankers(this);
+		}
 
 		move_bullets(this);
 	});
@@ -100,12 +105,15 @@ function restart(background, ship, grout) {
 
 	new_attack_wave(grout);
 
+	grout.state['turns'] = 0;
+
 	grout.draw_all();
 }
 
 function new_attack_wave(grout) {
 
 	grout.state['bankers'] = [];
+	grout.state['banker_direction'] = 'right';
 
 	for (var i = 0; i < 5; i++) {
 
@@ -127,10 +135,16 @@ function new_attack_wave(grout) {
 		banker.offset_x = (1 + (i * 6));
 		banker.offset_y = 2 + ((i % 2) * 2);
 
-		banker.state['direction'] = 'right';
+		banker.state['direction'] = grout.state['banker_direction'];
 		banker.state['move_logic'] = function (banker, background) {
-			//if (banker.state['direction'] == 'right') {
-			//}
+
+			if (banker.state['direction'] == 'right') {
+
+				banker.offset_x++;
+			}
+			else {
+				banker.offset_x--;
+			}
 		}
 	}
 }
@@ -145,6 +159,12 @@ for each banker,
 */
 
 	var banker_id;
+	var live_bankers = 0;
+
+	var leftmost_x = 9999;
+	var rightmost_x = 0;
+
+	var drop;
 
 	for (var i = 0; i < grout.state['bankers'].length; i++) {
 
@@ -152,20 +172,40 @@ for each banker,
 		banker = grout.sprite(banker_id);
 
 		if (banker.state['move_logic'] != undefined) {
+
 			banker.state['move_logic'](banker, grout);
+
+			if (banker.offset_x < leftmost_x) {
+				leftmost_x = banker.offset_x;
+			}
+
+			if (banker.offset_x > rightmost_x) {
+				rightmost_x = banker.offset_x;
+			}
+
+			live_bankers++;
 		}
 	}
 
-	/*
-	for (var i = 0; i < 5; i++) {
-
-		banker = grout.sprite('banker_' + (i + 1));
-
-		alert(banker.goat);
-		alert(banker.offset_x);
+	if (rightmost_x > 43) {
+		drop = true;
+		grout.state['banker_direction'] = 'left';
 	}
-	*/
 
+	if (leftmost_x < 2) {
+		drop = true;
+		grout.state['banker_direction'] = 'right';
+	}
+
+	for (var i = 0; i < grout.state['bankers'].length; i++) {
+
+		banker_id = grout.state['bankers'][i];
+		banker = grout.sprite(banker_id);
+		banker.state['direction'] = grout.state['banker_direction'];
+		if (drop) {
+			banker.offset_y++;
+		}
+	}
 }
 
 function shoot_bullet(grout, ship) {
@@ -254,8 +294,9 @@ function move_bullets(grout) {
 
 			if (banker.detect_collision_with_map(collision_plane)) {
 
+				// instead of just deleting them we should add them to a "dying" queue
+				// or, better yet, change their state to "dying"
 				delete grout.sprites[banker_id];
-				//banker.state['move_logic'](banker, grout);
 			}
 		}
 
