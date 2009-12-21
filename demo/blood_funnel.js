@@ -151,13 +151,6 @@ function new_attack_wave(grout) {
 
 function move_bankers(grout) {
 
-/*
-for each banker,
-  let banker know wave direction
-  let banker move according to the wave direction
-  after movement of banks see if direction should be changed
-*/
-
 	var banker_id;
 	var live_bankers = 0;
 
@@ -165,6 +158,8 @@ for each banker,
 	var rightmost_x = 0;
 
 	var drop;
+
+	var background = grout.map('background');
 
 	for (var i = 0; i < grout.state['bankers'].length; i++) {
 
@@ -179,15 +174,15 @@ for each banker,
 				leftmost_x = banker.offset_x;
 			}
 
-			if (banker.offset_x > rightmost_x) {
-				rightmost_x = banker.offset_x;
+			if ((banker.offset_x + banker.width) > rightmost_x) {
+				rightmost_x = banker.offset_x + banker.width;
 			}
 
 			live_bankers++;
 		}
 	}
 
-	if (rightmost_x > 43) {
+	if (rightmost_x > (background.width - 2)) {
 		drop = true;
 		grout.state['banker_direction'] = 'left';
 	}
@@ -201,10 +196,16 @@ for each banker,
 
 		banker_id = grout.state['bankers'][i];
 		banker = grout.sprite(banker_id);
+
 		banker.state['direction'] = grout.state['banker_direction'];
+
 		if (drop) {
 			banker.offset_y++;
 		}
+	}
+
+	if (!live_bankers) {
+		new_attack_wave(grout);
 	}
 }
 
