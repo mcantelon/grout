@@ -79,8 +79,10 @@ function groutris() {
 		}
 
 		// space key triggers drop
-		if (key == 38) {
+		if (key == 32) {
 
+			while(move_piece(piece, background, 'margin_bottom', 0, 1)) {
+			};
 		}
 
 		// handle movement via arrow keys
