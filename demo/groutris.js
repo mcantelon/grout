@@ -78,27 +78,19 @@ function groutris() {
 			return;
 		}
 
+		// space key triggers drop
+		if (key == 38) {
+
+		}
+
 		// handle movement via arrow keys
 		for (keycode in keycode_response) {
 
-			response = keycode_response[keycode];
+			if (key == keycode) {
 
-			// execute appropriate piece method to check space between piece and map edge
-			margin_space = piece[response['margin_check_function']](background);
+				response = keycode_response[keycode];
 
-			// check to see if piece, when shifted, would collide with the background
-			will_collide_with_background = piece.check_if_move_will_collide_with_pixels(
-				response['shift_x'],
-				response['shift_y'],
-				background.pixels
-			)
-
-			// shift piece if key is pressed and there is space to shift it to
-			if (key == keycode
-			  && margin_space != 0
-			  && !will_collide_with_background
-			) {
-				piece.move(response['shift_x'], response['shift_y']);
+				move_piece(piece, background, response['margin_check_function'], response['shift_x'], response['shift_y']);
 			}
 		}
 	});
@@ -241,6 +233,33 @@ function generate_piece(grout) {
 
 	// return the piece as a matrix of pixels
 	return grout.make_sprite(pieces[random_piece], color_codes);
+}
+
+// move piece
+function move_piece(piece, background, margin_check_function, shift_x, shift_y) {
+	
+	var margin_space;
+	var will_collide_with_background;
+	
+	// execute appropriate piece method to check space between piece and map edge
+	margin_space = piece[margin_check_function](background);
+
+	// check to see if piece, when shifted, would collide with the background
+	will_collide_with_background = piece.check_if_move_will_collide_with_pixels(
+		shift_x,
+		shift_y,
+		background.pixels
+	);
+
+	// shift piece if key is pressed and there is space to shift it to
+	if (margin_space != 0
+		&& !will_collide_with_background
+	) {
+		piece.move(shift_x, shift_y);
+		return true;
+	}
+	
+	return false;
 }
 
 // find full rows
