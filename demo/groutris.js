@@ -81,8 +81,8 @@ function groutris() {
 		// space key triggers drop
 		if (key == 32) {
 
-			while(move_piece(piece, background, 'margin_bottom', 0, 1)) {
-			};
+			// keep moving piece down until move fails
+			while(move_piece(piece, background, 'margin_bottom', 0, 1)) {};
 		}
 
 		// handle movement via arrow keys
@@ -92,6 +92,7 @@ function groutris() {
 
 				response = keycode_response[keycode];
 
+				// attempt to move piece down in appropriat direction
 				move_piece(piece, background, response['margin_check_function'], response['shift_x'], response['shift_y']);
 			}
 		}
@@ -112,7 +113,8 @@ function groutris() {
 			piece = this.sprites['piece'];
 
 			if (piece.margin_bottom(background) != 0
-			  && !piece.check_if_move_will_collide_with_pixels(0, 1, background.pixels)) {
+			  && !piece.check_if_move_will_collide_with_pixels(0, 1, background.pixels)
+			  && !piece.detect_collision_with_map(background)) {
 				piece.move(0, 1);
 			}
 			else {
