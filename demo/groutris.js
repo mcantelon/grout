@@ -160,18 +160,21 @@ function reset_piece(piece, grout) {
 	// To-do: make it start flush with the top and properly centered
 
 	// generate random piece
+	/*
 	new_shape = generate_piece(grout);
 
 	// size piece according to shape size, assuming shape is square
 	piece.width  = new_shape.length;
 	piece.height = new_shape.length;
+	*/
 
 	// set pixels in piece to new shape
-	piece.overwrite(new_shape);
+	//piece.overwrite(new_shape);
+	generate_piece(piece);
 }
 
 // game piece generation logic
-function generate_piece(grout) {
+function generate_piece(piece) {
 
 	// define color pallette for pieces
 	var color_codes = {
@@ -236,7 +239,7 @@ function generate_piece(grout) {
 	var random_piece = Math.floor(Math.random() * pieces.length);
 
 	// return the piece as a matrix of pixels
-	return grout.make_sprite(pieces[random_piece], color_codes);
+	piece.make_sprite(pieces[random_piece], color_codes);
 }
 
 // move piece

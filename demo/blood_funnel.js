@@ -26,7 +26,7 @@ function blood_funnel() {
 	// create sprite for ship
 	var ship = grout.sprite('ship');
 
-	ship.pixels = grout.make_sprite(" \
+	ship.make_sprite(" \
 		..*.. \
 		.***. \
 		**.** \
@@ -110,6 +110,23 @@ function restart(background, ship, grout) {
 	grout.draw_all();
 }
 
+function new_banker(grout, banker_id) {
+
+	banker = grout.sprite(banker_id);
+
+	banker.make_sprite(" \
+		..*.. \
+		***** \
+		*.*.* \
+		*.*.* \
+	");
+
+	banker.width = 5;
+	banker.height = 5;
+
+	return banker;
+}
+
 function new_attack_wave(grout) {
 
 	grout.state['bankers'] = [];
@@ -119,32 +136,32 @@ function new_attack_wave(grout) {
 
 		banker_id = 'banker_' + (i + 1);
 
-		banker = grout.sprite(banker_id);
+		// note that a new banker exists
 		grout.state['bankers'].push(banker_id);
 
-		banker.pixels = grout.make_sprite(" \
-			..*.. \
-			***** \
-			*.*.* \
-			*.*.* \
-		");
+		// set banker pixels
+		banker = new_banker(grout, banker_id);
 
-		banker.width = 5;
-		banker.height = 5;
-
+		// distribute bankers evenly horizintal, but stagger vertically
 		banker.offset_x = (1 + (i * 6));
 		banker.offset_y = 2 + ((i % 2) * 2);
 
-		banker.state['direction'] = grout.state['banker_direction'];
+		// set banker movement logic
 		banker.state['move_logic'] = function (banker, background) {
 
-			if (banker.state['direction'] == 'right') {
+			var direction = banker.state['direction'];
+			var move_x;
 
-				banker.offset_x++;
+			// allow individual bankers to have different directions
+			// in case we want to implement at some point
+			if (direction == undefined) {
+
+				direction = banker.parent.state['banker_direction'];
 			}
-			else {
-				banker.offset_x--;
-			}
+
+			move_x = (direction == 'right') ? 1 : -1;
+
+			banker.offset_x += move_x;
 		}
 	}
 }
@@ -161,6 +178,8 @@ function move_bankers(grout) {
 
 	var background = grout.map('background');
 
+	// trigger move logic for each banks, noting
+	// position and which are still alive
 	for (var i = 0; i < grout.state['bankers'].length; i++) {
 
 		banker_id = grout.state['bankers'][i];
@@ -182,6 +201,8 @@ function move_bankers(grout) {
 		}
 	}
 
+	// change direction of bankers if we near
+	// the edge of the background
 	if (rightmost_x > (background.width - 2)) {
 		drop = true;
 		grout.state['banker_direction'] = 'left';
@@ -192,18 +213,19 @@ function move_bankers(grout) {
 		grout.state['banker_direction'] = 'right';
 	}
 
-	for (var i = 0; i < grout.state['bankers'].length; i++) {
+	// if we've changed directions, drop bankers down
+	if (drop) {
 
-		banker_id = grout.state['bankers'][i];
-		banker = grout.sprite(banker_id);
+		for (var i = 0; i < grout.state['bankers'].length; i++) {
 
-		banker.state['direction'] = grout.state['banker_direction'];
+			banker_id = grout.state['bankers'][i];
+			banker = grout.sprite(banker_id);
 
-		if (drop) {
 			banker.offset_y++;
 		}
 	}
 
+	// if all bankers are dead, set up new attack wave
 	if (!live_bankers) {
 		new_attack_wave(grout);
 	}
@@ -227,7 +249,7 @@ function shoot_bullet(grout, ship) {
 		bullet_id = 'bullet_' + grout.state['bullet_id']
 		bullet = grout.sprite(bullet_id);
 
-		bullet.pixels = grout.make_sprite("*");
+		bullet.make_sprite("*");
 		bullet.offset_x = ship.offset_x + 2;
 		bullet.offset_y = ship.offset_y;
 
@@ -300,9 +322,5 @@ function move_bullets(grout) {
 				delete grout.sprites[banker_id];
 			}
 		}
-
-		//bullets = collision_plane.count_pixels(0, 0, collision_plane.width, collision_plane.height);
-
-		//console.log(bullets);
 	}
 }

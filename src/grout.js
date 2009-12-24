@@ -354,6 +354,62 @@ var Has_Pixels = {
 		}
 
 		return new_pixels;
+	},
+
+	make_sprite:function(sprite_string, color_codes) {
+
+		var color_codes = this.merge(color_codes, {});
+
+		var sprite_rows = [];
+
+		// normalize whitespace
+		sprite_string = sprite_string.replace(/[\n\r\t]/g, ' ');
+
+		// reduce multiple contigous spaces to single spaces
+		while(sprite_string.indexOf('  ') != -1) {
+			sprite_string = sprite_string.replace('  ', ' ');
+		}
+
+		// separate into raw rows, separated by spaces
+		raw_rows = sprite_string.split(" ");
+
+		// get rid of blank rows
+		var y = 0;
+		for (var i = 0; i < raw_rows.length; i++) {
+			row = raw_rows[i].replace(' ', '');
+			if (row.length > 0) {
+				sprite_rows[y] = raw_rows[i];
+				y++;
+			}
+		}
+
+		// create pixel array from string
+		var y = 0;
+		pixels = [];
+		for (var y = 0; y < sprite_rows.length; y++) {
+			for (var x = 0; x < sprite_rows[y].length; x++) {
+
+				if (this.undefined_or_null(pixels[x])) {
+					pixels[x] = [];
+				}
+
+				if (sprite_rows[y][x] == '.') {
+					pixels[x][y] = false;
+				} else {
+					if (sprite_rows[y][x] == '*') {
+						pixels[x][y] = true;
+					} else {
+						color_code = sprite_rows[y][x];
+						pixels[x][y] = color_codes[color_code];
+					}
+				}
+			}
+		}
+
+		this.width = x;
+		this.height = y;
+
+		this.pixels = pixels;
 	}
 };
 
@@ -861,58 +917,5 @@ Grout.prototype.mixin({
 		this.draw_all();
 
 		setTimeout('document.getElementById("' + this.canvas_id + '").grout.animate(' + speed + ')', speed);
-	},
-	
-	make_sprite:function(sprite_string, color_codes) {
-
-		var color_codes = this.merge(color_codes, {});
-
-		var sprite_rows = [];
-
-		// normalize whitespace
-		sprite_string = sprite_string.replace(/[\n\r\t]/g, ' ');
-
-		// reduce multiple contigous spaces to single spaces
-		while(sprite_string.indexOf('  ') != -1) {
-			sprite_string = sprite_string.replace('  ', ' ');
-		}
-
-		// separate into raw rows, separated by spaces
-		raw_rows = sprite_string.split(" ");
-
-		// get rid of blank rows
-		var y = 0;
-		for (var i = 0; i < raw_rows.length; i++) {
-			row = raw_rows[i].replace(' ', '');
-			if (row.length > 0) {
-				sprite_rows[y] = raw_rows[i];
-				y++;
-			}
-		}
-
-		// create pixel array from string
-		var y = 0;
-		pixels = [];
-		for (var y = 0; y < sprite_rows.length; y++) {
-			for (var x = 0; x < sprite_rows[y].length; x++) {
-
-				if (this.undefined_or_null(pixels[x])) {
-					pixels[x] = [];
-				}
-
-				if (sprite_rows[y][x] == '.') {
-					pixels[x][y] = false;
-				} else {
-					if (sprite_rows[y][x] == '*') {
-						pixels[x][y] = true;
-					} else {
-						color_code = sprite_rows[y][x];
-						pixels[x][y] = color_codes[color_code];
-					}
-				}
-			}
-		}
-
-		return pixels;
 	}
 });
