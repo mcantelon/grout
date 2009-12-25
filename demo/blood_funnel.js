@@ -2,7 +2,7 @@ function blood_funnel() {
 
 	var pixel_width     = 3;
 	var pixel_height    = 3;
-	var pixel_map_width = 25;
+	var pixel_map_width = 50;
 	var canvas_width    = pixel_width * pixel_map_width;
 
 	// create new grout
@@ -101,7 +101,7 @@ function blood_funnel() {
 	restart(background, ship, grout);
 
 	// enter main loop
-	grout.animate(50, function () {
+	grout.animate(25, function () {
 
 		this.state['turns']++;
 
@@ -120,7 +120,7 @@ function restart(background, ship, grout) {
 	background.clear();
 
 	ship.offset_x = 15;
-	ship.offset_y = 20;
+	ship.offset_y = 40;
 
 	new_attack_wave(grout);
 
@@ -206,6 +206,9 @@ function move_bankers(grout) {
 
 	var background = grout.map('background');
 
+	var lowest_x_position    = {};
+	var lowest_at_x_position = {};
+
 	// trigger move logic for each banks, noting
 	// position and which are still alive
 	for (var i = 0; i < grout.state['bankers'].length; i++) {
@@ -225,8 +228,20 @@ function move_bankers(grout) {
 				rightmost_x = banker.offset_x + banker.width;
 			}
 
+			// see if banker is the lowest at this x position
+			if (lowest_x_position[banker.offset_x] == undefined
+			  || banker.offset_y > lowest_x_position[banker.offset_x]) {
+					
+				lowest_x_position[banker.offset_x]    = banker.offset_y;
+				lowest_at_x_position[banker.offset_x] = banker_id;
+			}
+
 			live_bankers++;
 		}
+	}
+
+	// possibly fire bullet from one of the lowest bankers
+	for (var x in lowest_at_x_position) {
 	}
 
 	// change direction of bankers if we near
