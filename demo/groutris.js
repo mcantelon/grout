@@ -147,7 +147,7 @@ function groutris() {
 					reset_piece(piece, preview_piece, grout_main, grout_preview);
 
 					if (piece.detect_collision_with_map(background)) {
-						
+
 						game_over(background, piece, grout_main);
 					}
 				}
@@ -185,6 +185,8 @@ function reset_piece(piece, preview_piece, grout_main, grout_preview) {
 	piece.pixels = preview_piece.pixels;
 	piece.width  = preview_piece.width;
 	piece.height = preview_piece.height;
+
+	piece.offset_y =- piece.margin_top(grout_main.maps['background']);
 
 	// set pixels in piece to new shape
 	generate_piece(preview_piece);
