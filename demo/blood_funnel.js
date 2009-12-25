@@ -145,9 +145,28 @@ function restart(background, ship, grout) {
 	grout.state['turns'] = 0;
 	grout.state['ship_hit'] = false;
 
-	// add logic to clean up bullets
+	clean_up_bullets(grout);
 
 	grout.draw_all();
+}
+
+function clean_up_bullets(grout) {
+
+	clean_up_bullet_array(grout, grout.state['bullets_in_motion']);
+	clean_up_bullet_array(grout, grout.state['banker_bullets_in_motion']);
+}
+
+function clean_up_bullet_array(grout, bullet_array) {
+
+	if (bullet_array != undefined) {
+
+		for (var i = 0; i < bullet_array.length; i++) {
+			sprite_id = bullet_array[i];
+			delete grout.sprites[sprite_id];
+		}
+
+		bullet_array = [];
+	}
 }
 
 function new_banker(grout, banker_id) {
