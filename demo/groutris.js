@@ -4,26 +4,39 @@ function groutris() {
 	var pixel_map_width = 10;
 	var canvas_width    = pixel_width * pixel_map_width;
 
-	// create new grout
-	var grout = new Grout({
+	// create new grout for playing area
+	var grout_main = new Grout({
 		'width':  canvas_width,
 		'height': canvas_width * 2
 	});
 
+	// create square grout for piece preview
+	var grout_preview = new Grout({
+		'width':  pixel_width * 4,
+		'height': pixel_width * 4
+	});
+
 	// grout's state array is a place for ad-hoc data
-	grout.state['turns'] = 0;
+	grout_main.state['turns'] = 0;
 
 	// create pixel map for background
-	var background = grout.map('background', {
+	var background = grout_main.map('background', {
 		'width':  pixel_map_width,
 		'height': pixel_map_width * 2
 	});
 
 	// create pixel map for game pieces
-	var piece = grout.sprite('piece');
+	var piece = grout_main.sprite('piece');
+
+	// create pixel map for previewing game pieces
+	var preview_piece = grout_preview.sprite('preview_piece');
+
+	generate_piece(preview_piece);
+
+	grout_preview.draw_all();
 
 	// set up keyboard handling
-	grout.keypress(function(key) {
+	grout_main.keypress(function(key) {
 
 		var margin_space;
 		var response;
@@ -99,10 +112,10 @@ function groutris() {
 	});
 
 	// set up game
-	restart(background, piece, grout);
+	restart(background, piece, preview_piece, grout_main, grout_preview);
 
 	// enter main loop
-	grout.animate(100, function () {
+	grout_main.animate(100, function () {
 
 		var full_rows;
 
@@ -127,13 +140,13 @@ function groutris() {
 
 					alert('Game over');
 
-					restart(background, piece, grout);
+					restart(background, piece, grout_main);
 				}
 				else {
 
 					shift_full_rows_down(background);
 
-					reset_piece(piece, grout);
+					reset_piece(piece, preview_piece, grout_main, grout_preview);
 				}
 			}
 		}
@@ -141,17 +154,17 @@ function groutris() {
 }
 
 // restart logic
-function restart(background, piece, grout) {
+function restart(background, piece, preview_piece, grout_main, grout_preview) {
 
 	background.clear();
 
-	reset_piece(piece, grout);
+	reset_piece(piece, preview_piece, grout_main, grout_preview);
 
-	grout.draw_all();
+	grout_main.draw_all();
 }
 
 // create new piece logic
-function reset_piece(piece, grout) {
+function reset_piece(piece, preview_piece, grout_main, grout_preview) {
 
 	// move piece to the top center
 	piece.offset_x = 4;
@@ -159,8 +172,13 @@ function reset_piece(piece, grout) {
 
 	// To-do: make it start flush with the top and properly centered
 
+	piece.pixels = preview_piece.pixels;
+	piece.width  = preview_piece.width;
+	piece.height = preview_piece.height;
+
 	// set pixels in piece to new shape
-	generate_piece(piece);
+	generate_piece(preview_piece);
+	grout_preview.draw_all();
 }
 
 // game piece generation logic
