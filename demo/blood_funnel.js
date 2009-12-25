@@ -111,6 +111,7 @@ function blood_funnel() {
 		}
 
 		move_bullets(this);
+		move_banker_bullets(this);
 	});
 }
 
@@ -209,6 +210,16 @@ function move_bankers(grout) {
 	var lowest_x_position    = {};
 	var lowest_at_x_position = {};
 
+	if (grout.state['banker_bullets_in_motion'] == undefined) {
+
+		grout.state['banker_bullets_in_motion'] = [];
+	}
+
+	if (grout.state['banker_bullet_id'] == undefined) {
+
+		grout.state['banker_bullet_id'] = 1;
+	}
+
 	// trigger move logic for each banks, noting
 	// position and which are still alive
 	for (var i = 0; i < grout.state['bankers'].length; i++) {
@@ -242,6 +253,25 @@ function move_bankers(grout) {
 
 	// possibly fire bullet from one of the lowest bankers
 	for (var x in lowest_at_x_position) {
+
+		banker_id = lowest_at_x_position[x];
+
+		var bullet_shot = Math.floor(Math.random() * 10) == 1;
+
+		if (bullet_shot) {
+
+			bullet_id = 'banker_bullet_' + grout.state['banker_bullet_id'];
+
+			make_bullet_sprite(
+				grout,
+				bullet_id,
+				grout.sprites[banker_id].offset_x + 3,
+				grout.sprites[banker_id].offset_y + 3
+			);
+
+			grout.state['banker_bullets_in_motion'].push(bullet_id);
+			grout.state['banker_bullet_id']++;
+		}
 	}
 
 	// change direction of bankers if we near
@@ -290,13 +320,8 @@ function shoot_bullet(grout, ship) {
 
 		// create new bullet sprite corresponding to ID
 		bullet_id = 'bullet_' + grout.state['bullet_id']
-		bullet = grout.sprite(bullet_id);
 
-		bullet.make_sprite("*");
-		bullet.offset_x = ship.offset_x + 2;
-		bullet.offset_y = ship.offset_y;
-		bullet.pixel_width  = grout.state['pixel_width'];
-		bullet.pixel_height = grout.state['pixel_height'];
+		make_bullet_sprite(grout, bullet_id, ship.offset_x + 2, ship.offset_y);
 
 		// add bullet ID to list 
 		if (grout.state['bullets_in_motion'] == undefined) {
@@ -306,6 +331,54 @@ function shoot_bullet(grout, ship) {
 
 		// note that bullet is in motion
 		grout.state['bullets_in_motion'].push(bullet_id);
+	}
+}
+
+function make_bullet_sprite(grout, bullet_id, x, y) {
+
+	bullet = grout.sprite(bullet_id);
+
+	bullet.make_sprite("*");
+	bullet.offset_x = x;
+	bullet.offset_y = y;
+	bullet.pixel_width  = grout.state['pixel_width'];
+	bullet.pixel_height = grout.state['pixel_height'];
+
+	return bullet;
+}
+
+function move_banker_bullets(grout) {
+
+	var bullet_id;
+	var bullets_still_in_motion = [];
+
+	if (grout.state['banker_bullets_in_motion'] != undefined) {
+
+	for (var i = 0; i < grout.state['banker_bullets_in_motion'].length; i++) {
+
+		bullet_id = grout.state['banker_bullets_in_motion'][i];
+
+		bullet = grout.sprites[bullet_id];
+
+		// if bullet hasn't reached top of screen move it, otherwise delete it	
+		if (bullet != undefined) {
+
+			if (bullet.offset_y < grout.map('background').height) {
+
+				bullet.move(0, 1);
+
+				//collision_plane.stamp(bullet.pixels, bullet.offset_x, bullet.offset_y);					
+
+				bullets_still_in_motion.push(bullet_id);
+			}
+			else {
+
+				delete grout.sprites[bullet_id];
+			}
+		}
+	}
+
+	grout.state['banker_bullets_in_motion'] = bullets_still_in_motion;
 	}
 }
 
