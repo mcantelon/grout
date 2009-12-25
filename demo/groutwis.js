@@ -138,7 +138,7 @@ function groutris() {
 				// if piece that has just dropped is at top of map, end game
 				if (piece.margin_top(background) == 0) {
 
-					game_over(background, piece, grout_main);
+					game_over(background, piece, grout_main, grout_preview);
 				}
 				else {
 
@@ -148,7 +148,7 @@ function groutris() {
 
 					if (piece.detect_collision_with_map(background)) {
 
-						game_over(background, piece, grout_main);
+						game_over(background, piece, grout_main, grout_preview);
 					}
 				}
 			}
@@ -156,17 +156,19 @@ function groutris() {
 	});
 }
 
-function game_over(background, piece, grout_main) {
+function game_over(background, piece, grout_main, grout_preview) {
 
 	alert('Game over');
 
-	restart(background, piece, grout_main);
+	restart(background, piece, grout_main, grout_preview);
 }
 
 // restart logic
 function restart(background, piece, preview_piece, grout_main, grout_preview) {
 
 	background.clear();
+
+	//generate_piece(preview_piece);
 
 	reset_piece(piece, preview_piece, grout_main, grout_preview);
 
@@ -180,12 +182,13 @@ function reset_piece(piece, preview_piece, grout_main, grout_preview) {
 	piece.offset_x = 4;
 	piece.offset_y = 0;
 
-	// To-do: make it start flush with the top and properly centered
+	// To-do: center piece using logic rather than hardcoded number
 
 	piece.pixels = preview_piece.pixels;
 	piece.width  = preview_piece.width;
 	piece.height = preview_piece.height;
 
+	// make piece flush with top of background
 	piece.offset_y =- piece.margin_top(grout_main.maps['background']);
 
 	// set pixels in piece to new shape
