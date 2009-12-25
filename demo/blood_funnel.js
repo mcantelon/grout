@@ -31,6 +31,14 @@ function blood_funnel() {
 		'pixel_height': pixel_height
 	});
 
+	// create pixel map for collision plane
+	var collision_plane_2 = grout.map('collision_plane_2', {
+		'width':  background.width,
+		'height': background.height,
+		'pixel_width': pixel_width,
+		'pixel_height': pixel_height
+	});
+
 	// create sprite for ship
 	var ship = grout.sprite('ship');
 
@@ -142,39 +150,46 @@ function new_banker(grout, banker_id) {
 
 function new_attack_wave(grout) {
 
+	var banker_number = 1;
+
 	grout.state['bankers'] = [];
 	grout.state['banker_direction'] = 'right';
 
-	for (var i = 0; i < 5; i++) {
+	for (var row = 1; row <= 3; row++) {
 
-		banker_id = 'banker_' + (i + 1);
+		for (var i = 0; i < 5; i++) {
 
-		// note that a new banker exists
-		grout.state['bankers'].push(banker_id);
+			banker_id = 'banker_' + banker_number;
 
-		// set banker pixels
-		banker = new_banker(grout, banker_id);
+			// note that a new banker exists
+			grout.state['bankers'].push(banker_id);
 
-		// distribute bankers evenly horizintal, but stagger vertically
-		banker.offset_x = (1 + (i * 6));
-		banker.offset_y = 2 + ((i % 2) * 2);
+			// set banker pixels
+			banker = new_banker(grout, banker_id);
 
-		// set banker movement logic
-		banker.state['move_logic'] = function (banker, background) {
+			// distribute bankers evenly horizintal, but stagger vertically
+			banker.offset_x = (1 + (i * 6));
+			banker.offset_y = (5 * row) + ((i % 2) * 2) - 3;
 
-			var direction = banker.state['direction'];
-			var move_x;
+			// set banker movement logic
+			banker.state['move_logic'] = function (banker, background) {
 
-			// allow individual bankers to have different directions
-			// in case we want to implement at some point
-			if (direction == undefined) {
+				var direction = banker.state['direction'];
+				var move_x;
 
-				direction = banker.parent.state['banker_direction'];
+				// allow individual bankers to have different directions
+				// in case we want to implement at some point
+				if (direction == undefined) {
+
+					direction = banker.parent.state['banker_direction'];
+				}
+
+				move_x = (direction == 'right') ? 1 : -1;
+
+				banker.offset_x += move_x;
 			}
 
-			move_x = (direction == 'right') ? 1 : -1;
-
-			banker.offset_x += move_x;
+			banker_number++;
 		}
 	}
 }
@@ -285,10 +300,12 @@ function move_bullets(grout) {
 	var bullets_still_in_motion;
 	var bullet_id;
 
-	var collision_plane = grout.map('collision_plane');
+	var collision_plane   = grout.map('collision_plane');
+	var collision_plane_2 = grout.map('collision_plane_2');
 
-	// we simply bullet/banker collision detection by stamping all bullets on a map
+	// we stamp bullets on one map to simply collision detection, and bankers on another map
 	collision_plane.clear();
+	collision_plane_2.clear();
 
 	if (grout.state['bullets_in_motion'] != undefined) {
 
@@ -298,7 +315,6 @@ function move_bullets(grout) {
 		for (var i = 0; i < grout.state['bullets_in_motion'].length; i++) {
 
 			bullet_id = grout.state['bullets_in_motion'][i];
-
 			bullet = grout.sprites[bullet_id];
 
 			// if bullet hasn't reached top of screen move it, otherwise delete it	
@@ -322,7 +338,7 @@ function move_bullets(grout) {
 		// update list of buttets still in play
 		grout.state['bullets_in_motion'] = bullets_still_in_motion;
 
-		// see if we've hit any bankers
+		// see if any bankers have been hit
 		var banker_id;
 
 		for (var i = 0; i < grout.state['bankers'].length; i++) {
@@ -332,9 +348,25 @@ function move_bullets(grout) {
 
 			if (banker.detect_collision_with_map(collision_plane)) {
 
+				// make note that this banker has collided and put onto new collision plane
+				// so we can delete any bullets that hit it
+				collision_plane_2.stamp(banker.pixels, banker.offset_x, banker.offset_y);
+
 				// instead of just deleting them we should add them to a "dying" queue
 				// or, better yet, change their state to "dying"
 				delete grout.sprites[banker_id];
+			}
+		}
+
+		// see if any bullets have hit bankers
+		for (var i = 0; i < bullets_still_in_motion.length; i++) {
+
+			bullet_id = bullets_still_in_motion[i];
+			bullet = grout.sprites[bullet_id];
+
+			if (bullet.detect_collision_with_map(collision_plane_2)) {
+
+				delete grout.sprites[bullet_id];
 			}
 		}
 	}
