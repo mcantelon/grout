@@ -123,6 +123,11 @@ function blood_funnel() {
 			move_banker_bullets(this);
 		}
 
+		if (grout.state['ship_hit']) {
+			alert('Game over');
+			restart(this.maps['background'], this.sprites['ship'], this);
+		}
+
 		move_bullets(this);
 	});
 }
@@ -132,12 +137,15 @@ function restart(background, ship, grout) {
 
 	background.clear();
 
-	ship.offset_x = 15;
+	ship.offset_x = 30;
 	ship.offset_y = 40;
 
 	new_attack_wave(grout);
 
 	grout.state['turns'] = 0;
+	grout.state['ship_hit'] = false;
+
+	// add logic to clean up bullets
 
 	grout.draw_all();
 }
@@ -363,7 +371,6 @@ function move_banker_bullets(grout) {
 
 	var bullet_id;
 	var bullets_still_in_motion = [];
-
 	var bullet_movement_result;
 
 	bullet_movement_result = move_bullet_sprites(
@@ -377,7 +384,14 @@ function move_banker_bullets(grout) {
 	grout.maps['collision_plane_3'] = bullet_movement_result['collision_plane_map'];
 	bullets_still_in_motion = bullet_movement_result['bullets_still_in_motion'];
 
+	// if a banker's bullet has hit the ship, note this
+	if (grout.sprites['ship'].detect_collision_with_map(grout.maps['collision_plane_3'])) {
+		grout.state['ship_hit'] = true;
+	}
+
 	grout.state['banker_bullets_in_motion'] = bullets_still_in_motion;
+
+	return false;
 }
 
 function move_bullets(grout) {
