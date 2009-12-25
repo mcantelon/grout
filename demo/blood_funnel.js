@@ -168,9 +168,9 @@ function new_attack_wave(grout) {
 	grout.state['bankers'] = [];
 	grout.state['banker_direction'] = 'right';
 
-	for (var row = 1; row <= 3; row++) {
+	for (var row = 1; row <= 5; row++) {
 
-		for (var i = 0; i < 5; i++) {
+		for (var i = 0; i < 10; i++) {
 
 			banker_id = 'banker_' + banker_number;
 
