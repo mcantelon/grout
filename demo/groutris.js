@@ -138,19 +138,29 @@ function groutris() {
 				// if piece that has just dropped is at top of map, end game
 				if (piece.margin_top(background) == 0) {
 
-					alert('Game over');
-
-					restart(background, piece, grout_main);
+					game_over(background, piece, grout_main);
 				}
 				else {
 
 					shift_full_rows_down(background);
 
 					reset_piece(piece, preview_piece, grout_main, grout_preview);
+
+					if (piece.detect_collision_with_map(background)) {
+						
+						game_over(background, piece, grout_main);
+					}
 				}
 			}
 		}
 	});
+}
+
+function game_over(background, piece, grout_main) {
+
+	alert('Game over');
+
+	restart(background, piece, grout_main);
 }
 
 // restart logic
