@@ -110,8 +110,12 @@ function blood_funnel() {
 			move_bankers(this);
 		}
 
+		if (this.state['turns'] % 2 == 0) {
+
+			move_banker_bullets(this);
+		}
+
 		move_bullets(this);
-		move_banker_bullets(this);
 	});
 }
 
