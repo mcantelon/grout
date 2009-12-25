@@ -1,6 +1,7 @@
 function blood_funnel() {
 
-	var pixel_width     = 10;
+	var pixel_width     = 3;
+	var pixel_height    = 3;
 	var pixel_map_width = 25;
 	var canvas_width    = pixel_width * pixel_map_width;
 
@@ -10,17 +11,24 @@ function blood_funnel() {
 		'height': canvas_width
 	});
 
+	grout.state['pixel_width']  = pixel_width;
+	grout.state['pixel_height'] = pixel_height;
+
 	// create pixel map for background
 	var background = grout.map('background', {
 		'width':  pixel_map_width * 2,
-		'height': pixel_map_width
+		'height': pixel_map_width,
+		'pixel_width': pixel_width,
+		'pixel_height': pixel_height
 	});
 	background.clear();
 
 	// create pixel map for collision plane
 	var collision_plane = grout.map('collision_plane', {
 		'width':  background.width,
-		'height': background.height
+		'height': background.height,
+		'pixel_width': pixel_width,
+		'pixel_height': pixel_height
 	});
 
 	// create sprite for ship
@@ -31,6 +39,9 @@ function blood_funnel() {
 		.***. \
 		**.** \
 	");
+
+	ship.pixel_width  = pixel_width;
+	ship.pixel_height = pixel_height;
 
 	// set up keyboard handling
 	grout.keypress(function(key) {
@@ -123,6 +134,8 @@ function new_banker(grout, banker_id) {
 
 	banker.width = 5;
 	banker.height = 5;
+	banker.pixel_width  = grout.state['pixel_width'];
+	banker.pixel_height = grout.state['pixel_height'];
 
 	return banker;
 }
@@ -252,6 +265,8 @@ function shoot_bullet(grout, ship) {
 		bullet.make_sprite("*");
 		bullet.offset_x = ship.offset_x + 2;
 		bullet.offset_y = ship.offset_y;
+		bullet.pixel_width  = grout.state['pixel_width'];
+		bullet.pixel_height = grout.state['pixel_height'];
 
 		// add bullet ID to list 
 		if (grout.state['bullets_in_motion'] == undefined) {
