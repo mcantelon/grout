@@ -1,3 +1,6 @@
+// Global used to keep track of grout instances
+var grout_id = 0;
+
 // Base class contains helpers
 var Base = function(params) {
 }
@@ -783,6 +786,10 @@ Grout.prototype.mixin({
 
 	initialize:function(params) {
 
+		grout_id++;
+
+		this.id = grout_id;
+
 		this.merge(params.width, 10);
 		//params = typeof(params) != 'undefined' ? params : {};
 
@@ -819,7 +826,7 @@ Grout.prototype.mixin({
 
 	initialize_canvas:function(params) {
 
-		this.canvas_id = this.merge(params.canvas_id, 'canvas');
+		this.canvas_id = this.merge(params.canvas_id, 'canvas_' + this.id);
 		this.canvas    = this.doc_get(this.canvas_id);
 		this.width     = this.merge(params.width, 'width');
 		this.height    = this.merge(params.height, 'height');
