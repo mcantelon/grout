@@ -39,6 +39,14 @@ function blood_funnel() {
 		'pixel_height': pixel_height
 	});
 
+	// create pixel map for collision plane
+	var collision_plane_3 = grout.map('collision_plane_3', {
+		'width':  background.width,
+		'height': background.height,
+		'pixel_width': pixel_width,
+		'pixel_height': pixel_height
+	});
+
 	// create sprite for ship
 	var ship = grout.sprite('ship');
 
@@ -356,34 +364,20 @@ function move_banker_bullets(grout) {
 	var bullet_id;
 	var bullets_still_in_motion = [];
 
-	if (grout.state['banker_bullets_in_motion'] != undefined) {
+	var bullet_movement_result;
 
-	for (var i = 0; i < grout.state['banker_bullets_in_motion'].length; i++) {
+	bullet_movement_result = move_bullet_sprites(
+		grout,
+		grout.state['banker_bullets_in_motion'],
+		1,
+		grout.map('background').height,
+		grout.maps['collision_plane_3']
+	);
 
-		bullet_id = grout.state['banker_bullets_in_motion'][i];
-
-		bullet = grout.sprites[bullet_id];
-
-		// if bullet hasn't reached top of screen move it, otherwise delete it	
-		if (bullet != undefined) {
-
-			if (bullet.offset_y < grout.map('background').height) {
-
-				bullet.move(0, 1);
-
-				//collision_plane.stamp(bullet.pixels, bullet.offset_x, bullet.offset_y);					
-
-				bullets_still_in_motion.push(bullet_id);
-			}
-			else {
-
-				delete grout.sprites[bullet_id];
-			}
-		}
-	}
+	grout.maps['collision_plane_3'] = bullet_movement_result['collision_plane_map'];
+	bullets_still_in_motion = bullet_movement_result['bullets_still_in_motion'];
 
 	grout.state['banker_bullets_in_motion'] = bullets_still_in_motion;
-	}
 }
 
 function move_bullets(grout) {
@@ -395,40 +389,18 @@ function move_bullets(grout) {
 	var collision_plane   = grout.map('collision_plane');
 	var collision_plane_2 = grout.map('collision_plane_2');
 
+	var bullet_movement_result;
+
 	// we stamp bullets on one map to simply collision detection, and bankers on another map
 	collision_plane.clear();
 	collision_plane_2.clear();
 
 	if (grout.state['bullets_in_motion'] != undefined) {
 
-		bullets_still_in_motion = [];
+		bullet_movement_result = move_bullet_sprites(grout, grout.state['bullets_in_motion'], -1, 0, collision_plane);
 
-		// move each bullet
-		for (var i = 0; i < grout.state['bullets_in_motion'].length; i++) {
-
-			bullet_id = grout.state['bullets_in_motion'][i];
-			bullet = grout.sprites[bullet_id];
-
-			// if bullet hasn't reached top of screen move it, otherwise delete it	
-			if (bullet != undefined) {
-
-				if (bullet.offset_y > 0) {
-
-					bullet.move(0, -1);
-
-					collision_plane.stamp(bullet.pixels, bullet.offset_x, bullet.offset_y);					
-
-					bullets_still_in_motion.push(bullet_id);
-				}
-				else {
-
-					delete grout.sprites[bullet_id];
-				}
-			}
-		}
-
-		// update list of buttets still in play
-		grout.state['bullets_in_motion'] = bullets_still_in_motion;
+		collision_plane = bullet_movement_result['collision_plane_map'];
+		bullets_still_in_motion = bullet_movement_result['bullets_still_in_motion'];
 
 		// see if any bankers have been hit
 		var banker_id;
@@ -461,5 +433,45 @@ function move_bullets(grout) {
 				delete grout.sprites[bullet_id];
 			}
 		}
+	}
+}
+
+function move_bullet_sprites(grout, bullets_in_motion, y_adjustment, max_y, collision_plane_map) {
+
+	var bullets_still_in_motion = [];
+
+	collision_plane_map.clear();
+
+	if (bullets_in_motion != undefined) {
+
+		for (var i = 0; i < bullets_in_motion.length; i++) {
+
+			bullet_id = bullets_in_motion[i];
+
+			bullet = grout.sprites[bullet_id];
+
+			// if bullet hasn't reached top of screen move it, otherwise delete it	
+			if (bullet != undefined) {
+
+				if ((max_y > 0 && bullet.offset_y < grout.map('background').height)
+				  || (max_y == 0 && bullet.offset_y > 0)) {
+
+					bullet.move(0, y_adjustment);
+
+					collision_plane_map.stamp(bullet.pixels, bullet.offset_x, bullet.offset_y);
+
+					bullets_still_in_motion.push(bullet_id);
+				}
+				else {
+
+					delete grout.sprites[bullet_id];
+				}
+			}
+		}
+	}
+
+	return {
+		'collision_plane_map':     collision_plane_map,
+		'bullets_still_in_motion': bullets_still_in_motion
 	}
 }
