@@ -123,8 +123,6 @@ function groutris() {
 
 		if (this.state['turns'] % 10 == 0) {
 
-			piece = this.sprites['piece'];
-
 			if (piece.margin_bottom(background) != 0
 			  && !piece.check_if_move_will_collide_with_pixels(0, 1, background.pixels)
 			  && !piece.detect_collision_with_map(background)) {
@@ -138,7 +136,7 @@ function groutris() {
 				// if piece that has just dropped is at top of map, end game
 				if (piece.margin_top(background) == 0) {
 
-					game_over(background, piece, grout_main, grout_preview);
+					game_over(background, piece, preview_piece, grout_main, grout_preview);
 				}
 				else {
 
@@ -148,7 +146,7 @@ function groutris() {
 
 					if (piece.detect_collision_with_map(background)) {
 
-						game_over(background, piece, grout_main, grout_preview);
+						game_over(background, piece, preview_piece, grout_main, grout_preview);
 					}
 				}
 			}
@@ -156,19 +154,17 @@ function groutris() {
 	});
 }
 
-function game_over(background, piece, grout_main, grout_preview) {
+function game_over(background, piece, preview_piece, grout_main, grout_preview) {
 
 	alert('Game over');
 
-	restart(background, piece, grout_main, grout_preview);
+	restart(background, piece, preview_piece, grout_main, grout_preview);
 }
 
 // restart logic
 function restart(background, piece, preview_piece, grout_main, grout_preview) {
 
 	background.clear();
-
-	//generate_piece(preview_piece);
 
 	reset_piece(piece, preview_piece, grout_main, grout_preview);
 
