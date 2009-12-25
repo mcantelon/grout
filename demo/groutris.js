@@ -127,7 +127,7 @@ function groutris() {
 
 					alert('Game over');
 
-					restart(background, piece);
+					restart(background, piece, grout);
 				}
 				else {
 
@@ -159,17 +159,7 @@ function reset_piece(piece, grout) {
 
 	// To-do: make it start flush with the top and properly centered
 
-	// generate random piece
-	/*
-	new_shape = generate_piece(grout);
-
-	// size piece according to shape size, assuming shape is square
-	piece.width  = new_shape.length;
-	piece.height = new_shape.length;
-	*/
-
 	// set pixels in piece to new shape
-	//piece.overwrite(new_shape);
 	generate_piece(piece);
 }
 
