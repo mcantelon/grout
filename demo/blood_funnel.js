@@ -400,7 +400,7 @@ function move_bullets(grout) {
 		bullet_movement_result = move_bullet_sprites(grout, grout.state['bullets_in_motion'], -1, 0, collision_plane);
 
 		collision_plane = bullet_movement_result['collision_plane_map'];
-		bullets_still_in_motion = bullet_movement_result['bullets_still_in_motion'];
+		grout.state['bullets_in_motion'] = bullet_movement_result['bullets_still_in_motion'];
 
 		// see if any bankers have been hit
 		var banker_id;
@@ -422,15 +422,18 @@ function move_bullets(grout) {
 			}
 		}
 
-		// see if any bullets have hit bankers
-		for (var i = 0; i < bullets_still_in_motion.length; i++) {
+		if (grout.state['bullets_in_motion'] != undefined) {
 
-			bullet_id = bullets_still_in_motion[i];
-			bullet = grout.sprites[bullet_id];
+			// see if any bullets have hit bankers
+			for (var i = 0; i < grout.state['bullets_in_motion'].length; i++) {
 
-			if (bullet.detect_collision_with_map(collision_plane_2)) {
+				bullet_id = grout.state['bullets_in_motion'][i];
+				bullet = grout.sprites[bullet_id];
 
-				delete grout.sprites[bullet_id];
+				if (bullet.detect_collision_with_map(collision_plane_2)) {
+
+					delete grout.sprites[bullet_id];
+				}
 			}
 		}
 	}
