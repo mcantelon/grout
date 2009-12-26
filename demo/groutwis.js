@@ -140,7 +140,9 @@ function groutris() {
 				}
 				else {
 
-					shift_full_rows_down(background);
+					grout_main.state['score'] = grout_main.state['score'] + shift_full_rows_down(background);
+
+					grout_main.doc_get('score').innerHTML = grout_main.state['score'];
 
 					reset_piece(piece, preview_piece, grout_main, grout_preview);
 
@@ -158,11 +160,15 @@ function game_over(background, piece, preview_piece, grout_main, grout_preview) 
 
 	alert('Game over');
 
+	grout_main.doc_get('score').innerHTML = 0;
+
 	restart(background, piece, preview_piece, grout_main, grout_preview);
 }
 
 // restart logic
 function restart(background, piece, preview_piece, grout_main, grout_preview) {
+
+	grout_main.state['score'] = 0;
 
 	background.clear();
 
@@ -328,4 +334,6 @@ function shift_full_rows_down(background) {
 		// stamp the copy onto the background, shifted down 1 pixel
 		background.stamp(pixels_above_full_row, 0, 1);
 	}
+
+	return full_rows.length;
 }
