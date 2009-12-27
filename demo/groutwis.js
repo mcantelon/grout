@@ -190,9 +190,6 @@ function reset_piece(piece, preview_piece, grout_main, grout_preview) {
 	piece.width  = preview_piece.width;
 	piece.height = preview_piece.height;
 
-	// make piece flush with top of background
-	//piece.offset_y =- piece.margin_top(grout_main.maps['background']);
-
 	// set pixels in piece to new shape
 	generate_piece(preview_piece);
 	grout_preview.draw_all();
@@ -326,7 +323,6 @@ function shift_full_rows_down(background) {
 	for (var i = 0; i < full_rows.length; i++) {
 
 		// copy up to the row before the full row
-//		pixels_above_full_row = background.copy_pixel_row_range(0, full_rows[i] - 1);
 		pixels_above_full_row = background.copy_pixel_range(0, 0, background.width, full_rows[i] - 1);
 
 		// clear up to the full row
