@@ -65,43 +65,59 @@ function blood_funnel() {
 		var margin_space;
 		var response;
 
-		var keycode_response = {
+		// pause/unpause
+		if (key == 80) {
 
-			// left arrow key moves ship left
-			37: {
-				'shift_x': -1,
-				'shift_y': 0,
-				'margin_check_function': 'margin_left'
-			},
+			grout.stopped = !grout.stopped;
 
-			// right arrow key moves ship right
-			39: {
-				'shift_x': 1,
-				'shift_y': 0,
-				'margin_check_function': 'margin_right'
+			if (grout.stopped) {
+				grout.clear_canvas();
 			}
-		}
 
-		// up arrow key triggers shooting
-		if (key == 32) {
-
-			shoot_bullet(grout, ship);
 			return;
 		}
 
-		// handle movement via arrow keys
-		for (keycode in keycode_response) {
+		if (!grout.stopped) {
 
-			response = keycode_response[keycode];
+			// space bar triggers shooting
+			if (key == 32) {
 
-			// execute appropriate piece method to check space between piece and map edge
-			margin_space = ship[response['margin_check_function']](background);
+				shoot_bullet(grout, ship);
+				return;
+			}
 
-			// shift piece if key is pressed and there is space to shift it to
-			if (key == keycode
-			  && margin_space != 0
-			) {
-				ship.move(response['shift_x'], response['shift_y']);
+			// specified movement criteria
+			var keycode_response = {
+
+				// left arrow key moves ship left
+				37: {
+					'shift_x': -1,
+					'shift_y': 0,
+					'margin_check_function': 'margin_left'
+				},
+
+				// right arrow key moves ship right
+				39: {
+					'shift_x': 1,
+					'shift_y': 0,
+					'margin_check_function': 'margin_right'
+				}
+			}
+
+			// handle movement via arrow keys
+			for (keycode in keycode_response) {
+
+				response = keycode_response[keycode];
+
+				// execute appropriate piece method to check space between piece and map edge
+				margin_space = ship[response['margin_check_function']](background);
+
+				// shift piece if key is pressed and there is space to shift it to
+				if (key == keycode
+				  && margin_space != 0
+				) {
+					ship.move(response['shift_x'], response['shift_y']);
+				}
 			}
 		}
 	});
@@ -110,6 +126,7 @@ function blood_funnel() {
 
 	// enter main loop
 	grout.animate(25, function () {
+
 
 		this.state['turns']++;
 
