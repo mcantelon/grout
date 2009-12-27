@@ -330,18 +330,14 @@ var Has_Pixels = {
 		}
 	},
 
-	copy_pixel_row_range:function(start_y, end_y) {
+	copy_pixel_range:function(start_x, start_y, end_x, end_y) {
 
 		var new_y_count = 0;
 		var new_pixels = [];
 
 		for (var y = start_y; y <= end_y; y++) {
 
-			//alert('YC:' + y);
-
-			//new_pixels[new_y_count] = [];
-
-			for (var x = 0; x <= this.pixels.length; x++) {
+			for (var x = start_x; x <= end_x; x++) {
 
 				if (this.undefined_or_null(new_pixels[x])) {
 					new_pixels[x] = [];
