@@ -1,4 +1,4 @@
-function groutris() {
+function groutwis() {
 
 	var pixel_width     = 10;
 	var pixel_map_width = 10;
