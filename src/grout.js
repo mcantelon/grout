@@ -794,6 +794,8 @@ Grout.prototype.mixin({
 		this.maps    = {};
 		this.sprites = {};
 		this.state   = {};
+
+		this.stopped = false;
 	},
 
 	map:function(name, params) {
@@ -897,9 +899,15 @@ Grout.prototype.mixin({
 		this.grout.click_logic(relative_x, relative_y);
 	},
 
-	draw_all:function() {
+	clear_canvas:function() {
 
 		this.ctx.clearRect(0, 0, this.width, this.height);
+	},
+
+	draw_all:function() {
+
+		this.clear_canvas();
+		//this.ctx.clearRect(0, 0, this.width, this.height);
 
 		for (var map in this.maps) {
 			this.maps[map].draw();
@@ -916,8 +924,11 @@ Grout.prototype.mixin({
 			this.animate_logic = logic;
 		}
 
-		this.animate_logic();
-		this.draw_all();
+		if (!this.stopped) {
+
+			this.animate_logic();
+			this.draw_all();
+		}
 
 		setTimeout('document.getElementById("' + this.canvas_id + '").grout.animate(' + speed + ')', speed);
 	}
