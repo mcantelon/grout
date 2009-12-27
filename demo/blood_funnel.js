@@ -1,9 +1,9 @@
 function blood_funnel() {
 
-	var pixel_width     = 3;
-	var pixel_height    = 3;
-	var pixel_map_width = 50;
-	var canvas_width    = pixel_width * pixel_map_width;
+	var tile_width     = 3;
+	var tile_height    = 3;
+	var tile_map_width = 50;
+	var canvas_width    = tile_width * tile_map_width;
 
 	// create new grout
 	var grout = new Grout({
@@ -11,15 +11,15 @@ function blood_funnel() {
 		'height': canvas_width
 	});
 
-	grout.state['pixel_width']  = pixel_width;
-	grout.state['pixel_height'] = pixel_height;
+	grout.state['tile_width']  = tile_width;
+	grout.state['tile_height'] = tile_height;
 
 	// create pixel map for background
 	var background = grout.map('background', {
-		'width':  pixel_map_width * 2,
-		'height': pixel_map_width,
-		'pixel_width': pixel_width,
-		'pixel_height': pixel_height
+		'width':  tile_map_width * 2,
+		'height': tile_map_width,
+		'tile_width': tile_width,
+		'tile_height': tile_height
 	});
 	background.clear();
 
@@ -27,24 +27,24 @@ function blood_funnel() {
 	var collision_plane = grout.map('collision_plane', {
 		'width':  background.width,
 		'height': background.height,
-		'pixel_width': pixel_width,
-		'pixel_height': pixel_height
+		'tile_width': tile_width,
+		'tile_height': tile_height
 	});
 
 	// create pixel map for collision plane
 	var collision_plane_2 = grout.map('collision_plane_2', {
 		'width':  background.width,
 		'height': background.height,
-		'pixel_width': pixel_width,
-		'pixel_height': pixel_height
+		'tile_width': tile_width,
+		'tile_height': tile_height
 	});
 
 	// create pixel map for collision plane
 	var collision_plane_3 = grout.map('collision_plane_3', {
 		'width':  background.width,
 		'height': background.height,
-		'pixel_width': pixel_width,
-		'pixel_height': pixel_height
+		'tile_width': tile_width,
+		'tile_height': tile_height
 	});
 
 	// create sprite for ship
@@ -56,8 +56,8 @@ function blood_funnel() {
 		**.** \
 	");
 
-	ship.pixel_width  = pixel_width;
-	ship.pixel_height = pixel_height;
+	ship.tile_width  = tile_width;
+	ship.tile_height = tile_height;
 
 	// set up keyboard handling
 	grout.keypress(function(key) {
@@ -213,8 +213,8 @@ function new_banker(grout, banker_id) {
 
 	banker.width = 5;
 	banker.height = 5;
-	banker.pixel_width  = grout.state['pixel_width'];
-	banker.pixel_height = grout.state['pixel_height'];
+	banker.tile_width  = grout.state['tile_width'];
+	banker.tile_height = grout.state['tile_height'];
 
 	return banker;
 }
@@ -411,8 +411,8 @@ function make_bullet_sprite(grout, bullet_id, x, y) {
 	bullet.make_sprite("*");
 	bullet.offset_x = x;
 	bullet.offset_y = y;
-	bullet.pixel_width  = grout.state['pixel_width'];
-	bullet.pixel_height = grout.state['pixel_height'];
+	bullet.tile_width  = grout.state['tile_width'];
+	bullet.tile_height = grout.state['tile_height'];
 
 	return bullet;
 }

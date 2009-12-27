@@ -38,8 +38,8 @@ var Has_Pixels = {
 		this.width  = this.merge(params.width, 10);
 		this.height = this.merge(params.height, 10);
 
-		this.pixel_width  = this.merge(params.pixel_width, 10);
-		this.pixel_height = this.merge(params.pixel_height, 10);
+		this.tile_width  = this.merge(params.tile_width, 10);
+		this.tile_height = this.merge(params.tile_height, 10);
 
 		this.pixels = []; // pixels to draw when rendering
 		this.buffer = []; // buffer area for pixel transformations
@@ -81,8 +81,8 @@ var Has_Pixels = {
 					that.parent.ctx.fillRect(
 						real_x,
 						real_y,
-						that.pixel_width,
-						that.pixel_height
+						that.tile_width,
+						that.tile_height
 					);
 				} catch(e) {}
 			}
@@ -330,7 +330,7 @@ var Has_Pixels = {
 		}
 	},
 
-	copy_pixel_range:function(start_x, start_y, end_x, end_y) {
+	copy_tile_range:function(start_x, start_y, end_x, end_y) {
 
 		var new_y_count = 0;
 		var new_pixels = [];
@@ -438,8 +438,8 @@ Sprite.prototype.mixin({
 
 		this.cycle_through_pixels(function(that, x, y, params) {
 
-			var real_x = (x + that.offset_x) * that.pixel_width;
-			var real_y = (y + that.offset_y) * that.pixel_width;
+			var real_x = (x + that.offset_x) * that.tile_width;
+			var real_y = (y + that.offset_y) * that.tile_width;
 
 			that.draw_common(that, x, y, real_x, real_y);
 		});
@@ -701,8 +701,8 @@ Map.prototype.mixin({
 
 		this.cycle_through_pixels(function(that, x, y, params) {
 
-			var real_x = x * that.pixel_width;
-			var real_y = y * that.pixel_width;
+			var real_x = x * that.tile_width;
+			var real_y = y * that.tile_width;
 
 			that.draw_common(that, x, y, real_x, real_y);
 		});
@@ -887,11 +887,11 @@ Grout.prototype.mixin({
 		for (var map in this.grout.maps) {
 
 			// determine x and y in virtual pixels
-			pixel_x = Math.floor(relative_x / this.grout.maps[map].pixel_width);
-			pixel_y = Math.floor(relative_y / this.grout.maps[map].pixel_height);
+			tile_x = Math.floor(relative_x / this.grout.maps[map].tile_width);
+			tile_y = Math.floor(relative_y / this.grout.maps[map].tile_height);
 
 			if (this.grout.maps[map].click_logic) {
-				this.grout.maps[map].click_logic(pixel_x, pixel_y);
+				this.grout.maps[map].click_logic(tile_x, tile_y);
 			}
 		}
 

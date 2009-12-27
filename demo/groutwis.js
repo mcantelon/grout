@@ -1,8 +1,8 @@
 function groutwis() {
 
-	var pixel_width     = 10;
-	var pixel_map_width = 10;
-	var canvas_width    = pixel_width * pixel_map_width;
+	var tile_width     = 10;
+	var tile_map_width = 10;
+	var canvas_width    = tile_width * tile_map_width;
 
 	// create new grout for playing area
 	var grout_main = new Grout({
@@ -12,8 +12,8 @@ function groutwis() {
 
 	// create square grout for piece preview
 	var grout_preview = new Grout({
-		'width':  pixel_width * 4,
-		'height': pixel_width * 4
+		'width':  tile_width * 4,
+		'height': tile_width * 4
 	});
 
 	// grout's state array is a place for ad-hoc data
@@ -21,8 +21,8 @@ function groutwis() {
 
 	// create pixel map for background
 	var background = grout_main.map('background', {
-		'width':  pixel_map_width,
-		'height': pixel_map_width * 2
+		'width':  tile_map_width,
+		'height': tile_map_width * 2
 	});
 
 	// create pixel map for game pieces
@@ -292,21 +292,21 @@ function move_piece(piece, background, margin_check_function, shift_x, shift_y) 
 // find full rows
 function find_full_rows(background) {
 
-	var empty_pixel_found;
+	var empty_tile_found;
 	var full_rows = [];
 
 	for(var y = 0; y < background.height; y++) {
 
-		empty_pixel_found = false;
+		empty_tile_found = false;
 
 		for (var x =0; x < background.width; x++) {
 
 			if (!background.pixels[x][y]) {
-				empty_pixel_found = true;
+				empty_tile_found = true;
 			}
 		}
 
-		if (!empty_pixel_found) {
+		if (!empty_tile_found) {
 			full_rows.push(y);
 		}
 	}
@@ -321,7 +321,7 @@ function shift_full_rows_down(background) {
 	for (var i = 0; i < full_rows.length; i++) {
 
 		// copy up to the row before the full row
-		pixels_above_full_row = background.copy_pixel_range(0, 0, background.width, full_rows[i] - 1);
+		pixels_above_full_row = background.copy_tile_range(0, 0, background.width, full_rows[i] - 1);
 
 		// clear up to the full row
 		background.clear_range(0, 0, background.width - 1, full_rows[i]);
