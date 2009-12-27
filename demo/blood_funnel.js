@@ -72,6 +72,21 @@ function blood_funnel() {
 
 			if (grout.stopped) {
 				grout.clear_canvas();
+
+				var paused = new Sprite();
+				paused.parent = grout;
+				paused.offset_x = 3;
+				paused.offset_y = 5;
+
+				paused.make_sprite(" \
+					**...*..*.*..**.***.**. \
+					*.*.*.*.*.*.*...*...*.* \
+					**..***.*.*..*..**..*.* \
+					*...*.*.*.*...*.*...*.* \
+					*...*.*..*..**..***.**. \
+				");
+
+				paused.draw();
 			}
 
 			return;
@@ -126,7 +141,6 @@ function blood_funnel() {
 
 	// enter main loop
 	grout.animate(25, function () {
-
 
 		this.state['turns']++;
 
