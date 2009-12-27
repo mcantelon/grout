@@ -213,17 +213,15 @@ function generate_piece(piece) {
 	var pieces = [
 
 		" \
-    	.... \
-    	B... \
-    	BBBB \
-    	.... \
+    	... \
+    	B.. \
+    	BBB \
   		",
 
 		" \
-    	.... \
-    	...O \
-    	OOOO \
-    	.... \
+    	... \
+    	..O \
+    	OOO \
   			",
 
 		" \
