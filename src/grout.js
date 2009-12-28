@@ -924,12 +924,16 @@ Grout.prototype.mixin({
 		this.ctx.clearRect(0, 0, this.width, this.height);
 	},
 
-	draw_all:function() {
+	draw_all:function(group) {
+
+		var map;
+
+		group = this.merge(group, 'main');
 
 		this.clear_canvas();
-		//this.ctx.clearRect(0, 0, this.width, this.height);
 
-		for (var map in this.maps) {
+		for (var i = 0; i < this.group_maps[group].length; i++) {
+			map = this.group_maps[group][i];
 			this.maps[map].draw();
 		}
 
