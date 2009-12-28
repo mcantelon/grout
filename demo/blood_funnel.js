@@ -59,6 +59,21 @@ function blood_funnel() {
 	ship.tile_width  = tile_width;
 	ship.tile_height = tile_height;
 
+	// create group for paused state
+	var paused = grout.sprite('paused', {
+		'group': 'paused'
+	});
+	paused.offset_x = 3;
+	paused.offset_y = 5;
+
+	paused.make_sprite(" \
+					**...*..*.*..**.***.**. \
+					*.*.*.*.*.*.*...*...*.* \
+					**..***.*.*..*..**..*.* \
+					*...*.*.*.*...*.*...*.* \
+					*...*.*..*..**..***.**. \
+				");
+
 	// set up keyboard handling
 	grout.keypress(function(key) {
 
@@ -71,8 +86,10 @@ function blood_funnel() {
 			grout.stopped = !grout.stopped;
 
 			if (grout.stopped) {
+
 				grout.clear_canvas();
 
+				/*
 				var paused = new Sprite();
 				paused.parent = grout;
 				paused.offset_x = 3;
@@ -87,6 +104,7 @@ function blood_funnel() {
 				");
 
 				paused.draw();
+				*/
 			}
 
 			return;

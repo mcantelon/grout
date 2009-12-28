@@ -937,7 +937,8 @@ Grout.prototype.mixin({
 			this.maps[map].draw();
 		}
 
-		for (var sprite in this.sprites) {
+		for (var i = 0; i < this.group_sprites[group].length; i++) {
+			sprite = this.group_sprites[group][i];
 			this.sprites[sprite].draw();
 		}
 	},
