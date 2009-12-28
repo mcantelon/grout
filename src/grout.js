@@ -793,6 +793,10 @@ Grout.prototype.mixin({
 
 		this.maps    = {};
 		this.sprites = {};
+
+		this.group_maps    = {};
+		this.group_sprites = {};
+
 		this.state   = {};
 
 		this.stopped = false;
@@ -800,26 +804,42 @@ Grout.prototype.mixin({
 
 	map:function(name, params) {
 
-		this.merge(params, {});
+		var group;
+
+		params = this.merge(params, {});
+
+		group = this.merge(params['group'], 'main');
 
 		if (!this.maps[name]) {
 			this.maps[name] = new Map(params);
 			this.maps[name].parent = this;
+			this.add_to_group(this.group_maps, group, name);
 		}
-			
+
 		return this.maps[name];
 	},
 
 	sprite:function(name, params) {
 
-		this.merge(params, {});
+		var group;
+
+		params = this.merge(params, {});
+
+		group = this.merge(params['group'], 'main');
 
 		if (!this.sprites[name]) {
 			this.sprites[name] = new Sprite(params);
 			this.sprites[name].parent = this;
+			this.add_to_group(this.group_sprites, group, name);
 		}
 			
 		return this.sprites[name];
+	},
+
+	add_to_group:function(groups, group, name) {
+
+		groups[group] = this.merge(groups[group], []);
+		groups[group].push(name);
 	},
 
 	initialize_canvas:function(params) {
