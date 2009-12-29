@@ -211,7 +211,8 @@ function clean_up_bullet_array(grout, bullet_array) {
 
 		for (var i = 0; i < bullet_array.length; i++) {
 			sprite_id = bullet_array[i];
-			delete grout.sprites[sprite_id];
+			grout.delete_sprite(sprite_id);
+			//delete grout.sprites[sprite_id];
 		}
 
 		bullet_array = [];
@@ -500,7 +501,8 @@ function move_bullets(grout) {
 
 				// instead of just deleting them we should add them to a "dying" queue
 				// or, better yet, change their state to "dying"
-				delete grout.sprites[banker_id];
+				grout.delete_sprite(banker_id);
+				//delete grout.sprites[banker_id];
 			}
 		}
 
@@ -514,7 +516,8 @@ function move_bullets(grout) {
 
 				if (bullet.detect_collision_with_map(collision_plane_2)) {
 
-					delete grout.sprites[bullet_id];
+					grout.delete_sprite(bullet_id);
+					//delete grout.sprites[bullet_id];
 				}
 			}
 		}
@@ -549,7 +552,8 @@ function move_bullet_sprites(grout, bullets_in_motion, y_adjustment, max_y, coll
 				}
 				else {
 
-					delete grout.sprites[bullet_id];
+					grout.delete_sprite(bullet_id);
+					//delete grout.sprites[bullet_id];
 				}
 			}
 		}
