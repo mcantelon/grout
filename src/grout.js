@@ -953,17 +953,27 @@ Grout.prototype.mixin({
 
 		this.clear_canvas();
 
-		for (var i = 0; i < this.group_maps[group].length; i++) {
-			map = this.group_maps[group][i];
-			this.maps[map].draw();
+		if (this.group_maps[group] != undefined) {
+
+			for (var i = 0; i < this.group_maps[group].length; i++) {
+				map = this.group_maps[group][i];
+
+				if (map != undefined) {
+
+					this.maps[map].draw();
+				}
+			}
 		}
 
-		for (var i = 0; i < this.group_sprites[group].length; i++) {
-			sprite = this.group_sprites[group][i];
+		if (this.group_sprites[group] != undefined) {
 
-			if (sprite != undefined) {
+			for (var i = 0; i < this.group_sprites[group].length; i++) {
+				sprite = this.group_sprites[group][i];
 
-				this.sprites[sprite].draw();
+				if (sprite != undefined) {
+
+					this.sprites[sprite].draw();
+				}
 			}
 		}
 	},
