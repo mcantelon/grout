@@ -795,7 +795,9 @@ Grout.prototype.mixin({
 		this.sprites = {};
 
 		this.group_maps    = {};
+		this.map_group     = {};
 		this.group_sprites = {};
+		this.sprite_group  = {};
 
 		this.state   = {};
 
@@ -813,7 +815,7 @@ Grout.prototype.mixin({
 		if (!this.maps[name]) {
 			this.maps[name] = new Map(params);
 			this.maps[name].parent = this;
-			this.add_to_group(this.group_maps, group, name);
+			this.add_to_group(this.group_maps, this.map_group, group, name);
 		}
 
 		return this.maps[name];
@@ -830,16 +832,35 @@ Grout.prototype.mixin({
 		if (!this.sprites[name]) {
 			this.sprites[name] = new Sprite(params);
 			this.sprites[name].parent = this;
-			this.add_to_group(this.group_sprites, group, name);
+			this.add_to_group(this.group_sprites, this.sprite_group, group, name);
 		}
-			
+
 		return this.sprites[name];
 	},
 
-	add_to_group:function(groups, group, name) {
+	add_to_group:function(groups, reverse_lookup, group, name) {
 
 		groups[group] = this.merge(groups[group], []);
+		reverse_lookup[name] = group;
 		groups[group].push(name);
+	},
+
+	delete_sprite:function(name) {
+
+		var group = this.sprite_group[name];
+
+		delete this.sprite_group[name];
+
+		// find in group array and delete
+		for (var i = 0; i < this.group_sprites[group].length; i++) {
+
+			if (this.group_sprites[group][i] == name) {
+
+				delete this.group_sprites[group][i];
+			}
+		}
+
+		delete this.sprites[name];
 	},
 
 	initialize_canvas:function(params) {
@@ -939,7 +960,11 @@ Grout.prototype.mixin({
 
 		for (var i = 0; i < this.group_sprites[group].length; i++) {
 			sprite = this.group_sprites[group][i];
-			this.sprites[sprite].draw();
+
+			if (sprite != undefined) {
+
+				this.sprites[sprite].draw();
+			}
 		}
 	},
 
