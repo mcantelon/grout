@@ -540,6 +540,15 @@ Sprite.prototype.mixin({
 	detect_collision_with_map:function(map) {
 		
 		return this.detect_collision_with_pixels(map.pixels, this.offset_x, this.offset_y);
+	},
+
+	click:function(logic) {
+
+		// store click logic
+		this.click_logic = logic;
+
+		// activate click handler
+		this.parent.canvas.addEventListener('mousedown', this.parent.click_handler, false);
 	}
 });
 
@@ -757,15 +766,6 @@ Map.prototype.mixin({
 				this.pixels[x][y] = this.pixels[x][y] ? false : color;
 			}
 		}
-	},
-
-	click:function(logic) {
-
-		// store click logic
-		this.click_logic = logic;
-
-		// activate click handler
-		this.parent.canvas.addEventListener('mousedown', this.parent.click_handler, false);
 	}
 });
 
@@ -924,20 +924,26 @@ Grout.prototype.mixin({
 		var relative_x = event.clientX - this.offsetLeft;
 		var relative_y = event.clientY - this.offsetTop;
 
-		// execute pixel map click logic
-		for (var map in this.grout.maps) {
-
-			// determine x and y in virtual pixels
-			tile_x = Math.floor(relative_x / this.grout.maps[map].tile_width);
-			tile_y = Math.floor(relative_y / this.grout.maps[map].tile_height);
-
-			if (this.grout.maps[map].click_logic) {
-				this.grout.maps[map].click_logic(tile_x, tile_y);
-			}
-		}
+		this.grout.click_children(this.grout.maps, relative_x, relative_y);
+		this.grout.click_children(this.grout.sprites, relative_x, relative_y);
 
 		// execute global click logic
 		this.grout.click_logic(relative_x, relative_y);
+	},
+
+	click_children:function(objects, relative_x, relative_y) {
+
+		// execute pixel map click logic
+		for (var item in objects) {
+
+			// determine x and y in virtual pixels
+			tile_x = Math.floor(relative_x /  objects[item].tile_width);
+			tile_y = Math.floor(relative_y / objects[item].tile_height);
+
+			if (objects[item].click_logic) {
+				objects[item].click_logic(tile_x, tile_y);
+			}
+		}
 	},
 
 	clear_canvas:function() {
