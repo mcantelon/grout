@@ -973,12 +973,6 @@ Grout.prototype.mixin({
 		}
 	},
 
-	text:function(text) {
-
-		this.ctx.font = "20pt Arial";
-		this.ctx.fillText(text, x, y);
-	},
-
 	clear_canvas:function() {
 
 		this.ctx.clearRect(0, 0, this.width, this.height);
