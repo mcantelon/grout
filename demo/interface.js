@@ -1,7 +1,7 @@
 function interface() {
 
 	var tile_width     = 10;
-	var tile_map_width = 10;
+	var tile_map_width = 11;
 	var canvas_width   = tile_width * tile_map_width;
 
 	// create new grout for playing area
@@ -10,30 +10,110 @@ function interface() {
 		'height': canvas_width
 	});
 
-	var button_1 = grout.sprite('button_1');
+	start_screen(grout);
 
-	button_1.make_sprite(" \
-	  **** \
-	  *..* \
-	  **** \
-	");
+	function start_screen(grout) {
 
-	button_1.offset_x = 2;
-	button_1.offset_y = 2;
+		var blue_button = grout.sprite('blue_button', {'group': 'start'});
 
-	button_1.click(function(x, y) {
-		alert('clicked that button');
-	});
+		var blue_button_colors = {'B': 'blue', 'G': 'grey'};
 
-	// set global click logic
-	grout.click(function (x, y) {
+		blue_button.make_sprite(" \
+			BBBB \
+			BGGB \
+			BBBB \
+		", blue_button_colors);
 
-		// global click gets real pixel coordinates
-		alert('Youuuuu clicked x=' + x + ', y=' + y);
-	});
+		blue_button.offset_x = 1;
+		blue_button.offset_y = 1;
 
-	// animation loop
-	grout.animate(100, function () {});
+		// sprite click logic receives x, y in tiles
+		blue_button.click(function(x, y) {
+
+			if (this.inside_margins(x, y)) {
+
+				alert('You clicked the blue button!');
+				another_screen(this.parent);
+			}
+		});
+
+		var red_button = grout.sprite('red_button', {'group': 'start'});
+
+		var red_button_colors = {'R': 'red', 'G': 'grey'};
+
+		red_button.make_sprite(" \
+			RRRR \
+			RGGR \
+			RRRR \
+		", red_button_colors);
+
+		red_button.offset_x = 6;
+		red_button.offset_y = 1;
+
+		// sprite click logic receives x, y in tiles
+		red_button.click(function(x, y) {
+
+			if (this.inside_margins(x, y)) {
+
+				alert('You clicked the red button!');
+			}
+		});
+
+		// global click logic receives x, y in pixels
+		grout.click(function (x, y) {
+
+			// global click gets real pixel coordinates
+			alert('You clicked x=' + x + ', y=' + y);
+		});
+
+		// set up keyboard handling
+		grout.keypress(function(key) {
+
+			alert('You pressed key ' + key);
+		});
+
+		grout.draw_all('start');
+	}
+
+	function another_screen(grout) {
+
+		var yellow_button = grout.sprite('yellow_button', {'group': 'another'});
+
+		var yellow_button_colors = {'Y': 'yellow', 'G': 'grey'};
+
+		yellow_button.make_sprite(" \
+			YYYYYY \
+			YGGGGY \
+			YYYYYY \
+		", yellow_button_colors);
+
+		yellow_button.offset_x = 1;
+		yellow_button.offset_y = 1;
+
+		// sprite click logic receives x, y in tiles
+		yellow_button.click(function(x, y) {
+
+			if (this.inside_margins(x, y)) {
+
+				alert('You clicked the yellow button!');
+			}
+		});
+
+		// global click logic receives x, y in pixels
+		grout.click(function (x, y) {
+
+			// global click gets real pixel coordinates
+			alert('This is a different global click handler!');
+		});
+
+		// set up keyboard handling
+		grout.keypress(function(key) {
+
+			alert('This is a different key handler!');
+		});
+
+		grout.draw_all('another');
+	}
 }
 
 /*
