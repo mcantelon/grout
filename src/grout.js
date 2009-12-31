@@ -103,6 +103,30 @@ var Has_Pixels = {
 		});
 	},
 
+	inside_margins:function(x, y) {
+
+		var horizontal_margin_data = this.margin_horizontal_data(this.pixels);
+		var vertical_margin_data;
+
+		if (x >= (this.offset_x + horizontal_margin_data['left'])
+		  & x < (this.offset_x + this.width - horizontal_margin_data['right'])) {
+
+			vertical_margin_data = this.margin_vertical_data(this.pixels);
+
+			if (y >= (this.offset_y + vertical_margin_data['top'])
+			  & y < (this.offset_y + this.height - vertical_margin_data['bottom'])) {
+
+				return true;
+			}
+			else {
+
+				return false;
+			}
+		}
+
+		return false;
+	},
+
 	margin_vertical_data:function(pixels) {
 
 		var lowest_row = 0;
@@ -927,8 +951,11 @@ Grout.prototype.mixin({
 		this.grout.click_children(this.grout.maps, relative_x, relative_y);
 		this.grout.click_children(this.grout.sprites, relative_x, relative_y);
 
-		// execute global click logic
-		this.grout.click_logic(relative_x, relative_y);
+		if (this.grout.click_logic != undefined) {
+
+			// execute global click logic
+			this.grout.click_logic(relative_x, relative_y);
+		}
 	},
 
 	click_children:function(objects, relative_x, relative_y) {
@@ -944,6 +971,12 @@ Grout.prototype.mixin({
 				objects[item].click_logic(tile_x, tile_y);
 			}
 		}
+	},
+
+	text:function(text) {
+
+		this.ctx.font = "20pt Arial";
+		this.ctx.fillText(text, x, y);
 	},
 
 	clear_canvas:function() {
