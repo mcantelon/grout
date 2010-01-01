@@ -10,6 +10,8 @@ function groutwis() {
 		'height': canvas_width * 2
 	});
 
+	grout_main.key_repeat_interval = 250;
+
 	// create square grout for piece preview
 	var grout_preview = new Grout({
 		'width':  tile_width * 4,

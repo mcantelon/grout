@@ -1,7 +1,7 @@
 function blood_funnel() {
 
-	var tile_width     = 3;
-	var tile_height    = 3;
+	var tile_width     = 6;
+	var tile_height    = 6;
 	var tile_map_width = 50;
 	var canvas_width    = tile_width * tile_map_width;
 
@@ -10,6 +10,8 @@ function blood_funnel() {
 		'width':  canvas_width * 2,
 		'height': canvas_width
 	});
+
+	grout.key_repeat_interval = 25;
 
 	grout.state['tile_width']  = tile_width;
 	grout.state['tile_height'] = tile_height;
