@@ -208,10 +208,16 @@ function new_banker(grout, banker_id) {
 
 	banker = grout.sprite(banker_id);
 
+	banker_skin_colors = ['#F2EBC9', '#D9B166', '#A66B38'];
+    banker_skin = Math.floor(Math.random() * 3);
+
+	banker_hair_colors = ['#000000', '#271F2E'];
+    banker_hair = Math.floor(Math.random() * 2);
+
 	banker_color_map = {
-		'H': '#330',
+		'H': banker_hair_colors[banker_hair],
 		'B': '#330',
-		'F': 'red',
+		'F': banker_skin_colors[banker_skin],
 		'K': 'black',
 		'N': 'navy'
 	};
