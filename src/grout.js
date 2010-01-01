@@ -205,10 +205,6 @@ var Has_Pixels = {
 			}
 		}
 
-		//alert('L:' + leftmost_row_with_pixel);
-		//alert('RR:' + rightmost_row_with_pixel);
-		//alert('RR2:' + typeof ((this.width - 1) - rightmost_row_with_pixel));
-
 		return {
 			'left': leftmost_row_with_pixel,
 			'right': (this.width - 1) - rightmost_row_with_pixel
@@ -294,8 +290,6 @@ var Has_Pixels = {
 		offset_x = this.merge(offset_x, 0);
 		offset_y = this.merge(offset_y, 0);
 
-		//alert('OY:' + offset_y);
-
 		params = {
 			'new_pixels': new_pixels,
 			'offset_x':   offset_x,
@@ -305,10 +299,6 @@ var Has_Pixels = {
 
 		this.cycle_through_pixels(function(that, x, y, params) {
 
-			if (params['offset_y'] == 1) {
-				//alert('X:' + x + '/Y:' + y);
-			}
-
 			if (params['new_pixels'][x] != undefined
 			  && params['new_pixels'][x][y] != undefined) {
 				if (params['new_pixels'][x][y]) {
@@ -317,9 +307,6 @@ var Has_Pixels = {
 			  	}
 			}
 		});
-
-		//alert('C:' + params['count']);
-
 	},
 
 	count_pixels:function(start_x, start_y, end_x, end_y) {
@@ -472,8 +459,6 @@ Sprite.prototype.mixin({
 	// bottom margin in relation to some map
 	margin_vertical:function(map) {
 
-		//alert(this.pixels);
-
 		var margin_data = this.margin_vertical_data(this.pixels);
 
 		return {
@@ -572,7 +557,7 @@ Sprite.prototype.mixin({
 		this.click_logic = logic;
 
 		// activate click handler
-		this.parent.canvas.addEventListener('mousedown', this.parent.click_handler, false);
+		//this.parent.canvas.addEventListener('mousedown', this.parent.click_handler, false);
 	}
 });
 
@@ -720,10 +705,7 @@ Map.prototype.mixin({
 
 					that.buffer[new_x][new_y] = pixel;
 
-				} catch(e) {
-					alert('b ' + new_x);
-					alert('b ' + new_y);
-				}
+				} catch(e) {}
 			}
 		});
 		
@@ -825,6 +807,7 @@ Grout.prototype.mixin({
 
 		this.state   = {};
 
+		this.active_group = 'main';
 		this.stopped = false;
 	},
 
@@ -921,6 +904,9 @@ Grout.prototype.mixin({
 		// store click logic
 		this.click_logic = logic;
 
+		// remove click handler, in case one already exists
+		this.canvas.removeEventListener('mousedown', this.click_handler, false);
+
 		// activate click handler
 		this.canvas.addEventListener('mousedown', this.click_handler, false);
 	},
@@ -948,27 +934,30 @@ Grout.prototype.mixin({
 		var relative_x = event.clientX - this.offsetLeft;
 		var relative_y = event.clientY - this.offsetTop;
 
-		this.grout.click_children(this.grout.maps, relative_x, relative_y);
-		this.grout.click_children(this.grout.sprites, relative_x, relative_y);
-
 		if (this.grout.click_logic != undefined) {
 
 			// execute global click logic
 			this.grout.click_logic(relative_x, relative_y);
 		}
+
+		this.grout.click_children(this.grout.active_group, this.grout.group_maps, this.grout.maps, relative_x, relative_y);
+		this.grout.click_children(this.grout.active_group, this.grout.group_sprites, this.grout.sprites, relative_x, relative_y);
 	},
 
-	click_children:function(objects, relative_x, relative_y) {
+	click_children:function(group, group_objects, objects, relative_x, relative_y) {
 
 		// execute pixel map click logic
 		for (var item in objects) {
 
-			// determine x and y in virtual pixels
-			tile_x = Math.floor(relative_x /  objects[item].tile_width);
-			tile_y = Math.floor(relative_y / objects[item].tile_height);
+			if (group_objects[group].indexOf(item) != -1) {
 
-			if (objects[item].click_logic) {
-				objects[item].click_logic(tile_x, tile_y);
+				// determine x and y in virtual pixels
+				tile_x = Math.floor(relative_x /  objects[item].tile_width);
+				tile_y = Math.floor(relative_y / objects[item].tile_height);
+
+				if (objects[item].click_logic) {
+					objects[item].click_logic(tile_x, tile_y);
+				}
 			}
 		}
 	},
@@ -985,6 +974,9 @@ Grout.prototype.mixin({
 		group = this.merge(group, 'main');
 
 		this.clear_canvas();
+
+		// set active group so map/sprite clicks are handled properly
+		this.active_group = group;
 
 		if (this.group_maps[group] != undefined) {
 
