@@ -809,6 +809,9 @@ Grout.prototype.mixin({
 
 		this.active_group = 'main';
 		this.stopped = false;
+
+		this.keys_pressed = {};
+		this.key_repeat_interval = 25;
 	},
 
 	map:function(name, params) {
@@ -919,13 +922,37 @@ Grout.prototype.mixin({
 		// store keypress logic
 		this.keypress_logic = logic;
 
-		// activate keypress handler
+		// activate key press handler
 		document.onkeydown = this.key_handler;
+
+		// activate key release handler
+		document.onkeyup = this.key_release_handler;
 	},
 
 	key_handler:function(event) {
 
-		this.grout.keypress_logic(event.keyCode);
+		// if key isn't already pressed, mark is as pressed and fire logic
+		if (this.grout.keys_pressed[event.keyCode] == undefined) {
+
+			this.grout.keys_pressed[event.keyCode] = true;
+
+			this.grout.key_cycle(event.keyCode);
+		}
+	},
+
+	key_cycle:function(keycode) {
+
+		if (this.keys_pressed[keycode] != undefined) {
+	
+			this.keypress_logic(keycode);
+
+			setTimeout('document.grout.key_cycle(' + keycode + ')', this.key_repeat_interval);
+		}
+	},
+
+	key_release_handler:function(event) {
+
+		delete this.grout.keys_pressed[event.keyCode];
 	},
 
 	click_handler:function(event) {
