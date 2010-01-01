@@ -208,15 +208,30 @@ function new_banker(grout, banker_id) {
 
 	banker = grout.sprite(banker_id);
 
-	banker.make_sprite(" \
-		..*.. \
-		***** \
-		*.*.* \
-		*.*.* \
-	");
+	banker_color_map = {
+		'H': '#330',
+		'B': '#330',
+		'F': 'red',
+		'K': 'black',
+		'N': 'navy'
+	};
 
-	banker.width = 5;
-	banker.height = 5;
+	banker.make_sprite(" \
+		...HHH.... \
+		...FFF.... \
+		...FFF.... \
+		..NNKNN... \
+		.N.NKN.N.. \
+		N..NNN..N. \
+		F..KKK..F. \
+		..NN.NN.BB \
+		..N...N.BB \
+		..N...N.BB \
+		..K...K... \
+	", banker_color_map);
+
+	banker.width = 10;
+	banker.height = 11;
 	banker.tile_width  = grout.state['tile_width'];
 	banker.tile_height = grout.state['tile_height'];
 
@@ -230,9 +245,9 @@ function new_attack_wave(grout) {
 	grout.state['bankers'] = [];
 	grout.state['banker_direction'] = 'right';
 
-	for (var row = 1; row <= 5; row++) {
+	for (var row = 1; row <= 2; row++) {
 
-		for (var i = 0; i < 10; i++) {
+		for (var i = 0; i < 5; i++) {
 
 			banker_id = 'banker_' + banker_number;
 
@@ -243,8 +258,8 @@ function new_attack_wave(grout) {
 			banker = new_banker(grout, banker_id);
 
 			// distribute bankers evenly horizintal, but stagger vertically
-			banker.offset_x = (1 + (i * 6));
-			banker.offset_y = (5 * row) + ((i % 2) * 2) - 3;
+			banker.offset_x = (1 + (i * 11));
+			banker.offset_y = (12 * row) + ((i % 2) * 2) - 11;
 
 			// set banker movement logic
 			banker.state['move_logic'] = function (banker, background) {
@@ -339,8 +354,8 @@ function move_bankers(grout) {
 			make_bullet_sprite(
 				grout,
 				bullet_id,
-				grout.sprites[banker_id].offset_x + 3,
-				grout.sprites[banker_id].offset_y + 3
+				grout.sprites[banker_id].offset_x + 8,
+				grout.sprites[banker_id].offset_y + 9
 			);
 
 			grout.state['banker_bullets_in_motion'].push(bullet_id);
