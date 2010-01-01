@@ -361,7 +361,10 @@ function move_bankers(grout) {
 				grout,
 				bullet_id,
 				grout.sprites[banker_id].offset_x + 8,
-				grout.sprites[banker_id].offset_y + 9
+				grout.sprites[banker_id].offset_y + 9,
+				'R \
+				 R',
+				{'R': 'red'}
 			);
 
 			grout.state['banker_bullets_in_motion'].push(bullet_id);
@@ -416,7 +419,14 @@ function shoot_bullet(grout, ship) {
 		// create new bullet sprite corresponding to ID
 		bullet_id = 'bullet_' + grout.state['bullet_id']
 
-		make_bullet_sprite(grout, bullet_id, ship.offset_x + 2, ship.offset_y);
+		make_bullet_sprite(
+			grout,
+			bullet_id,
+			ship.offset_x + 2,
+			ship.offset_y,
+			'B',
+			{'B': 'black'}
+		);
 
 		// add bullet ID to list 
 		if (grout.state['bullets_in_motion'] == undefined) {
@@ -429,11 +439,12 @@ function shoot_bullet(grout, ship) {
 	}
 }
 
-function make_bullet_sprite(grout, bullet_id, x, y) {
+function make_bullet_sprite(grout, bullet_id, x, y, definition, color_map) {
 
 	bullet = grout.sprite(bullet_id);
 
-	bullet.make_sprite("*");
+	bullet.make_sprite(definition, color_map);
+
 	bullet.offset_x = x;
 	bullet.offset_y = y;
 	bullet.tile_width  = grout.state['tile_width'];
