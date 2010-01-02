@@ -204,6 +204,17 @@ function clean_up_bullet_array(grout, bullet_array) {
 	}
 }
 
+function banker_color_map() {
+
+	return {
+		'H': banker_hair_colors[banker_hair],
+		'B': '#330',
+		'F': banker_skin_colors[banker_skin],
+		'K': 'black',
+		'N': 'navy'
+	};
+}
+
 function new_banker(grout, banker_id) {
 
 	banker = grout.sprite(banker_id);
@@ -213,14 +224,6 @@ function new_banker(grout, banker_id) {
 
 	banker_hair_colors = ['#000000', '#271F2E'];
     banker_hair = Math.floor(Math.random() * 2);
-
-	banker_color_map = {
-		'H': banker_hair_colors[banker_hair],
-		'B': '#330',
-		'F': banker_skin_colors[banker_skin],
-		'K': 'black',
-		'N': 'navy'
-	};
 
 	banker.make_sprite(" \
 		...HHH.... \
@@ -234,7 +237,7 @@ function new_banker(grout, banker_id) {
 		..N...N.BB \
 		..N...N.BB \
 		..K...K... \
-	", banker_color_map);
+	", banker_color_map());
 
 	banker.width = 10;
 	banker.height = 11;
@@ -242,6 +245,42 @@ function new_banker(grout, banker_id) {
 	banker.tile_height = grout.state['tile_height'];
 
 	return banker;
+}
+
+function banker_march(banker, frame) {
+
+	if (frame == 0) {
+		
+		banker.make_sprite(" \
+			...HHH.... \
+			...FFF.... \
+			...FFF.... \
+			..NNKNN... \
+			.N.NKN.N.. \
+			N..NNN..F. \
+			F..KKK..BB \
+			..NN.NN.BB \
+			..N...N.BB \
+			..K...N... \
+			......K... \
+		", banker_color_map());
+	}
+	else {
+
+		banker.make_sprite(" \
+			...HHH.... \
+			...FFF.... \
+			...FFF.... \
+			..NNKNN... \
+			.N.NKN.N.. \
+			F..NNN..N. \
+			...KKK..F. \
+			..NN.NN.BB \
+			..N...N.BB \
+			..N...K.BB \
+			..K....... \
+		", banker_color_map());
+	}
 }
 
 function new_attack_wave(grout) {
@@ -305,6 +344,26 @@ function move_bankers(grout) {
 	var lowest_x_position    = {};
 	var lowest_at_x_position = {};
 
+	var current_frame;
+
+	// store banker animation pixel arrays if not already stored
+	if (grout.state['banker_frames'] == undefined) {
+
+		grout.state['banker_frames'] = [];
+
+		banker = new Sprite();
+
+		banker_march(banker, 0);
+		grout.state['banker_frames'].push(banker.pixels);
+
+		banker_march(banker, 1);
+		grout.state['banker_frames'].push(banker.pixels);
+	}
+
+	// switch active frame
+	grout.state['banker_frame'] = (grout.state['banker_frame']) ? 0 : 1;
+	current_frame = grout.state['banker_frame'];
+
 	if (grout.state['banker_bullets_in_motion'] == undefined) {
 
 		grout.state['banker_bullets_in_motion'] = [];
@@ -323,6 +382,9 @@ function move_bankers(grout) {
 		banker = grout.sprite(banker_id);
 
 		if (banker.state['move_logic'] != undefined) {
+
+			// set pixels to active frame
+			banker.pixels = grout.state['banker_frames'][current_frame];
 
 			banker.state['move_logic'](banker, grout);
 
