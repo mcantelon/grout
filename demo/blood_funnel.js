@@ -76,108 +76,23 @@ function blood_funnel() {
 		*...*.*..*..**..***.**. \
 	");
 
-	// set up keyboard handling
-	grout.keypress(function(key) {
-
-		var margin_space;
-		var response;
-
-		// pause/unpause
-		if (key == 80) {
-
-			grout.stopped = !grout.stopped;
-
-			if (grout.stopped) {
-
-				grout.draw_all('paused');
-			}
-
-			return;
-		}
-
-		if (!grout.stopped) {
-
-			// space bar triggers shooting
-			if (key == 32) {
-
-				shoot_bullet(grout, ship);
-				return;
-			}
-
-			// specified movement criteria
-			var keycode_response = {
-
-				// left arrow key moves ship left
-				37: {
-					'shift_x': -1,
-					'shift_y': 0,
-					'margin_check_function': 'margin_left'
-				},
-
-				// right arrow key moves ship right
-				39: {
-					'shift_x': 1,
-					'shift_y': 0,
-					'margin_check_function': 'margin_right'
-				}
-			}
-
-			// handle movement via arrow keys
-			for (keycode in keycode_response) {
-
-				response = keycode_response[keycode];
-
-				// execute appropriate piece method to check space between piece and map edge
-				margin_space = ship[response['margin_check_function']](background);
-
-				// shift piece if key is pressed and there is space to shift it to
-				if (key == keycode
-				  && margin_space != 0
-				) {
-					ship.move(response['shift_x'], response['shift_y']);
-				}
-			}
-		}
-	});
-
-	restart(background, ship, grout);
-
-	// enter main loop
-	grout.animate(25, function () {
-
-		this.state['turns']++;
-
-		if (this.state['turns'] % 10 == 0) {
-
-			move_bankers(this);
-		}
-
-		if (this.state['turns'] % 2 == 0) {
-
-			move_banker_bullets(this);
-		}
-
-		if (grout.state['ship_hit']) {
-			alert('Game over');
-			restart(this.maps['background'], this.sprites['ship'], this);
-		}
-
-		move_bullets(this);
-	});
+	// show start screen
+	start_screen(grout);
 }
 
 // restart logic
-function restart(background, ship, grout) {
+function restart(grout) {
 
-	background.clear();
+	grout.maps['background'].clear();
 
-	ship.offset_x = 30;
-	ship.offset_y = 40;
+	grout.sprites['ship'].offset_x = 30;
+	grout.sprites['ship'].offset_y = 40;
 
 	new_attack_wave(grout);
 
 	grout.state['turns'] = 0;
 	grout.state['ship_hit'] = false;
+	grout.state['banker_dead'] = []
 
 	clean_up_bullets(grout);
 
@@ -247,7 +162,7 @@ function new_banker(grout, banker_id) {
 	return banker;
 }
 
-function banker_march(banker, frame) {
+function banker_frames(banker, frame) {
 
 	if (frame == 0) {
 		
@@ -265,7 +180,8 @@ function banker_march(banker, frame) {
 			......K... \
 		", banker_color_map());
 	}
-	else {
+
+	if (frame == 1) {
 
 		banker.make_sprite(" \
 			...HHH.... \
@@ -281,6 +197,23 @@ function banker_march(banker, frame) {
 			..K....... \
 		", banker_color_map());
 	}
+
+	if (frame == 2) {
+
+		banker.make_sprite(" \
+			F..HHH..F. \
+			N..FFF..N. \
+			.N.FFF.N.. \
+			..NNKNN... \
+			...NKN.... \
+			...NNN.... \
+			...KKK.... \
+			..NN.NN... \
+			..N...N.BB \
+			..N...N.BB \
+			..K...K.BB \
+		", banker_color_map());
+	}
 }
 
 function new_attack_wave(grout) {
@@ -289,6 +222,7 @@ function new_attack_wave(grout) {
 
 	grout.state['bankers'] = [];
 	grout.state['banker_direction'] = 'right';
+	grout.state['banker_dying'] = []
 
 	for (var row = 1; row <= 2; row++) {
 
@@ -353,10 +287,13 @@ function move_bankers(grout) {
 
 		banker = new Sprite();
 
-		banker_march(banker, 0);
+		banker_frames(banker, 0);
 		grout.state['banker_frames'].push(banker.pixels);
 
-		banker_march(banker, 1);
+		banker_frames(banker, 1);
+		grout.state['banker_frames'].push(banker.pixels);
+
+		banker_frames(banker, 2);
 		grout.state['banker_frames'].push(banker.pixels);
 	}
 
@@ -383,28 +320,37 @@ function move_bankers(grout) {
 
 		if (banker.state['move_logic'] != undefined) {
 
-			// set pixels to active frame
-			banker.pixels = grout.state['banker_frames'][current_frame];
+			if (grout.state['banker_dying'].indexOf(banker_id) != -1) {
 
-			banker.state['move_logic'](banker, grout);
-
-			if (banker.offset_x < leftmost_x) {
-				leftmost_x = banker.offset_x;
+				grout.delete_sprite(banker_id);
 			}
+			else {
 
-			if ((banker.offset_x + banker.width) > rightmost_x) {
-				rightmost_x = banker.offset_x + banker.width;
-			}
+				if (grout.state['banker_dying'].indexOf(banker_id) == -1) {
+					// set pixels to active frame
+					banker.pixels = grout.state['banker_frames'][current_frame];
+				}
 
-			// see if banker is the lowest at this x position
-			if (lowest_x_position[banker.offset_x] == undefined
-			  || banker.offset_y > lowest_x_position[banker.offset_x]) {
+				banker.state['move_logic'](banker, grout);
+
+				if (banker.offset_x < leftmost_x) {
+					leftmost_x = banker.offset_x;
+				}
+
+				if ((banker.offset_x + banker.width) > rightmost_x) {
+					rightmost_x = banker.offset_x + banker.width;
+				}
+
+				// see if banker is the lowest at this x position
+				if (lowest_x_position[banker.offset_x] == undefined
+				  || banker.offset_y > lowest_x_position[banker.offset_x]) {
 					
-				lowest_x_position[banker.offset_x]    = banker.offset_y;
-				lowest_at_x_position[banker.offset_x] = banker_id;
-			}
+					lowest_x_position[banker.offset_x]    = banker.offset_y;
+					lowest_at_x_position[banker.offset_x] = banker_id;
+				}
 
-			live_bankers++;
+				live_bankers++;
+			}
 		}
 	}
 
@@ -580,7 +526,10 @@ function move_bullets(grout) {
 
 				// instead of just deleting them we should add them to a "dying" queue
 				// or, better yet, change their state to "dying"
-				grout.delete_sprite(banker_id);
+				grout.state['banker_dying'].push(banker_id);
+				banker.pixels = grout.state['banker_frames'][2];
+
+				//grout.delete_sprite(banker_id);
 				//delete grout.sprites[banker_id];
 			}
 		}
@@ -641,5 +590,180 @@ function move_bullet_sprites(grout, bullets_in_motion, y_adjustment, max_y, coll
 	return {
 		'collision_plane_map':     collision_plane_map,
 		'bullets_still_in_motion': bullets_still_in_motion
+	}
+}
+
+// start screen has a blue button, which leads to another screen, and a red button
+function start_screen(grout) {
+
+	var start_button = grout.sprite('blue_button', {'group': 'start'});
+	var start_button_colors = {'B': 'blue', 'G': 'grey'};
+
+	start_button.make_sprite(" \
+		*********************** \
+		*.....................* \
+		*..**.***..*..**..***.* \
+		*.*....*..*.*.*.*..*..* \
+		*..*...*..***.**...*..* \
+		*...*..*..*.*.*.*..*..* \
+		*.**...*..*.*.*.*..*..* \
+		*.....................* \
+		*********************** \
+	", start_button_colors);
+
+	start_button.offset_x = 7;
+	start_button.offset_y = 20;
+
+	// sprite click logic receives x, y in tiles
+	start_button.click(function(x, y) {
+
+		if (this.inside_margins(x, y)) {
+
+			main_screen(this.parent);
+		}
+	});
+
+	var help_button = grout.sprite('red_button', {'group': 'start'});
+	var help_button_colors = {'R': 'red', 'G': 'grey'};
+
+	help_button.make_sprite(" \
+		******************* \
+		*.................* \
+		*.*.*.***.*...**..* \
+		*.*.*.*...*...*.*.* \
+		*.***.**..*...**..* \
+		*.*.*.*...*...*...* \
+		*.*.*.***.***.*...* \
+		*.................* \
+		******************* \
+	", help_button_colors);
+
+	help_button.offset_x = 34;
+	help_button.offset_y = 20;
+
+	// sprite click logic receives x, y in tiles
+	help_button.click(function(x, y) {
+
+		if (this.inside_margins(x, y)) {
+
+			alert('You clicked the help button!');
+		}
+	});
+
+	// shouldn't need to have this... :[
+	// global click logic receives x, y in pixels
+	grout.click(function (x, y) {
+	});
+
+	// negate keyboard handling
+	grout.keypress(function(key) {
+	});
+
+	grout.draw_all('start');
+}
+
+function main_screen(grout) {
+
+	var background = grout.maps['background'];
+	var ship = grout.sprites['ship'];
+
+	// set up keyboard handling
+	grout.keypress(function(key) {
+
+		var margin_space;
+		var response;
+
+		// pause/unpause
+		if (key == 80) {
+
+			grout.stopped = !grout.stopped;
+
+			if (grout.stopped) {
+
+				grout.draw_all('paused');
+			}
+
+			return;
+		}
+
+		if (!grout.stopped) {
+
+			// space bar triggers shooting
+			if (key == 32) {
+
+				shoot_bullet(grout, ship);
+				return;
+			}
+
+			// specified movement criteria
+			var keycode_response = {
+
+				// left arrow key moves ship left
+				37: {
+					'shift_x': -1,
+					'shift_y': 0,
+					'margin_check_function': 'margin_left'
+				},
+
+				// right arrow key moves ship right
+				39: {
+					'shift_x': 1,
+					'shift_y': 0,
+					'margin_check_function': 'margin_right'
+				}
+			}
+
+			// handle movement via arrow keys
+			for (keycode in keycode_response) {
+
+				response = keycode_response[keycode];
+
+				// execute appropriate piece method to check space between piece and map edge
+				margin_space = ship[response['margin_check_function']](background);
+
+				// shift piece if key is pressed and there is space to shift it to
+				if (key == keycode
+				  && margin_space != 0
+				) {
+					ship.move(response['shift_x'], response['shift_y']);
+				}
+			}
+		}
+	});
+
+	restart(grout);
+
+	// start animation loop if it isn't paused
+	if (!grout.stopped) {
+
+		grout.animate(25, function () {
+
+			this.state['turns']++;
+
+			if (this.state['turns'] % 10 == 0) {
+
+				move_bankers(this);
+			}
+
+			if (this.state['turns'] % 2 == 0) {
+
+				move_banker_bullets(this);
+			}
+
+			if (grout.state['ship_hit']) {
+				alert('Game over');
+				this.stop();
+				start_screen(this);
+			}
+			else {
+
+				move_bullets(this);
+			}
+		});
+	}
+	else {
+
+		// restart animation
+		grout.start();
 	}
 }
