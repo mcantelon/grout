@@ -1059,9 +1059,23 @@ Grout.prototype.mixin({
 		if (!this.stopped) {
 
 			this.animate_logic();
-			this.draw_all();
+
+			// allow animation logic to stop itself
+			if (!this.stopped) {
+				this.draw_all();
+			}
 		}
 
 		setTimeout('document.getElementById("' + this.canvas_id + '").grout.animate(' + speed + ')', speed);
+	},
+
+	start:function() {
+		this.stopped = false;
+		this.keys_pressed = {};		
+	},
+
+	stop:function() {
+		this.stopped = true;
+		this.keys_pressed = {};
 	}
 });
