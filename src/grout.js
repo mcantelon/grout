@@ -973,8 +973,21 @@ Grout.prototype.mixin({
 			this.grout.click_logic(relative_x, relative_y);
 		}
 
-		this.grout.click_children(this.grout.active_group, this.grout.group_maps, this.grout.maps, relative_x, relative_y);
-		this.grout.click_children(this.grout.active_group, this.grout.group_sprites, this.grout.sprites, relative_x, relative_y);
+		this.grout.click_children(
+			this.grout.active_group,
+			this.grout.group_maps,
+			this.grout.maps,
+			relative_x,
+			relative_y
+		);
+
+		this.grout.click_children(
+			this.grout.active_group,
+			this.grout.group_sprites,
+			this.grout.sprites,
+			relative_x,
+			relative_y
+		);
 	},
 
 	click_children:function(group, group_objects, objects, relative_x, relative_y) {
@@ -982,7 +995,8 @@ Grout.prototype.mixin({
 		// execute pixel map click logic
 		for (var item in objects) {
 
-			if (group_objects[group].indexOf(item) != -1) {
+			if (group_objects[group] != undefined
+			  && group_objects[group].indexOf(item) != -1) {
 
 				// determine x and y in virtual pixels
 				tile_x = Math.floor(relative_x /  objects[item].tile_width);
