@@ -24,6 +24,13 @@ Base.prototype = {
 
 	undefined_or_null:function(value) {
 		return value == undefined || value == null;
+	},
+
+	set_attributes_from_hash:function(params) {
+
+		for(param in params) {
+			this[param] = params[param];
+		}
 	}
 }
 
@@ -788,31 +795,57 @@ Grout.prototype.mixin({
 
 	initialize:function(params) {
 
+		// each grout gets unique ID
 		grout_id++;
-
 		this.id = grout_id;
 
-		this.merge(params.width, 10);
-		//params = typeof(params) != 'undefined' ? params : {};
+		this.key_repeat_interval = 250;
+
+		this.set_attributes_from_hash(params);
 
 		this.initialize_canvas(params);
 
+		// hashes where maps and sprites live
 		this.maps    = {};
 		this.sprites = {};
 
+		// group-related data
+		this.active_group = 'main';
 		this.group_maps    = {};
 		this.map_group     = {};
 		this.group_sprites = {};
 		this.sprite_group  = {};
 
+		// hash for ad-hoc state
 		this.state   = {};
 
-		this.active_group = 'main';
 		this.stopped = false;
 
 		this.keys_pressed = {};
-		this.key_repeat_interval = 250;
 		this.key_repeat_interval_for = {};
+	},
+
+	initialize_canvas:function(params) {
+
+		this.canvas_id = this.merge(params.canvas_id, 'canvas_' + this.id);
+		this.canvas    = this.doc_get(this.canvas_id);
+
+		// write canvas to document
+		if (!this.canvas) {
+			document.write('<canvas id="' + this.canvas_id + '"></canvas>');
+			this.canvas    = this.doc_get(this.canvas_id);
+		}
+
+		// set canvas size
+		this.canvas.setAttribute('width',  this.width);
+		this.canvas.setAttribute('height', this.height);
+
+		// put reference to this object in canvas
+		this.canvas.grout = this
+
+		if (this.canvas.getContext) {  
+			this.ctx = this.canvas.getContext('2d');  
+		}		
 	},
 
 	map:function(name, params) {
@@ -872,31 +905,6 @@ Grout.prototype.mixin({
 		}
 
 		delete this.sprites[name];
-	},
-
-	initialize_canvas:function(params) {
-
-		this.canvas_id = this.merge(params.canvas_id, 'canvas_' + this.id);
-		this.canvas    = this.doc_get(this.canvas_id);
-		this.width     = this.merge(params.width, 'width');
-		this.height    = this.merge(params.height, 'height');
-
-		// write canvas to document
-		if (!this.canvas) {
-			document.write('<canvas id="' + this.canvas_id + '"></canvas>');
-			this.canvas    = this.doc_get(this.canvas_id);
-		}
-
-		// set canvas size
-		this.canvas.setAttribute('width', this.width);
-		this.canvas.setAttribute('height', this.height);
-
-		// put reference to this object in canvas
-		this.canvas.grout = this
-
-		if (this.canvas.getContext) {  
-			this.ctx = this.canvas.getContext('2d');  
-		}		
 	},
 
 	//
