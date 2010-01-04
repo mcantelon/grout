@@ -812,6 +812,7 @@ Grout.prototype.mixin({
 
 		this.keys_pressed = {};
 		this.key_repeat_interval = 250;
+		this.key_repeat_interval_for = {};
 	},
 
 	map:function(name, params) {
@@ -944,6 +945,8 @@ Grout.prototype.mixin({
 
 	key_cycle:function(keycode) {
 
+		var repeat_interval;
+
 		if (this.keys_pressed[keycode] != undefined) {
 	
 			this.keypress_logic(keycode);
@@ -951,7 +954,15 @@ Grout.prototype.mixin({
 			// if key repetition management isn't disabled, allow repeat after interval
 			if (this.key_repeat_interval != 0) {
 
-				setTimeout('document.grout.key_cycle(' + keycode + ')', this.key_repeat_interval);
+				// allow for per-key repeat interval setting
+				if (this.key_repeat_interval_for[keycode] != undefined) {
+					repeat_interval = this.key_repeat_interval_for[keycode];
+				}
+				else {
+					repeat_interval = this.key_repeat_interval;
+				}
+
+				setTimeout('document.grout.key_cycle(' + keycode + ')', repeat_interval);
 			}
 		}
 	},
