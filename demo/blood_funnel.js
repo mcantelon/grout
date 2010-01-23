@@ -8,10 +8,13 @@ function blood_funnel() {
 	// create new grout
 	var grout = new Grout({
 		'width':  canvas_width * 2,
-		'height': canvas_width
+		'height': canvas_width,
+		'key_repeat_interval': 25
 	});
 
-	grout.key_repeat_interval = 25;
+	// make the space bar and pause keys repeat slower
+	grout.key_repeat_interval_for[32] = 500;
+	grout.key_repeat_interval_for[80] = 500;
 
 	grout.state['tile_width']  = tile_width;
 	grout.state['tile_height'] = tile_height;
