@@ -239,14 +239,16 @@ function add_banker_frames(banker) {
 function new_attack_wave(grout) {
 
 	var banker_number = 1;
+    var banker_rows = 3
+    var banker_columns = 7
 
 	grout.state['bankers'] = [];
 	grout.state['banker_direction'] = 'right';
 	grout.state['banker_dying'] = []
 
-	for (var row = 1; row <= 2; row++) {
+	for (var row = 1; row <= banker_rows; row++) {
 
-		for (var i = 0; i < 5; i++) {
+		for (var i = 0; i < banker_columns; i++) {
 
 			banker_id = 'banker_' + banker_number;
 
