@@ -91,23 +91,7 @@ function restart(grout) {
 
 	grout.maps['background'].clear();
 
-    // add money
-    var x_adjust = 0;
-    for (var y = grout.maps['background'].height - 7; y < grout.maps['background'].height; y++) {
-        if (y % 2) {
-            for (var x = 0; x < grout.maps['background'].width; x++) {
-            	if ((x + x_adjust) % 3) {
-      	            grout.maps['background'].pixels[x][y] = 'green';
-            	}
-            }
-        }
-        x_adjust++;
-        if (x_adjust == 3) {
-        	x_adjust = 0;
-        }
-    }
-
-    //grout.draw_all(); fff();
+    add_money_to_background(grout.maps['background'], 4);
 
 	grout.sprites['ship'].offset_x = 30;
 	grout.sprites['ship'].offset_y = grout.maps['background'].height - 11;
@@ -121,6 +105,27 @@ function restart(grout) {
 	clean_up_bullets(grout);
 
 	grout.draw_all();
+}
+
+function add_money_to_background(background, rows) {
+	
+    var x_adjust = 0;
+
+    for (var y = background.height - (rows * 2); y < background.height; y++) {
+
+        if (y % 2) {
+            for (var x = 0; x < background.width; x++) {
+            	if ((x + x_adjust) % 3) {
+      	            background.pixels[x][y] = 'green';
+            	}
+            }
+        }
+
+        x_adjust++;
+        if (x_adjust == 3) {
+        	x_adjust = 0;
+        }
+    }
 }
 
 function clean_up_bullets(grout) {
