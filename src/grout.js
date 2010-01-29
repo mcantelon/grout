@@ -373,7 +373,7 @@ var Has_Pixels = {
 		return new_pixels;
 	},
 
-	make_sprite:function(sprite_string, color_codes) {
+    pixels_and_size_from_string:function(sprite_string, color_codes) {
 
 		var color_codes = this.merge(color_codes, {});
 
@@ -423,10 +423,21 @@ var Has_Pixels = {
 			}
 		}
 
-		this.width = x;
-		this.height = y;
+        return {
+            'pixels': pixels,
+            'x': x,
+            'y': y
+        };
+    },
 
-		this.pixels = pixels;
+	make_sprite:function(sprite_string, color_codes) {
+
+        var sprite_data = this.pixels_and_size_from_string(sprite_string, color_codes);
+
+		this.width = sprite_data.x;
+		this.height = sprite_data.y;
+
+		this.pixels = sprite_data.pixels;
 	}
 };
 
@@ -449,7 +460,10 @@ Sprite.prototype.mixin({
 		this.initialize_resources(params);
 
 		this.offset_x = this.merge(params.offset_x, 0);
-		this.offset_y = this.merge(params.offset_y, 0);		
+		this.offset_y = this.merge(params.offset_y, 0);
+
+        this.frames = [];
+		this.current_frame = 0;
 	},
 
 	draw:function() {
@@ -565,7 +579,38 @@ Sprite.prototype.mixin({
 
 		// activate click handler
 		//this.parent.canvas.addEventListener('mousedown', this.parent.click_handler, false);
-	}
+	},
+
+    add_frame:function(pixels) {
+        this.frames.push(pixels);
+    },
+
+    add_frame_from_string:function(sprite_string, color_codes) {
+
+        var frame_data = this.pixels_and_size_from_string(sprite_string, color_codes)
+
+        this.add_frame(frame_data.pixels);
+    },
+
+    next_frame:function(restart_at_frame) {
+
+		restart_at_frame = this.merge(restart_at_frame, this.frames.length - 1);
+
+    	if (
+    	  this.current_frame < (this.frames.length - 1)
+    	  && this.current_frame < restart_at_frame
+    	) {
+            this.current_frame++;
+    	}
+    	else {
+    	    this.current_frame = 0;
+    	}
+        this.pixels = this.frames[this.current_frame];
+    },
+
+    set_frame:function(frame) {
+        banker.pixels = banker.frames[0];
+    }
 });
 
 // Map class deals with pixel maps
