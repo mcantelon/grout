@@ -109,6 +109,8 @@ function add_money_to_background(background, rows) {
 	
     var x_adjust = 0;
 
+	background.clear_range(0, background.height - (rows * 2), background.width, background.height);
+
     for (var y = background.height - (rows * 2); y < background.height; y++) {
 
         if (y % 2) {
