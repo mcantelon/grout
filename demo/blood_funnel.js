@@ -17,6 +17,16 @@ function blood_funnel() {
 	grout.key_repeat_interval_for[32] = 500;
 	grout.key_repeat_interval_for[80] = 500;
 
+    // create pixel map for background pattern
+	var background_pattern = grout.map(
+	    'background_pattern', {
+	    	'width': tile_map_width / 2,
+	    	'height': tile_map_width / 4,
+	        'tile_width': TILE_WIDTH * 4,
+	        'tile_height': TILE_HEIGHT * 4
+	    }
+	);
+
 	// create pixel map for background
 	var background = grout.map('background', {
 		'width':  tile_map_width * 2,
@@ -250,6 +260,16 @@ function new_attack_wave(grout) {
 
     grout.state['wave']++;
 
+    grout.maps['background_pattern'].clear();
+
+    grout.maps['background_pattern'].cycle_through_pixels(function(that, x, y, params) {
+
+        if (Math.floor(Math.random() * 2) == 1) {
+
+            that.pixels[x][y] = '#777777';
+        }
+    });
+
     if (grout.state['wave'] > 2) {
 
         money_rows = 3;
@@ -257,6 +277,7 @@ function new_attack_wave(grout) {
     else {
         money_rows = 4;
     }
+
 
     add_money_to_background(grout.maps['background'], money_rows);
 
