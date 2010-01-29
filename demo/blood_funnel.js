@@ -17,9 +17,6 @@ function blood_funnel() {
 	grout.key_repeat_interval_for[32] = 500;
 	grout.key_repeat_interval_for[80] = 500;
 
-	grout.state['tile_width']  = TILE_WIDTH;
-	grout.state['tile_height'] = TILE_HEIGHT;
-
 	// create pixel map for background
 	var background = grout.map('background', {
 		'width':  tile_map_width * 2,
@@ -191,8 +188,8 @@ function new_banker(grout, banker_id) {
 
 	banker.width = 10;
 	banker.height = 11;
-	banker.tile_width  = grout.state['tile_width'];
-	banker.tile_height = grout.state['tile_height'];
+	banker.tile_width  = TILE_WIDTH;
+	banker.tile_height = TILE_HEIGHT;
 
 	return banker;
 }
@@ -474,8 +471,8 @@ function make_bullet_sprite(grout, bullet_id, x, y, definition, color_map) {
 
 	bullet.offset_x = x;
 	bullet.offset_y = y;
-	bullet.tile_width  = grout.state['tile_width'];
-	bullet.tile_height = grout.state['tile_height'];
+	bullet.tile_width  = TILE_WIDTH;
+	bullet.tile_height = TILE_HEIGHT;
 
 	return bullet;
 }
