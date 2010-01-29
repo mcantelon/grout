@@ -89,10 +89,19 @@ function restart(grout) {
 	grout.maps['background'].clear();
 
     // add money
+    var x_adjust = 0;
     for (var y = 45; y < grout.maps['background'].height; y++) {
-      for (var x = 0; x < grout.maps['background'].width; x++) {
-      	grout.maps['background'].pixels[x][y] = 'green';
-      }
+        if (y % 2) {
+            for (var x = 0; x < grout.maps['background'].width; x++) {
+            	if ((x + x_adjust) % 3) {
+      	            grout.maps['background'].pixels[x][y] = 'green';
+            	}
+            }
+        }
+        x_adjust++;
+        if (x_adjust == 3) {
+        	x_adjust = 0;
+        }
     }
 
     //grout.draw_all(); fff();
@@ -468,6 +477,31 @@ function move_banker_bullets(grout) {
 	if (grout.sprites['ship'].detect_collision_with_map(grout.maps['collision_plane_3'])) {
 		grout.state['ship_hit'] = true;
 	}
+
+//if (grout.state['banker_bullets_in_motion'] != bullets_still_in_motion) {
+//  alert('ddd');
+//}
+
+    // if any banker's bullet has hit the pile of money, go through each
+    // bullet and, if it has hit the pile, knock a chunk out of the pile
+	if (grout.maps['background'].detect_collision_with_pixels(grout.maps['collision_plane_3'].pixels)) {
+
+        for (var i = 0; i < bullets_still_in_motion.length; i++) {
+
+            bullet_id = bullets_still_in_motion[i];
+
+            bullet = grout.sprites[bullet_id];
+
+            if (bullet.detect_collision_with_map(grout.maps['background'])) {
+
+                // ACTUALLY, IF BULLETS STILL IN MOTION DIFFERENT THAN IN MOTION
+                // THEN BULLET HAS GONE THROUGH MONEY
+
+                grout.maps['background'].pixels[bullet.offset_x][bullet.offset_y + 1] = false;
+                grout.delete_sprite(bullet_id);
+            }
+        }
+    }
 
 	grout.state['banker_bullets_in_motion'] = bullets_still_in_motion;
 
