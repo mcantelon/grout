@@ -462,7 +462,8 @@ Sprite.prototype.mixin({
 		this.offset_x = this.merge(params.offset_x, 0);
 		this.offset_y = this.merge(params.offset_y, 0);
 
-        this.frames = [];
+        this.current_sequence = 'default';
+        this.frames = {};
 		this.current_frame = 0;
 	},
 
@@ -581,8 +582,16 @@ Sprite.prototype.mixin({
 		//this.parent.canvas.addEventListener('mousedown', this.parent.click_handler, false);
 	},
 
+    make_sure_current_sequence_is_initialized:function() {
+
+        this.frames[this.current_sequence] = this.merge(this.frames[this.current_sequence], []);
+    },
+
     add_frame:function(pixels) {
-        this.frames.push(pixels);
+
+        this.make_sure_current_sequence_is_initialized();
+
+        this.frames[this.current_sequence].push(pixels);
     },
 
     add_frame_from_string:function(sprite_string, color_codes) {
@@ -594,10 +603,12 @@ Sprite.prototype.mixin({
 
     next_frame:function(restart_at_frame) {
 
-		restart_at_frame = this.merge(restart_at_frame, this.frames.length - 1);
+        this.make_sure_current_sequence_is_initialized();
+
+		restart_at_frame = this.merge(restart_at_frame, this.frames[this.current_sequence].length - 1);
 
     	if (
-    	  this.current_frame < (this.frames.length - 1)
+    	  this.current_frame < (this.frames[this.current_sequence].length - 1)
     	  && this.current_frame < restart_at_frame
     	) {
             this.current_frame++;
@@ -605,11 +616,15 @@ Sprite.prototype.mixin({
     	else {
     	    this.current_frame = 0;
     	}
-        this.pixels = this.frames[this.current_frame];
+    	this.set_frame(this.current_frame);
+        //this.pixels = this.frames[this.current_sequence][this.current_frame];
     },
 
     set_frame:function(frame) {
-        banker.pixels = banker.frames[0];
+
+        this.make_sure_current_sequence_is_initialized();
+
+        this.pixels = this.frames[this.current_sequence][frame];
     }
 });
 
