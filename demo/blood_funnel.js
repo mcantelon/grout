@@ -91,11 +91,12 @@ function restart(grout) {
 
 	grout.maps['background'].clear();
 
-    add_money_to_background(grout.maps['background'], 4);
+    //add_money_to_background(grout.maps['background'], 4);
 
 	grout.sprites['ship'].offset_x = 30;
 	grout.sprites['ship'].offset_y = grout.maps['background'].height - 11;
 
+    grout.state['wave'] = 0;
 	new_attack_wave(grout);
 
 	grout.state['turns'] = 0;
@@ -246,6 +247,19 @@ function new_attack_wave(grout) {
 	var banker_number = 1;
     var banker_rows = 3
     var banker_columns = 7
+    var money_rows;
+
+    grout.state['wave']++;
+
+    if (grout.state['wave'] > 2) {
+
+        money_rows = 3;
+    }
+    else {
+        money_rows = 4;
+    }
+
+    add_money_to_background(grout.maps['background'], money_rows);
 
 	grout.state['bankers'] = [];
 	grout.state['banker_direction'] = 'right';
