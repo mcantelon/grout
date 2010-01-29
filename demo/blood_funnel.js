@@ -504,8 +504,7 @@ function move_bullets(grout) {
 				// instead of just deleting them we should add them to a "dying" queue
 				// or, better yet, change their state to "dying"
 				grout.state['banker_dying'].push(banker_id);
-				banker.pixels = banker.frames[2];
-				//banker.pixels = grout.state['banker_frames'][2];
+				banker.set_frame(2);
 
 				//grout.delete_sprite(banker_id);
 				//delete grout.sprites[banker_id];
