@@ -88,6 +88,15 @@ function restart(grout) {
 
 	grout.maps['background'].clear();
 
+    // add money
+    for (var y = 45; y < grout.maps['background'].height; y++) {
+      for (var x = 0; x < grout.maps['background'].width; x++) {
+      	grout.maps['background'].pixels[x][y] = 'green';
+      }
+    }
+
+    //grout.draw_all(); fff();
+
 	grout.sprites['ship'].offset_x = 30;
 	grout.sprites['ship'].offset_y = 40;
 
