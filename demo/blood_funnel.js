@@ -772,6 +772,13 @@ function main_screen(grout) {
 	// start animation loop if it isn't paused
 	if (!grout.stopped) {
 
+// for level advances, bring down animate delay 2 and every two levels maybe
+// lower pile of money (can just lower state point by one and it'll do same thing)
+
+// need to have some kind of logic for when player loses a life
+
+// should see how things work when things are higher res, more bankers
+
 		grout.animate(25, function () {
 
 			this.state['turns']++;
