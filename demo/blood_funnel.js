@@ -1,9 +1,10 @@
+var TILE_WIDTH = 4;
+var TILE_HEIGHT = 4;
+
 function blood_funnel() {
 
-	var tile_width     = 6;
-	var tile_height    = 6;
-	var tile_map_width = 50;
-	var canvas_width    = tile_width * tile_map_width;
+	var tile_map_width = 75;
+	var canvas_width    = TILE_WIDTH * tile_map_width;
 
 	// create new grout
 	var grout = new Grout({
@@ -16,15 +17,15 @@ function blood_funnel() {
 	grout.key_repeat_interval_for[32] = 500;
 	grout.key_repeat_interval_for[80] = 500;
 
-	grout.state['tile_width']  = tile_width;
-	grout.state['tile_height'] = tile_height;
+	grout.state['tile_width']  = TILE_WIDTH;
+	grout.state['tile_height'] = TILE_HEIGHT;
 
 	// create pixel map for background
 	var background = grout.map('background', {
 		'width':  tile_map_width * 2,
 		'height': tile_map_width,
-		'tile_width': tile_width,
-		'tile_height': tile_height
+		'tile_width': TILE_WIDTH,
+		'tile_height': TILE_HEIGHT
 	});
 	background.clear();
 
@@ -32,24 +33,24 @@ function blood_funnel() {
 	var collision_plane = grout.map('collision_plane', {
 		'width':  background.width,
 		'height': background.height,
-		'tile_width': tile_width,
-		'tile_height': tile_height
+		'tile_width': TILE_WIDTH,
+		'tile_height': TILE_HEIGHT
 	});
 
 	// create pixel map for collision plane
 	var collision_plane_2 = grout.map('collision_plane_2', {
 		'width':  background.width,
 		'height': background.height,
-		'tile_width': tile_width,
-		'tile_height': tile_height
+		'tile_width': TILE_WIDTH,
+		'tile_height': TILE_HEIGHT
 	});
 
 	// create pixel map for collision plane
 	var collision_plane_3 = grout.map('collision_plane_3', {
 		'width':  background.width,
 		'height': background.height,
-		'tile_width': tile_width,
-		'tile_height': tile_height
+		'tile_width': TILE_WIDTH,
+		'tile_height': TILE_HEIGHT
 	});
 
 	// create sprite for ship
@@ -61,12 +62,14 @@ function blood_funnel() {
 		**.** \
 	");
 
-	ship.tile_width  = tile_width;
-	ship.tile_height = tile_height;
+	ship.tile_width  = TILE_WIDTH;
+	ship.tile_height = TILE_HEIGHT;
 
 	// create group for paused state
 	var paused = grout.sprite('paused', {
-		'group': 'paused'
+		'group': 'paused',
+		'tile_width': TILE_WIDTH,
+		'tile_height': TILE_HEIGHT
 	});
 	paused.offset_x = 3;
 	paused.offset_y = 5;
@@ -90,7 +93,7 @@ function restart(grout) {
 
     // add money
     var x_adjust = 0;
-    for (var y = 43; y < grout.maps['background'].height; y++) {
+    for (var y = grout.maps['background'].height - 7; y < grout.maps['background'].height; y++) {
         if (y % 2) {
             for (var x = 0; x < grout.maps['background'].width; x++) {
             	if ((x + x_adjust) % 3) {
@@ -107,7 +110,7 @@ function restart(grout) {
     //grout.draw_all(); fff();
 
 	grout.sprites['ship'].offset_x = 30;
-	grout.sprites['ship'].offset_y = 39;
+	grout.sprites['ship'].offset_y = grout.maps['background'].height - 11;
 
 	new_attack_wave(grout);
 
@@ -632,7 +635,14 @@ function move_bullet_sprites(grout, bullets_in_motion, y_adjustment, max_y, coll
 // start screen has a blue button, which leads to another screen, and a red button
 function start_screen(grout) {
 
-	var start_button = grout.sprite('blue_button', {'group': 'start'});
+	var start_button = grout.sprite(
+	    'blue_button', {
+	        'group': 'start',
+	        'tile_width': TILE_WIDTH,
+	        'tile_height': TILE_HEIGHT
+	    }
+	);
+
 	var start_button_colors = {'B': 'blue', 'G': 'grey'};
 
 	start_button.make_sprite(" \
@@ -659,7 +669,14 @@ function start_screen(grout) {
 		}
 	});
 
-	var help_button = grout.sprite('red_button', {'group': 'start'});
+	var help_button = grout.sprite(
+	    'red_button', {
+	        'group': 'start',
+	        'tile_width': TILE_WIDTH,
+	        'tile_height': TILE_HEIGHT   
+	    }
+	);
+
 	var help_button_colors = {'R': 'red', 'G': 'grey'};
 
 	help_button.make_sprite(" \
@@ -779,7 +796,7 @@ function main_screen(grout) {
 
 // should see how things work when things are higher res, more bankers
 
-		grout.animate(25, function () {
+		grout.animate(5, function () {
 
 			this.state['turns']++;
 
