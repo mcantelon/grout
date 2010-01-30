@@ -103,13 +103,6 @@ function demo() {
 		this.draw();
 	});
 
-	// create pixel map
-	map = grout.map('dot');
-	map.pixels[0][0] = true;
-
-	// ad-hoc map state info can be stored in the state hash
-	map.state['x'] = 0;
-
 	// set global click logic
 	grout.click(function (x, y) {
 
@@ -127,28 +120,14 @@ function demo() {
 		var face = this.maps['face']
 
 		// "zoom" in
-		face.pixel_height = face.pixel_width = (face.pixel_width < 50) ?
-			face.pixel_width + 1 : 1;
+		face.tile_height = face.tile_width = (face.tile_width < 50) ?
+			face.tile_width + 1 : 1;
 
 		// open mouth in fear
-		face.pixels[2][3] = face.pixel_width > 30 ? true : false;
+		face.pixels[2][3] = face.tile_width > 30 ? true : false;
 
 		// flash eyes
 		face.pixels[1][1] = face.pixels[3][1] = !face.pixels[3][1];
-
-		//
-		// animate dot
-		//
-		
-		var dot = this.maps['dot'];
-
-		//alert('-1:' + dot.pixels[0][0]);
-		dot.shift(1, 0);
-		//alert(dot.pixels[1][0]);
-
-		//dot.pixels[dot.state['x']][0] = false
-		//dot.state['x'] = dot.state['x'] < 9 ? dot.state['x'] + 1 : 1;
-		//dot.pixels[dot.state['x']][0] = true
 	});
 }
 
