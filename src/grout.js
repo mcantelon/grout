@@ -438,6 +438,15 @@ var Has_Pixels = {
 		this.height = sprite_data.y;
 
 		this.pixels = sprite_data.pixels;
+	},
+
+	click:function(logic) {
+
+		// store click logic
+		this.click_logic = logic;
+
+		// activate click handler
+		//this.parent.canvas.addEventListener('mousedown', this.parent.click_handler, false);
 	}
 };
 
@@ -571,15 +580,6 @@ Sprite.prototype.mixin({
 	detect_collision_with_map:function(map) {
 		
 		return this.detect_collision_with_pixels(map.pixels, this.offset_x, this.offset_y);
-	},
-
-	click:function(logic) {
-
-		// store click logic
-		this.click_logic = logic;
-
-		// activate click handler
-		//this.parent.canvas.addEventListener('mousedown', this.parent.click_handler, false);
 	},
 
     make_sure_current_sequence_is_initialized:function() {
