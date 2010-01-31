@@ -1,10 +1,10 @@
-var TILE_WIDTH = 4;
+var TILE_WIDTH  = 4;
 var TILE_HEIGHT = 4;
 
 function blood_funnel() {
 
 	var tile_map_width = 75;
-	var canvas_width    = TILE_WIDTH * tile_map_width;
+	var canvas_width = TILE_WIDTH * tile_map_width;
 
 	// create new grout
 	var grout = new Grout({
@@ -251,15 +251,62 @@ function add_banker_frames(banker) {
 	", banker_color_map());
 }
 
+function generate_buildings_background_pattern(grout, map_name, width_min, width_max) {
+
+  var rel_x = 0;
+  var building_width = 0;
+  var possible_height;
+  var building_height;
+  var start_y;
+  var pixel_color;
+
+  grout.maps[map_name].clear();
+
+  for (possible_width = width_min; possible_width < width_max; possible_width = possible_width + 2) {
+
+    for (var x = 0; x < Math.floor(grout.maps[map_name].width); x++) {
+
+      // 
+      if (rel_x >= building_width) {
+
+        rel_x = 0;
+        building_width = Math.floor(Math.random() * possible_width) + 1;
+
+        possible_height = Math.floor(grout.maps[map_name].height) - 1;
+        building_height = Math.floor(Math.random() * possible_height);
+        start_y = Math.floor(grout.maps[map_name].height) - building_height;
+      }
+
+      rel_x++;
+
+      for (var y = start_y; y < possible_height; y++) {
+
+        // closer buildings are the lighter grey they are
+        pixel_color = '#' + ((possible_width + 2) * 111111);
+
+        // logic for window placement and yellow coloring
+        if ((y > start_y) && (y % 2 == 0) && (rel_x % 2 == 0) && (rel_x > 1) && (rel_x < building_width)) {
+        	pixel_color = '#' + ((possible_width + 4) * 1111) + '00';
+        }
+
+        grout.maps[map_name].pixels[x][y] = pixel_color;
+      }
+    }
+  }
+}
+
 function new_attack_wave(grout) {
 
 	var banker_number = 1;
-    var banker_rows = 3
+    var banker_rows = 5;
     var banker_columns = 7
     var money_rows;
 
     grout.state['wave']++;
 
+    generate_buildings_background_pattern(grout, 'background_pattern', 1, 4);
+
+    /*
     grout.maps['background_pattern'].clear();
 
     grout.maps['background_pattern'].cycle_through_pixels(function(that, x, y, params) {
@@ -269,6 +316,7 @@ function new_attack_wave(grout) {
             that.pixels[x][y] = '#777777';
         }
     });
+    */
 
     if (grout.state['wave'] > 2) {
 
@@ -675,6 +723,23 @@ function move_bullet_sprites(grout, bullets_in_motion, y_adjustment, max_y, coll
 
 // start screen has a blue button, which leads to another screen, and a red button
 function start_screen(grout) {
+
+	var tile_map_width = 75;
+
+    // create pixel map for background pattern
+	var background_pattern = grout.map(
+	    'start_screen_background_pattern', {
+	    	'group': 'start',
+	    	'width': tile_map_width,
+	    	'height': tile_map_width / 2,
+	        'tile_width': TILE_WIDTH * 2,
+	        'tile_height': TILE_HEIGHT * 2
+	    }
+	);
+
+    generate_buildings_background_pattern(grout, 'start_screen_background_pattern', 3, 6);
+
+    //grout.maps['start_screen_background_pattern'].shift(0, 10);
 
 	var start_button = grout.sprite(
 	    'blue_button', {
