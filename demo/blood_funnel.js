@@ -176,27 +176,11 @@ function new_banker(grout, banker_id) {
 	banker_skin_colors = ['#F2EBC9', '#D9B166', '#A66B38'];
     banker_skin = Math.floor(Math.random() * 3);
 
-	banker_hair_colors = ['#000000', '#271F2E'];
+    banker_hair_colors = ['#000000', '#271F2E'];
     banker_hair = Math.floor(Math.random() * 2);
 
 	add_banker_frames(banker);
 	banker.set_frame(0);
-
-    /* USE THIS SPRITE ON THE START PAGE OR SOMETHING
-	banker.make_sprite(" \
-		...HHH.... \
-		...FFF.... \
-		...FFF.... \
-		..NNKNN... \
-		.N.NKN.N.. \
-		N..NNN..N. \
-		F..KKK..F. \
-		..NN.NN.BB \
-		..N...N.BB \
-		..N...N.BB \
-		..K...K... \
-	", banker_color_map());
-	*/
 
 	banker.width = 10;
 	banker.height = 11;
@@ -739,6 +723,37 @@ function start_screen(grout) {
 
     generate_buildings_background_pattern(grout, 'start_screen_background_pattern', 3, 6);
 
+    /* below four lines repetitive */
+	banker_skin_colors = ['#F2EBC9', '#D9B166', '#A66B38'];
+    banker_skin = Math.floor(Math.random() * 3);
+
+    banker_hair_colors = ['#000000', '#271F2E'];
+    banker_hair = Math.floor(Math.random() * 2);
+
+    var banker = grout.sprite(
+        'banker', {
+        	'group': 'start',
+        	'tile_width': TILE_WIDTH * 4,
+        	'tile_height': TILE_HEIGHT * 4,
+            'offset_x': 25,
+            'offset_y': 7
+        }
+    );
+
+	banker.make_sprite(" \
+		...HHH.... \
+		...FFF.... \
+		...FFF.... \
+		..NNKNN... \
+		.N.NKN.N.. \
+		N..NNN..N. \
+		F..KKK..F. \
+		..NN.NN.BB \
+		..N...N.BB \
+		..N...N.BB \
+		..K...K... \
+	", banker_color_map());
+
     //grout.maps['start_screen_background_pattern'].shift(0, 10);
 
 	var start_button = grout.sprite(
@@ -764,7 +779,7 @@ function start_screen(grout) {
 	", start_button_colors);
 
 	start_button.offset_x = 7;
-	start_button.offset_y = 20;
+	start_button.offset_y = 58;
 
 	// sprite click logic receives x, y in tiles
 	start_button.click(function(x, y) {
@@ -798,7 +813,7 @@ function start_screen(grout) {
 	", help_button_colors);
 
 	help_button.offset_x = 34;
-	help_button.offset_y = 20;
+	help_button.offset_y = 58;
 
 	// sprite click logic receives x, y in tiles
 	help_button.click(function(x, y) {
