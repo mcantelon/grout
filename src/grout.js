@@ -955,12 +955,15 @@ Grout.prototype.mixin({
 
 		delete this.sprite_group[name];
 
-		// find in group array and delete
-		for (var i = 0; i < this.group_sprites[group].length; i++) {
+		if (this.group_sprites[group] != undefined) {
 
-			if (this.group_sprites[group][i] == name) {
+			// find in group array and delete
+			for (var i = 0; i < this.group_sprites[group].length; i++) {
 
-				delete this.group_sprites[group][i];
+				if (this.group_sprites[group][i] == name) {
+
+					delete this.group_sprites[group][i];
+				}
 			}
 		}
 
