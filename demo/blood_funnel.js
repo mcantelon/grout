@@ -283,7 +283,7 @@ function generate_buildings_background_pattern(grout, map_name, width_min, width
 function new_attack_wave(grout) {
 
 	var banker_number = 1;
-    var banker_rows = 5;
+    var banker_rows;
     var banker_columns = 7
     var money_rows;
 
@@ -303,6 +303,31 @@ function new_attack_wave(grout) {
     });
     */
 
+    grout.state['banker_pixel_movement'] = 1;
+    grout.state['banker_bullet_fire_probability'] = 5;
+	grout.state['banker_dive_probability'] = 100;
+
+    // determine number of banker rows
+    if (grout.state['wave'] >= 4) {
+    	banker_rows = 5;
+    }
+    else if (grout.state['wave'] >= 2) {
+    	banker_rows = 4;
+    }
+    else {
+    	banker_rows = 3;
+    }
+
+    // determine number of turns until banker bullet moves
+    if (grout.state['wave'] >= 2) {
+
+        grout.state['banker_bullet_movement_turns'] = 1;
+    }
+    else {
+       	grout.state['banker_bullet_movement_turns'] = 2;
+    }
+
+    // add rows of money
     if (grout.state['wave'] > 2) {
 
         money_rows = 3;
@@ -347,9 +372,21 @@ function new_attack_wave(grout) {
 					direction = banker.parent.state['banker_direction'];
 				}
 
-				move_x = (direction == 'right') ? 1 : -1;
+				move_x = (direction == 'right')
+				  ? banker.parent.state['banker_pixel_movement']
+				  : 0 - banker.parent.state['banker_pixel_movement'];
 
 				banker.offset_x += move_x;
+
+                if (banker.state['diving'] != undefined
+                  && banker.state['diving']) {
+                  	if (banker.offset_y > banker.parent.maps['background'].height) {
+                  		banker.parent.delete_sprite(banker.state['banker_id']);
+                  	}
+                  	else {
+                  	    banker.offset_y += 1;
+                  	}
+                }
 			}
 
 			banker_number++;
@@ -384,7 +421,7 @@ function move_bankers(grout) {
 		grout.state['banker_bullet_id'] = 1;
 	}
 
-	// trigger move logic for each banks, noting
+	// trigger move logic for each banker, noting
 	// position and which are still alive
 	for (var i = 0; i < grout.state['bankers'].length; i++) {
 
@@ -431,24 +468,36 @@ function move_bankers(grout) {
 
 		banker_id = lowest_at_x_position[x];
 
-		var bullet_shot = Math.floor(Math.random() * 10) == 1;
+        // diving bankers can get destroyed during their movement loop
+        if (grout.sprites[banker_id] != undefined) {
 
-		if (bullet_shot) {
+			var bullet_shot = Math.floor(Math.random() * grout.state['banker_bullet_fire_probability']) == 1;
 
-			bullet_id = 'banker_bullet_' + grout.state['banker_bullet_id'];
+			if (bullet_shot) {
 
-			make_bullet_sprite(
-				grout,
-				bullet_id,
-				grout.sprites[banker_id].offset_x + 8,
-				grout.sprites[banker_id].offset_y + 9,
-				'R \
-				 R',
-				{'R': 'red'}
-			);
+				bullet_id = 'banker_bullet_' + grout.state['banker_bullet_id'];
 
-			grout.state['banker_bullets_in_motion'].push(bullet_id);
-			grout.state['banker_bullet_id']++;
+				var diving = Math.floor(Math.random() * grout.state['banker_dive_probability']) == 1;
+
+				if (diving) {
+					// need banker to know it's own ID so it can destroy itself at end of dive
+					grout.sprites[banker_id].state['banker_id'] = banker_id;
+					grout.sprites[banker_id].state['diving'] = true;
+				}
+
+				make_bullet_sprite(
+					grout,
+					bullet_id,
+					grout.sprites[banker_id].offset_x + 8,
+					grout.sprites[banker_id].offset_y + 9,
+					'R \
+					 R',
+					{'R': 'red'}
+				);
+
+				grout.state['banker_bullets_in_motion'].push(bullet_id);
+				grout.state['banker_bullet_id']++;
+			}
 		}
 	}
 
@@ -927,7 +976,8 @@ function main_screen(grout) {
 				move_bankers(this);
 			}
 
-			if (this.state['turns'] % 2 == 0) {
+            // if banker bullets allowed to move this turn, move them
+			if (this.state['turns'] % this.state['banker_bullet_movement_turns'] == 0) {
 
 				move_banker_bullets(this);
 			}
