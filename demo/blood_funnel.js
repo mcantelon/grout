@@ -1,5 +1,6 @@
 var TILE_WIDTH  = 4;
 var TILE_HEIGHT = 4;
+var MAX_PLAYER_BULLETS = 2;
 
 function blood_funnel() {
 
@@ -486,9 +487,9 @@ function shoot_bullet(grout, ship) {
 	var bullet_id;
 	var bullet;
 
-	// only let player have 5 bullets in motion
+	// only let player have a certain number of bullets in motion
 	if (grout.state['bullets_in_motion'] == undefined
-	  || grout.state['bullets_in_motion'].length < 5) {
+	  || grout.state['bullets_in_motion'].length < MAX_PLAYER_BULLETS) {
 
 		// get next bullet ID
 		grout.state['bullet_id'] = (grout.state['bullet_id'] == undefined)
