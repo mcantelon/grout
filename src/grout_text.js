@@ -180,18 +180,20 @@ var grout_pixel_font = {
 var grout_pixeL_font_single_letter_data;
 
 // add tolower
-var grout_text_stamp_text = function(text, offset_x, offset_y, max_width) {
+var grout_text_stamp_text = function(text, offset_x, offset_y, max_width, text_color) {
 
   var words = text.split(' ');
   var word;
   var x = 0;
   var y = 0;
 
+  var text_color = this.merge(text_color, true);
+
   // parse pixel font into pixel arrays for speed
   for(var letter in grout_pixel_font) {
 
     var grout_pixeL_font_single_letter_data = this.pixels_and_size_from_string(
-      grout_pixel_font[letter], {'C': 'black'});
+      grout_pixel_font[letter], {'C': text_color});
 
     grout_pixel_font_data[letter] = grout_pixeL_font_single_letter_data.pixels;
   }
