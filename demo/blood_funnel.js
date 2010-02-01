@@ -773,7 +773,11 @@ function start_screen(grout) {
 
     generate_buildings_background_pattern(grout, 'start_screen_background_pattern', 3, 6);
 
-    background_pattern.stamp_text('blood funnel', 5, 5, 50);
+    for (var i = 0; i < 6; i++) {
+
+        background_pattern.stamp_text('blood funnel', 5 + i, 5 + i, 50, '#' + ((6 - i) * 111111));
+    }
+    background_pattern.stamp_text('blood funnel', 5 + i, 5 + i, 50, '#ff0000');
 
     /* below four lines repetitive */
 	banker_skin_colors = ['#F2EBC9', '#D9B166', '#A66B38'];
