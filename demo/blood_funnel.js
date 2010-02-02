@@ -775,9 +775,10 @@ function start_screen(grout) {
 
     for (var i = 0; i < 6; i++) {
 
-        background_pattern.stamp_text('blood funnel', 5 + i, 5 + i, 50, '#' + ((6 - i) * 111111));
+        //background_pattern.stamp_text('blood funnel', 5 + i, 5 + i, 50, '#' + ((6 - i) * 111111));
     }
-    background_pattern.stamp_text('blood funnel', 5 + i, 5 + i, 50, '#ff0000');
+    background_pattern.stamp_text('blood funnel', 5, 5, 50, '#444444');
+    background_pattern.stamp_text('blood funnel', 4, 4, 50, '#ff0000');
 
     /* below four lines repetitive */
 	banker_skin_colors = ['#F2EBC9', '#D9B166', '#A66B38'];
@@ -876,7 +877,7 @@ function start_screen(grout) {
 
 		if (this.inside_margins(x, y)) {
 
-			alert('You clicked the help button!');
+			help_screen(this.parent);
 		}
 	});
 
@@ -890,6 +891,230 @@ function start_screen(grout) {
 	});
 
 	grout.draw_all('start');
+}
+
+// start screen has a blue button, which leads to another screen, and a red button
+function help_screen(grout) {
+
+	var tile_map_width = 75;
+
+    // create pixel map for background pattern
+	var background_pattern = grout.map(
+	    'help_screen_background_pattern', {
+	    	'group': 'help',
+	    	'width': tile_map_width,
+	    	'height': tile_map_width / 2,
+	        'tile_width': TILE_WIDTH * 2,
+	        'tile_height': TILE_HEIGHT * 2
+	    }
+	);
+
+    generate_buildings_background_pattern(grout, 'help_screen_background_pattern', 3, 6);
+
+    var help_text_map = grout.map(
+        'help_screen_text', {
+        	 'group': 'help',
+        	 'width': tile_map_width * 2,
+        	 'height': tile_map_width,
+        	 'tile_width': TILE_WIDTH,
+        	 'tile_height': TILE_HEIGHT
+        }
+    );
+
+    help_text = 'it is the year 2000. an evil cabal of bankers known as goldman sacks has infiltrated the state, enacting laws that enable them to steal from the populice.';
+
+    help_text_map.stamp_text(help_text, 5, 5, 140, 'black');
+
+	var help_button = grout.sprite(
+	    'help_button', {
+	        'group': 'help',
+	        'tile_width': TILE_WIDTH,
+	        'tile_height': TILE_HEIGHT
+	    }
+	);
+
+	var help_button_colors = {'B': 'blue', 'G': 'grey'};
+
+	help_button.make_sprite(" \
+		******************* \
+		*.................* \
+		*.**...*...**.*.*.* \
+		*.*.*.*.*.*...*.*.* \
+		*.**..***.*...**..* \
+		*.*.*.*.*.*...*.*.* \
+		*.**..*.*..**.*.*.* \
+		*.................* \
+		******************* \
+	", help_button_colors);
+
+	help_button.offset_x = 7;
+	help_button.offset_y = 58;
+
+	// sprite click logic receives x, y in tiles
+	help_button.click(function(x, y) {
+
+		if (this.inside_margins(x, y)) {
+
+			start_screen(this.parent);
+		}
+	});
+
+	var next_button = grout.sprite(
+	    'next_button', {
+	        'group': 'help',
+	        'tile_width': TILE_WIDTH,
+	        'tile_height': TILE_HEIGHT
+	    }
+	);
+
+	var next_button_colors = {'R': 'red', 'G': 'grey'};
+
+	next_button.make_sprite(" \
+		******************** \
+		*..................* \
+		*.*..*.***.*.*.***.* \
+		*.**.*.*...*.*..*..* \
+		*.*.**.**...*...*..* \
+		*.*..*.*...*.*..*..* \
+		*.*..*.***.*.*..*..* \
+		*..................* \
+		******************** \
+	", next_button_colors);
+
+	next_button.offset_x = 34;
+	next_button.offset_y = 58;
+
+	// sprite click logic receives x, y in tiles
+	next_button.click(function(x, y) {
+
+		if (this.inside_margins(x, y)) {
+
+			help_screen_2(this.parent);
+		}
+	});
+
+	// shouldn't need to have this... :[
+	// global click logic receives x, y in pixels
+	grout.click(function (x, y) {
+	});
+
+	// negate keyboard handling
+	grout.keypress(function(key) {
+	});
+
+	grout.draw_all('help');
+}
+
+// start screen has a blue button, which leads to another screen, and a red button
+function help_screen_2(grout) {
+
+	var tile_map_width = 75;
+
+    // create pixel map for background pattern
+	var background_pattern = grout.map(
+	    'help_screen_background_pattern_2', {
+	    	'group': 'help_2',
+	    	'width': tile_map_width,
+	    	'height': tile_map_width / 2,
+	        'tile_width': TILE_WIDTH * 2,
+	        'tile_height': TILE_HEIGHT * 2
+	    }
+	);
+
+    generate_buildings_background_pattern(grout, 'help_screen_background_pattern_2', 3, 6);
+
+    var help_text_map = grout.map(
+        'help_screen_2_text', {
+        	 'group': 'help_2',
+        	 'width': tile_map_width * 2,
+        	 'height': tile_map_width,
+        	 'tile_width': TILE_WIDTH,
+        	 'tile_height': TILE_HEIGHT
+        }
+    );
+
+    help_text = 'while pretending they strive to strengthen the economy, they instead shoot their blood funnels into your cash. expose and destroy them!';
+
+    help_text_map.stamp_text(help_text, 5, 5, 140, 'black');
+
+	var help_button = grout.sprite(
+	    'help_button_2', {
+	        'group': 'help_2',
+	        'tile_width': TILE_WIDTH,
+	        'tile_height': TILE_HEIGHT
+	    }
+	);
+
+	var help_button_colors = {'B': 'blue', 'G': 'grey'};
+
+	help_button.make_sprite(" \
+		******************* \
+		*.................* \
+		*.**...*...**.*.*.* \
+		*.*.*.*.*.*...*.*.* \
+		*.**..***.*...**..* \
+		*.*.*.*.*.*...*.*.* \
+		*.**..*.*..**.*.*.* \
+		*.................* \
+		******************* \
+	", help_button_colors);
+
+	help_button.offset_x = 7;
+	help_button.offset_y = 58;
+
+	// sprite click logic receives x, y in tiles
+	help_button.click(function(x, y) {
+
+		if (this.inside_margins(x, y)) {
+
+			start_screen(this.parent);
+		}
+	});
+
+	var next_button = grout.sprite(
+	    'next_button_2', {
+	        'group': 'help_2',
+	        'tile_width': TILE_WIDTH,
+	        'tile_height': TILE_HEIGHT
+	    }
+	);
+
+	var next_button_colors = {'R': 'red', 'G': 'grey'};
+
+	next_button.make_sprite(" \
+		******************** \
+		*..................* \
+		*.*..*.***.*.*.***.* \
+		*.**.*.*...*.*..*..* \
+		*.*.**.**...*...*..* \
+		*.*..*.*...*.*..*..* \
+		*.*..*.***.*.*..*..* \
+		*..................* \
+		******************** \
+	", next_button_colors);
+
+	next_button.offset_x = 34;
+	next_button.offset_y = 58;
+
+	// sprite click logic receives x, y in tiles
+	next_button.click(function(x, y) {
+
+		if (this.inside_margins(x, y)) {
+
+			help_screen_2(this.parent);
+		}
+	});
+
+	// shouldn't need to have this... :[
+	// global click logic receives x, y in pixels
+	grout.click(function (x, y) {
+	});
+
+	// negate keyboard handling
+	grout.keypress(function(key) {
+	});
+
+	grout.draw_all('help_2');
 }
 
 function main_screen(grout) {
