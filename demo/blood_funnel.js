@@ -89,9 +89,7 @@ function blood_funnel() {
 		'tile_height': TILE_HEIGHT,
 		'offset_x': 3,
 		'offset_y': 5
-	});
-
-	paused.make_sprite(" \
+	}).make_sprite(" \
 		**...*..*.*..**.***.**. \
 		*.*.*.*.*.*.*...*...*.* \
 		**..***.*.*..*..**..*.* \
@@ -131,13 +129,20 @@ function restart(grout) {
 function update_lives(grout) {
 
   for (var i = 1; i <= grout.state['lives']; i++) {
-  	//alert(grout.sprites['lives'].width - (i * (grout.sprites['ship'].width + 1)));
   	grout.sprites['lives'].stamp(
   	  grout.sprites['ship'].pixels,
   	  grout.sprites['lives'].width - (i * (grout.sprites['ship'].width + 1)),
   	  0
   	);
   }
+}
+
+function sleep(milliseconds) {
+
+   setTimeout('unsleep();', milliseconds);
+}
+
+function unsleep() {
 }
 
 function add_money_to_background(background, rows) {
