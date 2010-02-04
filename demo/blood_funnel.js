@@ -73,14 +73,23 @@ function blood_funnel() {
 	ship.tile_width  = TILE_WIDTH;
 	ship.tile_height = TILE_HEIGHT;
 
+    var lives = grout.sprite('lives', {
+        'width': (3 * (ship.width + 1)),
+        'height': ship.height,
+        'tile_width': TILE_WIDTH,
+        'tile_height': TILE_HEIGHT,
+        'offset_x': (tile_map_width * 2) - ((ship.width + 1) * 3),
+        'offset_y': tile_map_width - ship.height - 1
+    });
+
 	// create group for paused state
 	var paused = grout.sprite('paused', {
 		'group': 'paused',
 		'tile_width': TILE_WIDTH,
-		'tile_height': TILE_HEIGHT
+		'tile_height': TILE_HEIGHT,
+		'offset_x': 3,
+		'offset_y': 5
 	});
-	paused.offset_x = 3;
-	paused.offset_y = 5;
 
 	paused.make_sprite(" \
 		**...*..*.*..**.***.**. \
@@ -110,10 +119,25 @@ function restart(grout) {
 	grout.state['turns'] = 0;
 	grout.state['ship_hit'] = false;
 	grout.state['banker_dead'] = []
+    grout.state['lives'] = 3;
 
 	clean_up_bullets(grout);
 
+    update_lives(grout);
+
 	grout.draw_all();
+}
+
+function update_lives(grout) {
+
+  for (var i = 1; i <= grout.state['lives']; i++) {
+  	//alert(grout.sprites['lives'].width - (i * (grout.sprites['ship'].width + 1)));
+  	grout.sprites['lives'].stamp(
+  	  grout.sprites['ship'].pixels,
+  	  grout.sprites['lives'].width - (i * (grout.sprites['ship'].width + 1)),
+  	  0
+  	);
+  }
 }
 
 function add_money_to_background(background, rows) {
