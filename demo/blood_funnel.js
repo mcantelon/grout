@@ -1166,6 +1166,14 @@ function main_screen(grout) {
 
 			if (grout.stopped) {
 
+				/*
+				grout.animation_interlude('bop', " \
+				  console.log('zoof'); \n\
+				  alert('goat');|5000 \n\
+				  console.log('mimp'); \n\
+				");
+				*/
+
 				grout.draw_all('paused');
 			}
 
