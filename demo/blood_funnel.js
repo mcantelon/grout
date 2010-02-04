@@ -159,28 +159,38 @@ function clean_up_bullet_array(grout, bullet_array) {
 	}
 }
 
-function banker_color_map() {
+function banker_color_map(banker_skin_color, banker_hair_color) {
 
 	return {
-		'H': banker_hair_colors[banker_hair],
-		'B': '#330',
-		'F': banker_skin_colors[banker_skin],
+		'H': banker_hair_color,
+		'B': '#220',
+		'F': banker_skin_color,
 		'K': 'black',
 		'N': 'navy'
 	};
+}
+
+function banker_random_skin_color() {
+
+	var banker_skin_colors = ['#323021', '#D9B166', '#A66B38'];
+    var banker_skin = Math.floor(Math.random() * 3);
+
+    return banker_skin_colors[banker_skin];
+}
+
+function banker_random_hair_color() {
+	
+    var banker_hair_colors = ['#000000', '#271F2E'];
+    var banker_hair = Math.floor(Math.random() * 2);
+
+    return banker_hair_colors[banker_hair];
 }
 
 function new_banker(grout, banker_id) {
 
 	banker = grout.sprite(banker_id);
 
-	banker_skin_colors = ['#F2EBC9', '#D9B166', '#A66B38'];
-    banker_skin = Math.floor(Math.random() * 3);
-
-    banker_hair_colors = ['#000000', '#271F2E'];
-    banker_hair = Math.floor(Math.random() * 2);
-
-	add_banker_frames(banker);
+	add_banker_frames(banker, banker_random_skin_color(), banker_random_hair_color());
 	banker.set_frame(0);
 
 	banker.width = 10;
@@ -191,7 +201,7 @@ function new_banker(grout, banker_id) {
 	return banker;
 }
 
-function add_banker_frames(banker) {
+function add_banker_frames(banker, banker_skin_color, banker_hair_color) {
 
 	banker.add_frame_from_string(" \
 		...HHH.... \
@@ -205,7 +215,7 @@ function add_banker_frames(banker) {
 		..N...N.BB \
 		..K...N... \
 		......K... \
-	", banker_color_map());
+	", banker_color_map(banker_skin_color, banker_hair_color));
 
 	banker.add_frame_from_string(" \
 		...HHH.... \
@@ -219,7 +229,7 @@ function add_banker_frames(banker) {
 		..N...N.BB \
 		..N...K.BB \
 		..K....... \
-	", banker_color_map());
+	", banker_color_map(banker_skin_color, banker_hair_color));
 
 	banker.add_frame_from_string(" \
 		F..HHH..F. \
@@ -233,7 +243,7 @@ function add_banker_frames(banker) {
 		..N...N.BB \
 		..N...N.BB \
 		..K...K.BB \
-	", banker_color_map());
+	", banker_color_map(banker_skin_color, banker_hair_color));
 }
 
 function generate_buildings_background_pattern(grout, map_name, width_min, width_max) {
@@ -707,7 +717,6 @@ function move_bullets(grout) {
 				if (bullet.detect_collision_with_map(collision_plane_2)) {
 
 					grout.delete_sprite(bullet_id);
-					//delete grout.sprites[bullet_id];
 				}
 			}
 		}
@@ -780,13 +789,6 @@ function start_screen(grout) {
     background_pattern.stamp_text('blood funnel', 5, 5, 50, '#444444');
     background_pattern.stamp_text('blood funnel', 4, 4, 50, '#ff0000');
 
-    /* below four lines repetitive */
-	banker_skin_colors = ['#F2EBC9', '#D9B166', '#A66B38'];
-    banker_skin = Math.floor(Math.random() * 3);
-
-    banker_hair_colors = ['#000000', '#271F2E'];
-    banker_hair = Math.floor(Math.random() * 2);
-
     var banker = grout.sprite(
         'banker', {
         	'group': 'start',
@@ -809,7 +811,7 @@ function start_screen(grout) {
 		..N...N.BB \
 		..N...N.BB \
 		..K...K... \
-	", banker_color_map());
+	", banker_color_map(banker_random_skin_color(), banker_random_hair_color()));
 
     //grout.maps['start_screen_background_pattern'].shift(0, 10);
 
