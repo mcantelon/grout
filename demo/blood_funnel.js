@@ -128,12 +128,26 @@ function restart(grout) {
 
 function update_lives(grout) {
 
-  for (var i = 1; i <= grout.state['lives']; i++) {
-  	grout.sprites['lives'].stamp(
-  	  grout.sprites['ship'].pixels,
-  	  grout.sprites['lives'].width - (i * (grout.sprites['ship'].width + 1)),
-  	  0
-  	);
+  grout.sprites['lives'].clear();
+
+  if (grout.state['lives'] == 0) {
+
+    grout.draw_all();
+  	
+	alert('Game over');
+	grout.stop();
+	start_screen(grout);
+  }
+  else {
+
+	  for (var i = 1; i <= grout.state['lives']; i++) {
+  		grout.sprites['lives'].stamp(
+  		  grout.sprites['ship'].pixels,
+  		  grout.sprites['lives'].width - (i * (grout.sprites['ship'].width + 1)),
+  		  0
+  		);
+ 	 }
+ 	 grout.start();
   }
 }
 
@@ -1166,14 +1180,6 @@ function main_screen(grout) {
 
 			if (grout.stopped) {
 
-				/*
-				grout.animation_interlude('bop', [
-				  ["console.log('zoof')"],
-				  ["alert('goat')", 5000],
-				  ["console.log('mimp')"]
-				]);
-				*/
-
 				grout.draw_all('paused');
 			}
 
@@ -1253,9 +1259,21 @@ function main_screen(grout) {
 			}
 
 			if (grout.state['ship_hit']) {
-				alert('Game over');
-				this.stop();
-				start_screen(this);
+
+				grout.sequence('death', [
+				  ["this.sprites['ship'].tile_width = 6"],
+				  ["this.draw_all()", 500],
+				  ["this.sprites['ship'].tile_width = TILE_WIDTH"],
+				  ["this.draw_all()", 500],
+				  ["this.sprites['ship'].tile_width = 6"],
+				  ["this.draw_all()", 500],
+				  ["this.sprites['ship'].tile_width = TILE_WIDTH"],
+				  ["this.draw_all()", 500],
+				  ["clean_up_bullets(this)"],
+				  ["this.state['ship_hit'] = false"],
+				  ["this.state['lives']--"],
+				  ["update_lives(this)"]
+				]);
 			}
 			else {
 
