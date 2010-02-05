@@ -1136,13 +1136,12 @@ Grout.prototype.mixin({
 		}
 	},
 
-	animation_interlude:function(name, items) {
+	sequence:function(name, items) {
 
 		if ((this.queue[name] == undefined || this.queue_counter[name] == 0)
 		  && (this.queue_running[name] == undefined || !this.queue_running[name])) {
 
 			this.queue_running[name] = true;
-			this.stopped = true;
 			this.queue_counter[name] = 0;
 			this.queue[name] = items;
 			this.execute_queue_item(name);
@@ -1174,7 +1173,6 @@ Grout.prototype.mixin({
 
 			this.queue_counter[name] = 0;
 			this.queue_running[name] = false;
-			this.stopped = false;
 		}
 	},
 
