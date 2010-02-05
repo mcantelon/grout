@@ -1141,12 +1141,10 @@ Grout.prototype.mixin({
 		if ((this.queue[name] == undefined || this.queue_counter[name] == 0)
 		  && (this.queue_running[name] == undefined || !this.queue_running[name])) {
 
-console.log('R:' + name);
-
 			this.queue_running[name] = true;
 			this.stopped = true;
 			this.queue_counter[name] = 0;
-			this.queue[name] = items.split("\n");
+			this.queue[name] = items;
 			this.execute_queue_item(name);
 		}
 	},
@@ -1157,10 +1155,7 @@ console.log('R:' + name);
 
 		if (this.queue_counter[name] <= (this.queue[name].length - 1)) {
 
-//alert('L1:' + this.queue[name].length);
-//console.log('C1:' + this.queue_counter[name]); 
-
-			var item = this.queue[name][this.queue_counter[name]].split('|');
+			var item = this.queue[name][this.queue_counter[name]];
 
 			if (item[1] == undefined) {
 				delay = 0;
@@ -1176,7 +1171,7 @@ console.log('R:' + name);
 			setTimeout('document.getElementById("' + this.canvas_id + '").grout.execute_queue_item("' + name + '")', delay);
 		}
 		else {
-			//alert('starting');
+
 			this.queue_counter[name] = 0;
 			this.queue_running[name] = false;
 			this.stopped = false;
