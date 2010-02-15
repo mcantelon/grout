@@ -233,13 +233,13 @@ function new_banker(grout, banker_id) {
 
 	banker = grout.sprite(banker_id);
 
+	banker.tile_width  = TILE_WIDTH;
+	banker.tile_height = TILE_HEIGHT; // need to do something about this requirement
 	add_banker_frames(banker, banker_random_skin_color(), banker_random_hair_color());
 	banker.set_frame(0);
 
 	banker.width = 10;
 	banker.height = 11;
-	banker.tile_width  = TILE_WIDTH;
-	banker.tile_height = TILE_HEIGHT;
 
 	return banker;
 }
@@ -389,6 +389,7 @@ function new_attack_wave(grout) {
         money_rows = 4;
     }
 
+//banker_columns = 1; banker_rows = 1;
 
     add_money_to_background(grout.maps['background'], money_rows);
 
@@ -1176,11 +1177,18 @@ function main_screen(grout) {
 		// pause/unpause
 		if (key == 80) {
 
+/*
+grout.clear_canvas();
+grout.ctx.putImageData(grout.sprites['banker_2'].pixels_to_imagedata(grout.sprites['banker_1'].pixels), 0, 0);
+*/
+
+//alert(grout.frame_renderings[grout.ctx.putImageData(grout.sprites['banker_2'].pixels_to_imagedata(grout.sprites['banker_1'].pixels).data.length));
+
 			grout.stopped = !grout.stopped;
 
 			if (grout.stopped) {
 
-				grout.draw_all('paused');
+//				grout.draw_all('paused');
 			}
 
 			return;

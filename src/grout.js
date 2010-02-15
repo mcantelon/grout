@@ -68,6 +68,81 @@ var Has_Pixels = {
 		}
 	},
 
+	pixels_to_imagedata:function(pixels) {
+
+		var imgd, count, r, g, b, alpha;
+		var w = this.width * this.tile_width;
+		var h = this.height * this.tile_height;
+
+		// Not all browsers implement createImageData
+		if (this.parent.ctx.createImageData) {
+			imgd = this.parent.ctx.createImageData(w, h);
+		} else if (this.parent.ctx.getImageData) {
+			imgd = this.parent.ctx.getImageData(0, 0, w, h);
+		} else {
+			imgd = {'width' : w, 'height' : h, 'data' : new Array(w*h*4)};
+		}
+
+//alert(w); alert(h);
+
+		count = 0;
+
+//var hp = 0;
+
+		for (var y = 0; y < this.height; y++) {
+			
+			for (var i = 0; i < this.tile_height; i++) {
+//hp++;
+
+				for (var x = 0; x < this.width; x++) {
+
+					if (!this.undefined_or_null(pixels[x][y])
+					  && pixels[x][y]
+					) {
+						if (pixels[x][y] == true) {
+							r = 0;
+							g = 0;
+							b = 0;
+						}
+						else {
+							// test for now
+							r = 0;
+							g = 0;
+							b = 0;						
+						}
+
+						alpha = 255;
+					}
+					else {
+						r = 0;
+						g = 0;
+						b = 0;
+						alpha = 0;
+					}
+
+					for (var j = 0; j < this.tile_width; j++) {
+
+						imgd.data[count] = 255;//r;
+						imgd.data[count + 1] = 255; //g;
+						imgd.data[count + 2] = 255; //b;
+						imgd.data[count + 3] = 0; //alpha;
+
+						count = count + 4;
+					}
+				}
+			}
+		}
+
+//alert('H:' + hp);
+
+//		alert(this.width * this.height * this.tile_width * this.tile_height * 4); // GOAT
+		//alert('L:' + imgd.data.length);
+
+		//this.parent.clear_canvas();
+		//this.parent.ctx.putImageData(imgd, 0,0);
+		return imgd;
+	},
+
 	draw_common:function(that, x, y, real_x, real_y) {
 
 		if (that.pixels[x] != undefined) {
@@ -473,18 +548,33 @@ Sprite.prototype.mixin({
 
         this.current_sequence = 'default';
         this.frames = {};
+		this.frame_renderings = {};
 		this.current_frame = 0;
 	},
 
 	draw:function() {
 
-		this.cycle_through_pixels(function(that, x, y, params) {
+		var real_x = (x + this.offset_x) * this.tile_width;
+		var real_y = (y + this.offset_y) * this.tile_width;
 
-			var real_x = (x + that.offset_x) * that.tile_width;
-			var real_y = (y + that.offset_y) * that.tile_width;
+		// disabled this functionality until now... can't get it to work right
+		if (0 && this.rendered_pixels != undefined && this.rendered_pixels != false) {
+			this.parent.ctx.putImageData(
+				this.rendered_pixels,
+				this.offset_x * this.tile_width,
+				this.offset_y * this.tile_height
+			);
+		}
+		else {
 
-			that.draw_common(that, x, y, real_x, real_y);
-		});
+			this.cycle_through_pixels(function(that, x, y, params) {
+
+				var real_x = (x + that.offset_x) * that.tile_width;
+				var real_y = (y + that.offset_y) * that.tile_width;
+
+				that.draw_common(that, x, y, real_x, real_y);
+			});
+		}
 	},
 
 	// bottom margin in relation to some map
@@ -585,6 +675,7 @@ Sprite.prototype.mixin({
     make_sure_current_sequence_is_initialized:function() {
 
         this.frames[this.current_sequence] = this.merge(this.frames[this.current_sequence], []);
+        this.frame_renderings[this.current_sequence] = this.merge(this.frame_renderings[this.current_sequence], []);
     },
 
     add_frame:function(pixels) {
@@ -592,6 +683,7 @@ Sprite.prototype.mixin({
         this.make_sure_current_sequence_is_initialized();
 
         this.frames[this.current_sequence].push(pixels);
+        this.frame_renderings[this.current_sequence].push(this.pixels_to_imagedata(pixels));
     },
 
     add_frame_from_string:function(sprite_string, color_codes) {
@@ -625,6 +717,14 @@ Sprite.prototype.mixin({
         this.make_sure_current_sequence_is_initialized();
 
         this.pixels = this.frames[this.current_sequence][frame];
+
+        if (this.frame_renderings[this.current_sequence][frame] != undefined) {
+        	//alert(this.frame_renderings[this.current_sequence][frame].data.length);
+	        this.rendered_pixels = this.frame_renderings[this.current_sequence][frame];
+        }
+        else {
+        	this.rendered_pixels = false;
+        }
     }
 });
 
