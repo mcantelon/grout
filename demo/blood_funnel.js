@@ -106,6 +106,15 @@ function blood_funnel() {
 		'tile_height': TILE_HEIGHT * 4
 	}).stamp_text('get ready!', 3, 4, 50);
 
+	// create group for paused state
+	grout.map('game_over', {
+		'group': 'game_over',
+		'width': tile_map_width / 2,
+		'height': tile_map_width / 4,
+		'tile_width': TILE_WIDTH * 4,
+		'tile_height': TILE_HEIGHT * 4
+	}).stamp_text('game over', 7, 4, 50);
+
 	// show start screen
 	start_screen(grout);
 }
@@ -141,11 +150,11 @@ function update_lives(grout) {
 
   if (grout.state['lives'] == 0) {
 
-    grout.draw_all();
+    //grout.draw_all();
   	
-	alert('Game over');
-	grout.stop();
-	start_screen(grout);
+	//alert('Game over');
+	//grout.stop();
+	//start_screen(grout);
   }
   else {
 
@@ -1288,7 +1297,7 @@ function main_screen(grout) {
 				  ["this.state['ship_hit'] = false"],
 				  ["this.state['lives']--"],
 				  ["update_lives(this)"],
-				  ["if (this.state['lives'] > 0) { get_ready_interlude(this) }"]
+				  ["if (this.state['lives'] > 0) { get_ready_interlude(this) } else { game_over_interlude(this) }"]
 				]);
 			}
 			else {
@@ -1314,5 +1323,14 @@ function get_ready_interlude(grout) {
 		["this.draw_all('get_ready')", 3000],
 		["this.draw_all()"],
 		["this.start()"]
+	]);
+}
+
+function game_over_interlude(grout) {
+
+	grout.sequence('game_over', [
+		["this.stop()"],
+		["this.draw_all('game_over')", 3000],
+		["start_screen(this)"]
 	]);
 }
