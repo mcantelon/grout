@@ -97,6 +97,15 @@ function blood_funnel() {
 		*...*.*..*..**..***.**. \
 	");
 
+	// create group for paused state
+	grout.map('get_ready', {
+		'group': 'get_ready',
+		'width': tile_map_width / 2,
+		'height': tile_map_width / 4,
+		'tile_width': TILE_WIDTH * 4,
+		'tile_height': TILE_HEIGHT * 4
+	}).stamp_text('get ready!', 3, 4, 50);
+
 	// show start screen
 	start_screen(grout);
 }
@@ -140,14 +149,13 @@ function update_lives(grout) {
   }
   else {
 
-	  for (var i = 1; i <= grout.state['lives']; i++) {
-  		grout.sprites['lives'].stamp(
-  		  grout.sprites['ship'].pixels,
-  		  grout.sprites['lives'].width - (i * (grout.sprites['ship'].width + 1)),
-  		  0
-  		);
- 	 }
- 	 grout.start();
+    for (var i = 1; i <= grout.state['lives']; i++) {
+      grout.sprites['lives'].stamp(
+        grout.sprites['ship'].pixels,
+        grout.sprites['lives'].width - (i * (grout.sprites['ship'].width + 1)),
+        0
+      );
+ 	}
   }
 }
 
@@ -1177,18 +1185,11 @@ function main_screen(grout) {
 		// pause/unpause
 		if (key == 80) {
 
-/*
-grout.clear_canvas();
-grout.ctx.putImageData(grout.sprites['banker_2'].pixels_to_imagedata(grout.sprites['banker_1'].pixels), 0, 0);
-*/
-
-//alert(grout.frame_renderings[grout.ctx.putImageData(grout.sprites['banker_2'].pixels_to_imagedata(grout.sprites['banker_1'].pixels).data.length));
-
 			grout.stopped = !grout.stopped;
 
 			if (grout.stopped) {
 
-//				grout.draw_all('paused');
+				grout.draw_all('paused');
 			}
 
 			return;
@@ -1253,6 +1254,8 @@ grout.ctx.putImageData(grout.sprites['banker_2'].pixels_to_imagedata(grout.sprit
 
 		grout.animate(5, function () {
 
+			if (!this.stopped) {
+
 			this.state['turns']++;
 
 			if (this.state['turns'] % 10 == 0) {
@@ -1270,22 +1273,28 @@ grout.ctx.putImageData(grout.sprites['banker_2'].pixels_to_imagedata(grout.sprit
 
 				grout.sequence('death', [
 				  ["this.sprites['ship'].tile_width = 6"],
-				  ["this.draw_all()", 500],
+				  ["this.draw_all()", 100],
 				  ["this.sprites['ship'].tile_width = TILE_WIDTH"],
-				  ["this.draw_all()", 500],
+				  ["this.draw_all()", 100],
 				  ["this.sprites['ship'].tile_width = 6"],
-				  ["this.draw_all()", 500],
+				  ["this.draw_all()", 100],
 				  ["this.sprites['ship'].tile_width = TILE_WIDTH"],
-				  ["this.draw_all()", 500],
+				  ["this.draw_all()", 100],
+				  ["this.sprites['ship'].tile_width = 6"],
+				  ["this.draw_all()", 100],
+				  ["this.sprites['ship'].tile_width = TILE_WIDTH"],
+				  ["this.draw_all()", 100],
 				  ["clean_up_bullets(this)"],
 				  ["this.state['ship_hit'] = false"],
 				  ["this.state['lives']--"],
-				  ["update_lives(this)"]
+				  ["update_lives(this)"],
+				  ["if (this.state['lives'] > 0) { get_ready_interlude(this) }"]
 				]);
 			}
 			else {
 
 				move_bullets(this);
+			}
 			}
 		});
 	}
@@ -1294,4 +1303,16 @@ grout.ctx.putImageData(grout.sprites['banker_2'].pixels_to_imagedata(grout.sprit
 		// restart animation
 		grout.start();
 	}
+
+	get_ready_interlude(grout);
+}
+
+function get_ready_interlude(grout) {
+
+	grout.sequence('get_ready', [
+		["this.stop()"],
+		["this.draw_all('get_ready')", 3000],
+		["this.draw_all()"],
+		["this.start()"]
+	]);
 }
