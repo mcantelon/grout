@@ -148,17 +148,11 @@ function update_lives(grout) {
 
   grout.sprites['lives'].clear();
 
-  if (grout.state['lives'] == 0) {
-
-    //grout.draw_all();
-  	
-	//alert('Game over');
-	//grout.stop();
-	//start_screen(grout);
-  }
-  else {
+  // stamp ship images onto life indicator sprite
+  if (grout.state['lives'] > 0) {
 
     for (var i = 1; i <= grout.state['lives']; i++) {
+
       grout.sprites['lives'].stamp(
         grout.sprites['ship'].pixels,
         grout.sprites['lives'].width - (i * (grout.sprites['ship'].width + 1)),
@@ -166,14 +160,6 @@ function update_lives(grout) {
       );
  	}
   }
-}
-
-function sleep(milliseconds) {
-
-   setTimeout('unsleep();', milliseconds);
-}
-
-function unsleep() {
 }
 
 function add_money_to_background(background, rows) {
@@ -212,7 +198,6 @@ function clean_up_bullet_array(grout, bullet_array) {
 		for (var i = 0; i < bullet_array.length; i++) {
 			sprite_id = bullet_array[i];
 			grout.delete_sprite(sprite_id);
-			//delete grout.sprites[sprite_id];
 		}
 
 		bullet_array = [];
@@ -376,6 +361,10 @@ function new_attack_wave(grout) {
     grout.state['banker_pixel_movement'] = 1;
     grout.state['banker_bullet_fire_probability'] = 5;
 	grout.state['banker_dive_probability'] = 100;
+	grout.state['turns_until_banker_move'] = 10;
+
+	grout.state['banker_death_counter'] = 0;
+	grout.state['banker_deaths_until_pixel_movement_increase'] = 3;
 
     // determine number of banker rows
     if (grout.state['wave'] >= 4) {
@@ -452,7 +441,9 @@ function new_attack_wave(grout) {
                 if (banker.state['diving'] != undefined
                   && banker.state['diving']) {
                   	if (banker.offset_y > banker.parent.maps['background'].height) {
+
                   		banker.parent.delete_sprite(banker.state['banker_id']);
+                  		ship_hit(banker.parent);
                   	}
                   	else {
                   	    banker.offset_y += 1;
@@ -503,6 +494,16 @@ function move_bankers(grout) {
 
 			if (grout.state['banker_dying'].indexOf(banker_id) != -1) {
 
+				grout.state['banker_death_counter']++;
+
+				if (grout.state['banker_death_counter'] % grout.state['banker_deaths_until_pixel_movement_increase']) {
+					if (grout.state['turns_until_banker_move'] > 5) {
+						grout.state['turns_until_banker_move']--;
+					}
+					else if(grout.state['banker_pixel_movement'] < 5) {
+						grout.state['banker_pixel_movement']++;
+					}
+				}
 				grout.delete_sprite(banker_id);
 			}
 			else {
@@ -574,12 +575,12 @@ function move_bankers(grout) {
 
 	// change direction of bankers if we near
 	// the edge of the background
-	if (rightmost_x > (background.width - 2)) {
+	if (rightmost_x > (background.width - (grout.state['banker_pixel_movement'] + 1))) {
 		drop = true;
 		grout.state['banker_direction'] = 'left';
 	}
 
-	if (leftmost_x < 2) {
+	if (leftmost_x < (grout.state['banker_pixel_movement'] + 1)) {
 		drop = true;
 		grout.state['banker_direction'] = 'right';
 	}
@@ -1267,7 +1268,7 @@ function main_screen(grout) {
 
 			this.state['turns']++;
 
-			if (this.state['turns'] % 10 == 0) {
+			if (this.state['turns'] % grout.state['turns_until_banker_move'] == 0) {
 
 				move_bankers(this);
 			}
@@ -1279,6 +1280,47 @@ function main_screen(grout) {
 			}
 
 			if (grout.state['ship_hit']) {
+
+				ship_hit(grout);
+				/*
+				grout.sequence('death', [
+				  ["this.sprites['ship'].tile_width = 6"],
+				  ["this.draw_all()", 100],
+				  ["this.sprites['ship'].tile_width = TILE_WIDTH"],
+				  ["this.draw_all()", 100],
+				  ["this.sprites['ship'].tile_width = 6"],
+				  ["this.draw_all()", 100],
+				  ["this.sprites['ship'].tile_width = TILE_WIDTH"],
+				  ["this.draw_all()", 100],
+				  ["this.sprites['ship'].tile_width = 6"],
+				  ["this.draw_all()", 100],
+				  ["this.sprites['ship'].tile_width = TILE_WIDTH"],
+				  ["this.draw_all()", 100],
+				  ["clean_up_bullets(this)"],
+				  ["this.state['ship_hit'] = false"],
+				  ["this.state['lives']--"],
+				  ["update_lives(this)"],
+				  ["if (this.state['lives'] > 0) { get_ready_interlude(this) } else { game_over_interlude(this) }"]
+				]);
+				*/
+			}
+			else {
+
+				move_bullets(this);
+			}
+			}
+		});
+	}
+	else {
+
+		// restart animation
+		grout.start();
+	}
+
+	get_ready_interlude(grout);
+}
+
+function ship_hit(grout) {
 
 				grout.sequence('death', [
 				  ["this.sprites['ship'].tile_width = 6"],
@@ -1299,21 +1341,7 @@ function main_screen(grout) {
 				  ["update_lives(this)"],
 				  ["if (this.state['lives'] > 0) { get_ready_interlude(this) } else { game_over_interlude(this) }"]
 				]);
-			}
-			else {
 
-				move_bullets(this);
-			}
-			}
-		});
-	}
-	else {
-
-		// restart animation
-		grout.start();
-	}
-
-	get_ready_interlude(grout);
 }
 
 function get_ready_interlude(grout) {
