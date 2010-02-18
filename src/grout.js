@@ -384,8 +384,13 @@ var Has_Pixels = {
 			if (params['new_pixels'][x] != undefined
 			  && params['new_pixels'][x][y] != undefined) {
 				if (params['new_pixels'][x][y]) {
-					that.pixels[x + params['offset_x']][y + params['offset_y']] = params['new_pixels'][x][y];
-					params['count']++;
+					if (that.pixels[x + params['offset_x']] != undefined
+					  && that.pixels[x + params['offset_x']][y + params['offset_y']] != undefined
+					 ) {
+ 	
+						that.pixels[x + params['offset_x']][y + params['offset_y']] = params['new_pixels'][x][y];
+						params['count']++;
+					 }
 			  	}
 			}
 		});
