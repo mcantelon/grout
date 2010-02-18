@@ -115,6 +115,15 @@ function blood_funnel() {
 		'tile_height': TILE_HEIGHT * 4
 	}).stamp_text('game over', 7, 4, 50);
 
+	// create group for paused state
+	grout.map('new_level', {
+		'group': 'new_level',
+		'width': tile_map_width,
+		'height': tile_map_width / 2,
+		'tile_width': TILE_WIDTH * 2,
+		'tile_height': TILE_HEIGHT * 2
+	});
+
 	// show start screen
 	start_screen(grout);
 }
@@ -374,7 +383,8 @@ function new_attack_wave(grout) {
     	banker_rows = 4;
     }
     else {
-    	banker_rows = 3;
+    	banker_rows = 1;
+banker_columns = 1;
     }
 
     // determine number of turns until banker bullet moves
@@ -599,7 +609,8 @@ function move_bankers(grout) {
 
 	// if all bankers are dead, set up new attack wave
 	if (!live_bankers) {
-		new_attack_wave(grout);
+		new_level_interlude(grout);
+		//new_attack_wave(grout);
 	}
 }
 
@@ -1282,27 +1293,6 @@ function main_screen(grout) {
 			if (grout.state['ship_hit']) {
 
 				ship_hit(grout);
-				/*
-				grout.sequence('death', [
-				  ["this.sprites['ship'].tile_width = 6"],
-				  ["this.draw_all()", 100],
-				  ["this.sprites['ship'].tile_width = TILE_WIDTH"],
-				  ["this.draw_all()", 100],
-				  ["this.sprites['ship'].tile_width = 6"],
-				  ["this.draw_all()", 100],
-				  ["this.sprites['ship'].tile_width = TILE_WIDTH"],
-				  ["this.draw_all()", 100],
-				  ["this.sprites['ship'].tile_width = 6"],
-				  ["this.draw_all()", 100],
-				  ["this.sprites['ship'].tile_width = TILE_WIDTH"],
-				  ["this.draw_all()", 100],
-				  ["clean_up_bullets(this)"],
-				  ["this.state['ship_hit'] = false"],
-				  ["this.state['lives']--"],
-				  ["update_lives(this)"],
-				  ["if (this.state['lives'] > 0) { get_ready_interlude(this) } else { game_over_interlude(this) }"]
-				]);
-				*/
 			}
 			else {
 
@@ -1322,26 +1312,25 @@ function main_screen(grout) {
 
 function ship_hit(grout) {
 
-				grout.sequence('death', [
-				  ["this.sprites['ship'].tile_width = 6"],
-				  ["this.draw_all()", 100],
-				  ["this.sprites['ship'].tile_width = TILE_WIDTH"],
-				  ["this.draw_all()", 100],
-				  ["this.sprites['ship'].tile_width = 6"],
-				  ["this.draw_all()", 100],
-				  ["this.sprites['ship'].tile_width = TILE_WIDTH"],
-				  ["this.draw_all()", 100],
-				  ["this.sprites['ship'].tile_width = 6"],
-				  ["this.draw_all()", 100],
-				  ["this.sprites['ship'].tile_width = TILE_WIDTH"],
-				  ["this.draw_all()", 100],
-				  ["clean_up_bullets(this)"],
-				  ["this.state['ship_hit'] = false"],
-				  ["this.state['lives']--"],
-				  ["update_lives(this)"],
-				  ["if (this.state['lives'] > 0) { get_ready_interlude(this) } else { game_over_interlude(this) }"]
-				]);
-
+	grout.sequence('death', [
+		["this.sprites['ship'].tile_width = 6"],
+		["this.draw_all()", 100],
+		["this.sprites['ship'].tile_width = TILE_WIDTH"],
+		["this.draw_all()", 100],
+		["this.sprites['ship'].tile_width = 6"],
+		["this.draw_all()", 100],
+		["this.sprites['ship'].tile_width = TILE_WIDTH"],
+		["this.draw_all()", 100],
+		["this.sprites['ship'].tile_width = 6"],
+		["this.draw_all()", 100],
+		["this.sprites['ship'].tile_width = TILE_WIDTH"],
+		["this.draw_all()", 100],
+		["clean_up_bullets(this)"],
+		["this.state['ship_hit'] = false"],
+		["this.state['lives']--"],
+		["update_lives(this)"],
+		["if (this.state['lives'] > 0) { get_ready_interlude(this) } else { game_over_interlude(this) }"]
+	]);
 }
 
 function get_ready_interlude(grout) {
@@ -1354,11 +1343,24 @@ function get_ready_interlude(grout) {
 	]);
 }
 
-function game_over_interlude(grout) {
+function get_ready_interlude(grout) {
 
-	grout.sequence('game_over', [
+	grout.sequence('get_ready', [
 		["this.stop()"],
-		["this.draw_all('game_over')", 3000],
-		["start_screen(this)"]
+		["this.draw_all('get_ready')", 3000],
+		["this.draw_all()"],
+		["this.start()"]
+	]);
+}
+
+function new_level_interlude(grout) {
+
+	grout.maps['new_level'].stamp_text('level ' + (grout.state['wave'] + 1), 15, 15, 50);
+
+	grout.sequence('new_level', [
+		["this.stop()"],
+		["this.draw_all('new_level')", 3000],
+		["new_attack_wave(this)"],
+		["this.start()"]
 	]);
 }
