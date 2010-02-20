@@ -127,8 +127,8 @@ function blood_funnel() {
 	// set up chunky interludes
 	chunky_interlude_map(grout, 'get_ready').stamp_text('get ready!', 3, 4, 50);
 	chunky_interlude_map(grout, 'game_over').stamp_text('game over', 7, 4, 50);
-	//chunky_interlude_map(grout, 'infiltrated').stamp_text('infiltrated!', 3, 4, 50);
 
+	// set less chunky interludes
 	less_chunky_interlude_map(grout, 'new_level');
 	less_chunky_interlude_map(grout, 'infiltrated').stamp_text('infiltrated!', 3, 4, 50);
 
@@ -602,34 +602,7 @@ function move_bankers(grout) {
 
         // diving bankers can get destroyed during their movement loop
         if (grout.sprites[banker_id] != undefined) {
-
-			var bullet_shot = Math.floor(Math.random() * grout.state['banker_bullet_fire_probability']) == 1;
-
-			if (bullet_shot) {
-
-				bullet_id = 'banker_bullet_' + grout.state['banker_bullet_id'];
-
-				var diving = Math.floor(Math.random() * grout.state['banker_dive_probability']) == 1;
-
-				if (diving) {
-					// need banker to know it's own ID so it can destroy itself at end of dive
-					grout.sprites[banker_id].state['banker_id'] = banker_id;
-					grout.sprites[banker_id].state['diving'] = true;
-				}
-
-				make_bullet_sprite(
-					grout,
-					bullet_id,
-					grout.sprites[banker_id].offset_x + 8,
-					grout.sprites[banker_id].offset_y + 9,
-					'R \
-					 R',
-					{'R': 'red'}
-				);
-
-				grout.state['banker_bullets_in_motion'].push(bullet_id);
-				grout.state['banker_bullet_id']++;
-			}
+			banker_chance_to_shoot_bullet(grout, banker_id);
 		}
 	}
 
@@ -647,19 +620,57 @@ function move_bankers(grout) {
 
 	// if we've changed directions, drop bankers down
 	if (drop) {
-
-		for (var i = 0; i < grout.state['bankers'].length; i++) {
-
-			banker_id = grout.state['bankers'][i];
-			banker = grout.sprite(banker_id);
-
-			banker.offset_y++;
-		}
+		bankers_move_vertically(grout, 1);
 	}
 
 	// if all bankers are dead, set up new attack wave
 	if (!live_bankers) {
 		new_level_interlude(grout);
+	}
+}
+
+function bankers_move_vertically(grout, y_offset) {
+
+	var banker_id, banker;
+
+	for (var i = 0; i < grout.state['bankers'].length; i++) {
+
+		banker_id = grout.state['bankers'][i];
+		banker = grout.sprite(banker_id);
+
+		banker.offset_y++;
+	}
+}
+
+function banker_chance_to_shoot_bullet(grout, banker_id) {
+
+	var bullet_id, diving;
+	var bullet_shot = Math.floor(Math.random() * grout.state['banker_bullet_fire_probability']) == 1;
+
+	if (bullet_shot) {
+
+		bullet_id = 'banker_bullet_' + grout.state['banker_bullet_id'];
+
+		diving = Math.floor(Math.random() * grout.state['banker_dive_probability']) == 1;
+
+		if (diving) {
+			// need banker to know it's own ID so it can destroy itself at end of dive
+			grout.sprites[banker_id].state['banker_id'] = banker_id;
+			grout.sprites[banker_id].state['diving'] = true;
+		}
+
+		make_bullet_sprite(
+			grout,
+			bullet_id,
+			grout.sprites[banker_id].offset_x + 8,
+			grout.sprites[banker_id].offset_y + 9,
+			'R \
+			 R',
+			{'R': 'red'}
+		);
+
+		grout.state['banker_bullets_in_motion'].push(bullet_id);
+		grout.state['banker_bullet_id']++;
 	}
 }
 
