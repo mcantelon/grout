@@ -4,62 +4,32 @@ var MAX_PLAYER_BULLETS = 2;
 var SCORE_MAX_WIDTH = 50;
 var MAP_SIZE_IN_TILES = 75;
 
-function blood_funnel() {
+function standard_map(grout, map_name) {
+	return grout.map(
+		map_name,
+		{
+			'width':  MAP_SIZE_IN_TILES * 2,
+			'height': MAP_SIZE_IN_TILES,
+			'tile_width': TILE_WIDTH,
+			'tile_height': TILE_HEIGHT
+		}
+	)
+}
 
-	var canvas_width = TILE_WIDTH * MAP_SIZE_IN_TILES;
+function chunky_interlude_map(grout, map_name) {
 
-	// create new grout
-	var grout = new Grout({
-		'width':  canvas_width * 2,
-		'height': canvas_width,
-		'key_repeat_interval': 25
+	return grout.map(
+		map_name,
+		{
+			'group': map_name,
+			'width': MAP_SIZE_IN_TILES / 2,
+			'height': MAP_SIZE_IN_TILES / 4,
+			'tile_width': TILE_WIDTH * 4,
+			'tile_height': TILE_HEIGHT * 4
 	});
+}
 
-	// make the space bar and pause keys repeat slower
-	grout.key_repeat_interval_for[32] = 500;
-	grout.key_repeat_interval_for[80] = 500;
-
-    // create pixel map for background pattern
-	background_pattern = grout.map(
-	    'background_pattern', {
-	    	'width': MAP_SIZE_IN_TILES / 2,
-	    	'height': MAP_SIZE_IN_TILES / 4,
-	        'tile_width': TILE_WIDTH * 4,
-	        'tile_height': TILE_HEIGHT * 4
-	    }
-	);
-
-	// create pixel map for background
-	var background = grout.map('background', {
-		'width':  MAP_SIZE_IN_TILES * 2,
-		'height': MAP_SIZE_IN_TILES,
-		'tile_width': TILE_WIDTH,
-		'tile_height': TILE_HEIGHT
-	}).clear();
-
-	// create pixel map for collision plane
-	grout.map('collision_plane', {
-		'width':  background.width,
-		'height': background.height,
-		'tile_width': TILE_WIDTH,
-		'tile_height': TILE_HEIGHT
-	});
-
-	// create pixel map for collision plane
-	grout.map('collision_plane_2', {
-		'width':  background.width,
-		'height': background.height,
-		'tile_width': TILE_WIDTH,
-		'tile_height': TILE_HEIGHT
-	});
-
-	// create pixel map for collision plane
-	grout.map('collision_plane_3', {
-		'width':  background.width,
-		'height': background.height,
-		'tile_width': TILE_WIDTH,
-		'tile_height': TILE_HEIGHT
-	});
+function create_ship_related_sprites(grout) {
 
 	// create sprite for ship
 	var ship = grout.sprite('ship');
@@ -90,41 +60,57 @@ function blood_funnel() {
         'offset_x': 2,
         'offset_y': MAP_SIZE_IN_TILES - 6
     }).stamp_text('0', 0, 0, SCORE_MAX_WIDTH, '#444444');
+}
+
+function blood_funnel() {
+
+	var canvas_width = TILE_WIDTH * MAP_SIZE_IN_TILES;
+
+	var grout = new Grout({
+		'width':  canvas_width * 2,
+		'height': canvas_width,
+		'key_repeat_interval': 25
+	});
+
+	// make the space bar and pause keys repeat slower
+	grout.key_repeat_interval_for[32] = 500;
+	grout.key_repeat_interval_for[80] = 500;
+
+    // create pixel map for background pattern
+	background_pattern = grout.map(
+	    'background_pattern',
+	    {
+	    	'width': MAP_SIZE_IN_TILES / 2,
+	    	'height': MAP_SIZE_IN_TILES / 4,
+	        'tile_width': TILE_WIDTH * 4,
+	        'tile_height': TILE_HEIGHT * 4
+	    }
+	);
+
+	// create pixel map for background
+	var background = standard_map(grout, 'background').clear();
+
+	// create maps for collision detection
+	for(var i = 1; i <= 3; i++) {
+		standard_map(grout, 'collision_plane_' + i);
+	}
+
+	create_ship_related_sprites(grout);
 
 	// create group for paused state
 	grout.sprite('paused', {
 		'group': 'paused',
+		'width': 50,
+		'height': 50,
 		'tile_width': TILE_WIDTH,
-		'tile_height': TILE_HEIGHT,
-		'offset_x': 3,
-		'offset_y': 5
-	}).make_sprite(" \
-		**...*..*.*..**.***.**. \
-		*.*.*.*.*.*.*...*...*.* \
-		**..***.*.*..*..**..*.* \
-		*...*.*.*.*...*.*...*.* \
-		*...*.*..*..**..***.**. \
-	");
+		'tile_height': TILE_HEIGHT
+	}).stamp_text('paused', 3, 3, 50);
 
-	// create group for paused state
-	grout.map('get_ready', {
-		'group': 'get_ready',
-		'width': MAP_SIZE_IN_TILES / 2,
-		'height': MAP_SIZE_IN_TILES / 4,
-		'tile_width': TILE_WIDTH * 4,
-		'tile_height': TILE_HEIGHT * 4
-	}).stamp_text('get ready!', 3, 4, 50);
+	// set up chunky interludes
+	chunky_interlude_map(grout, 'get_ready').stamp_text('get ready!', 3, 4, 50);
+	chunky_interlude_map(grout, 'game_over').stamp_text('game over', 7, 4, 50);
 
-	// create group for paused state
-	grout.map('game_over', {
-		'group': 'game_over',
-		'width': MAP_SIZE_IN_TILES / 2,
-		'height': MAP_SIZE_IN_TILES / 4,
-		'tile_width': TILE_WIDTH * 4,
-		'tile_height': TILE_HEIGHT * 4
-	}).stamp_text('game over', 7, 4, 50);
-
-	// create group for paused state
+	// create group for new level
 	grout.map('new_level', {
 		'group': 'new_level',
 		'width': MAP_SIZE_IN_TILES,
@@ -757,7 +743,7 @@ function move_bullets(grout) {
 	var bullets_still_in_motion;
 	var bullet_id;
 
-	var collision_plane   = grout.map('collision_plane');
+	var collision_plane   = grout.map('collision_plane_1');
 	var collision_plane_2 = grout.map('collision_plane_2');
 
 	var bullet_movement_result;
@@ -1355,13 +1341,12 @@ function get_ready_interlude(grout) {
 	]);
 }
 
-function get_ready_interlude(grout) {
+function game_over_interlude(grout) {
 
-	grout.sequence('get_ready', [
+	grout.sequence('game_over', [
 		["this.stop()"],
-		["this.draw_all('get_ready')", 3000],
-		["this.draw_all()"],
-		["this.start()"]
+		["this.draw_all('game_over')", 3000],
+		["start_screen(this)"]
 	]);
 }
 
