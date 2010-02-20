@@ -92,7 +92,7 @@ function blood_funnel() {
 	});
 
 	// take note of original background color as we may mess with it
-	grout.state['background-color'] = grout.canvas.style['background-color'];
+	grout.state.background_color = grout.canvas.style['background-color'];
 
     // create pixel map for background pattern
 	background_pattern = grout.map(
@@ -139,18 +139,18 @@ function blood_funnel() {
 // restart logic
 function restart(grout) {
 
-	grout.maps['background'].clear();
+	grout.maps.background.clear();
 
-	grout.sprites['ship'].offset_x = 30;
-	grout.sprites['ship'].offset_y = grout.maps['background'].height - 11;
+	grout.sprites.ship.offset_x = 30;
+	grout.sprites.ship.offset_y = grout.maps.background.height - 11;
 
-	grout.state['score'] = 0;
-    grout.state['wave'] = 0;
-	grout.state['turns'] = 0;
+	grout.state.score = 0;
+    grout.state.wave = 0;
+	grout.state.turns = 0;
 
-	grout.state['ship_hit'] = false;
-	grout.state['banker_dead'] = []
-    grout.state['lives'] = 3;
+	grout.state.ship_hit = false;
+	grout.state.banker_dead = []
+    grout.state.lives = 3;
 
 	clean_up_bankers(grout);
 	clean_up_bullets(grout);
@@ -160,16 +160,16 @@ function restart(grout) {
 
 function update_lives(grout) {
 
-  grout.sprites['lives'].clear();
+  grout.sprites.lives.clear();
 
   // stamp ship images onto life indicator sprite
-  if (grout.state['lives'] > 0) {
+  if (grout.state.lives > 0) {
 
-    for (var i = 1; i <= grout.state['lives']; i++) {
+    for (var i = 1; i <= grout.state.lives; i++) {
 
-      grout.sprites['lives'].stamp(
-        grout.sprites['ship'].pixels,
-        grout.sprites['lives'].width - (i * (grout.sprites['ship'].width + 1)),
+      grout.sprites.lives.stamp(
+        grout.sprites.ship.pixels,
+        grout.sprites.lives.width - (i * (grout.sprites.ship.width + 1)),
         0
       );
  	}
@@ -203,19 +203,19 @@ function clean_up_bankers(grout, diving_only) {
 
 	var banker_id;
 
-	if (grout.state['bankers'] != undefined) {
+	if (grout.state.bankers != undefined) {
 
-		for (var i = 0; i < grout.state['bankers'].length; i++) {
+		for (var i = 0; i < grout.state.bankers.length; i++) {
 
-			banker_id = grout.state['bankers'][i];
+			banker_id = grout.state.bankers[i];
 
 			if (diving_only) {
 
 				banker = grout.sprites[banker_id];
 
 				if (banker != undefined
-				  && banker.state['diving'] != undefined
-				  && banker.state['diving']
+				  && banker.state.diving != undefined
+				  && banker.state.diving
 				) {
 
 					grout.delete_sprite(banker_id);
@@ -509,9 +509,9 @@ function generate_bankers(grout, banker_rows, banker_columns) {
 
 function add_to_score(grout, amount) {
 
-	grout.state['score'] += amount;
+	grout.state.score += amount;
 
-	grout.sprites['score'].clear().stamp_text(grout.state['score'] + '', 0, 0, SCORE_MAX_WIDTH, '#444444');
+	grout.sprites.score.clear().stamp_text(grout.state.score + '', 0, 0, SCORE_MAX_WIDTH, '#444444');
 }
 
 function move_bankers(grout) {
@@ -1124,7 +1124,7 @@ function create_help_next_button(grout, group, click_function) {
 		******************** \
 	", next_button_colors);
 
-	next_button.offset_x = 34;
+	next_button.offset_x = 30;
 	next_button.offset_y = 60;
 
 	// sprite click logic receives x, y in tiles
@@ -1176,7 +1176,7 @@ function help_screen_2(grout) {
 
 	var background_pattern = help_screen_background_pattern(grout, 'help_2');
 
-    help_text = 'it is the year 2000. an evil cabal of bankers known as goldman sacks is infiltrating the state, enacting laws that enable them to steal from the populice.';
+    help_text = 'it is the year 2000. an evil cabal of bankers known as goldman sacks is infiltrating world governments, enacting laws that enable them to conduct massive swindles and loot the public coffers.';
 
 	var help_text_map = create_help_text_map(grout, 'help_2').stamp_text(help_text, 5, 3, 140, 'black');
 
@@ -1200,7 +1200,7 @@ function help_screen_3(grout) {
 
 	var background_pattern = help_screen_background_pattern(grout, 'help_3');
 
-    help_text = 'As they shoot their blood funnels into your money and attempt to compromise institutions you must roam the land taking them out.';
+    help_text = 'As they shoot their blood funnels into your money and attempt to compromise public and private institutions, you must fight them using any means necessary.';
 
 	var help_text_map = create_help_text_map(grout, 'help_3').stamp_text(help_text, 5, 3, 140, 'black');
 
@@ -1224,7 +1224,7 @@ function help_screen_4(grout) {
 
 	var background_pattern = help_screen_background_pattern(grout, 'help_4');
 
-    help_text = "Spacebar shoots and arrow keys move left and right. Bankers won't kill you if you touch them so feel free to get close to them and shoot if they are infiltrating.";
+    help_text = "Spacebar shoots. arrow keys move left and right. Bankers won't kill you if you touch them so feel free to get close to them and shoot if they are attempting to infiltrate.";
 
 	var help_text_map = create_help_text_map(grout, 'help_4').stamp_text(help_text, 5, 3, 140, 'black');
 
@@ -1446,6 +1446,6 @@ function background_flash(grout) {
 
 	grout.sequence('background_flash', [
 		["this.canvas.style['background-color'] = 'red'", 25],
-		["this.canvas.style['background-color'] = this.state['background-color']"]
+		["this.canvas.style['background-color'] = this.state['background_color']"]
 	]);
 }
