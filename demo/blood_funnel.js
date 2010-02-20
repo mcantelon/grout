@@ -76,6 +76,9 @@ function blood_funnel() {
 		'key_repeat_interval': 25
 	});
 
+	// take note of original background color as we may mess with it
+	grout.state['background-color'] = grout.canvas.style['background-color'];
+
     // create pixel map for background pattern
 	background_pattern = grout.map(
 	    'background_pattern',
@@ -718,6 +721,7 @@ function move_banker_bullets(grout) {
             bullet = grout.sprites[bullet_id];
 
             if (bullet.offset_y == (grout.maps['background'].height - 1)) {
+            	background_flash(grout);
                 // REGISTER A HIT
             }
         }
@@ -1401,5 +1405,13 @@ function new_level_interlude(grout) {
 		["this.draw_all('new_level')", 3000],
 		["new_attack_wave(this)"],
 		["this.start()"]
+	]);
+}
+
+function background_flash(grout) {
+
+	grout.sequence('background_flash', [
+		["this.canvas.style['background-color'] = 'red'", 25],
+		["this.canvas.style['background-color'] = this.state['background-color']"]
 	]);
 }
