@@ -960,7 +960,7 @@ function start_screen(grout) {
 	", start_button_colors);
 
 	start_button.offset_x = 7;
-	start_button.offset_y = 58;
+	start_button.offset_y = 60;
 
 	// sprite click logic receives x, y in tiles
 	start_button.click(function(x, y) {
@@ -994,7 +994,7 @@ function start_screen(grout) {
 	", help_button_colors);
 
 	help_button.offset_x = 34;
-	help_button.offset_y = 58;
+	help_button.offset_y = 60;
 
 	// sprite click logic receives x, y in tiles
 	help_button.click(function(x, y) {
@@ -1043,9 +1043,17 @@ function help_screen(grout) {
         }
     );
 
-    help_text = 'it is the year 2000. an evil cabal of bankers known as goldman sacks has infiltrated the state, enacting laws that enable them to steal from the populice.';
+                 // As they shoot their blood funnels into your money and attempt to compromise institutions you must roam the land taking them out.
 
-    help_text_map.stamp_text(help_text, 5, 5, 140, 'black');
+                 // Spacebar shoots and arrow keys move left and right. Bankers won't kill you if you touch them so feel free to get close to them and shoot if they are infiltrating.
+
+    //help_text = 'while pretending they strive to strengthen the economy, they instead shoot their blood funnels into your cash. expose and destroy them!';
+
+    help_text = "\"The world's most powerful investment bank is a great vampire squid wrapped around the face of humanity, relentlessly jamming its blood funnel into anything that smells like money.\"";
+
+    help_text_map
+      .stamp_text(help_text, 5, 3, 140, 'black')
+      .stamp_text('-Matt Taibbi', 108, 55, 70, 'black');
 
 	var help_button = grout.sprite(
 	    'help_button', {
@@ -1070,7 +1078,7 @@ function help_screen(grout) {
 	", help_button_colors);
 
 	help_button.offset_x = 7;
-	help_button.offset_y = 58;
+	help_button.offset_y = 60;
 
 	// sprite click logic receives x, y in tiles
 	help_button.click(function(x, y) {
@@ -1104,7 +1112,7 @@ function help_screen(grout) {
 	", next_button_colors);
 
 	next_button.offset_x = 34;
-	next_button.offset_y = 58;
+	next_button.offset_y = 60;
 
 	// sprite click logic receives x, y in tiles
 	next_button.click(function(x, y) {
@@ -1153,9 +1161,9 @@ function help_screen_2(grout) {
         }
     );
 
-    help_text = 'while pretending they strive to strengthen the economy, they instead shoot their blood funnels into your cash. expose and destroy them!';
+    help_text = 'it is the year 2000. an evil cabal of bankers known as goldman sacks is infiltrating the state, enacting laws that enable them to steal from the populice.';
 
-    help_text_map.stamp_text(help_text, 5, 5, 140, 'black');
+    help_text_map.stamp_text(help_text, 5, 3, 140, 'black');
 
 	var help_button = grout.sprite(
 	    'help_button_2', {
