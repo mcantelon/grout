@@ -104,7 +104,7 @@ function blood_funnel() {
 		'height': 50,
 		'tile_width': TILE_WIDTH,
 		'tile_height': TILE_HEIGHT
-	}).stamp_text('paused', 3, 3, 50);
+	}).stamp_text('paused', 3, 3, 50)
 
 	// set up chunky interludes
 	chunky_interlude_map(grout, 'get_ready').stamp_text('get ready!', 3, 4, 50);
@@ -889,6 +889,20 @@ function start_screen(grout) {
     }
     background_pattern.stamp_text('blood funnel', 5, 5, 50, '#444444');
     background_pattern.stamp_text('blood funnel', 4, 4, 50, '#ff0000');
+
+	var author_credit = grout.sprite(
+	    'author_credit', {
+	        'group': 'start',
+	        'width': 120,
+	        'height': 20,
+	        'tile_width': TILE_WIDTH,
+	        'tile_height': TILE_HEIGHT,
+	        'offset_x': 8,
+	        'offset_y': 35
+	    }
+	)
+	.stamp_text('(c)2010 by mike cantelon', 1, 1, 80, '#555555')
+	.stamp_text('(c)2010 by mike cantelon', 0, 0, 80, '#888888');
 
     var banker = grout.sprite(
         'banker', {
