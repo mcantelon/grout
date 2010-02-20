@@ -1017,13 +1017,12 @@ function start_screen(grout) {
 	grout.draw_all('start');
 }
 
-// start screen has a blue button, which leads to another screen, and a red button
-function help_screen(grout) {
+function help_screen_background_pattern(grout, group) {
 
     // create pixel map for background pattern
 	var background_pattern = grout.map(
-	    'help_screen_background_pattern', {
-	    	'group': 'help',
+	    group, {
+	    	'group': group,
 	    	'width': MAP_SIZE_IN_TILES,
 	    	'height': MAP_SIZE_IN_TILES / 2,
 	        'tile_width': TILE_WIDTH * 2,
@@ -1031,33 +1030,29 @@ function help_screen(grout) {
 	    }
 	);
 
-    generate_buildings_background_pattern(grout.maps['help_screen_background_pattern'], 3, 6);
+	generate_buildings_background_pattern(grout.maps[group], 3, 6);
+   
+	return background_pattern;
+}
 
-    var help_text_map = grout.map(
-        'help_screen_text', {
-        	 'group': 'help',
+function create_help_text_map(grout, group) {
+
+    return grout.map(
+        group + '_text', {
+        	 'group': group,
         	 'width': MAP_SIZE_IN_TILES * 2,
         	 'height': MAP_SIZE_IN_TILES,
         	 'tile_width': TILE_WIDTH,
         	 'tile_height': TILE_HEIGHT
         }
     );
+}
 
-                 // As they shoot their blood funnels into your money and attempt to compromise institutions you must roam the land taking them out.
-
-                 // Spacebar shoots and arrow keys move left and right. Bankers won't kill you if you touch them so feel free to get close to them and shoot if they are infiltrating.
-
-    //help_text = 'while pretending they strive to strengthen the economy, they instead shoot their blood funnels into your cash. expose and destroy them!';
-
-    help_text = "\"The world's most powerful investment bank is a great vampire squid wrapped around the face of humanity, relentlessly jamming its blood funnel into anything that smells like money.\"";
-
-    help_text_map
-      .stamp_text(help_text, 5, 3, 140, 'black')
-      .stamp_text('-Matt Taibbi', 108, 55, 70, 'black');
+function create_help_back_button(grout, group, click_function) {
 
 	var help_button = grout.sprite(
-	    'help_button', {
-	        'group': 'help',
+	    group + '_back_button', {
+	        'group': group,
 	        'tile_width': TILE_WIDTH,
 	        'tile_height': TILE_HEIGHT
 	    }
@@ -1085,13 +1080,18 @@ function help_screen(grout) {
 
 		if (this.inside_margins(x, y)) {
 
-			start_screen(this.parent);
+			click_function(this.parent);
 		}
 	});
 
+	return help_button;
+}
+
+function create_help_next_button(grout, group, click_function) {
+
 	var next_button = grout.sprite(
-	    'next_button', {
-	        'group': 'help',
+	    group + '_next_button', {
+	        'group': group,
 	        'tile_width': TILE_WIDTH,
 	        'tile_height': TILE_HEIGHT
 	    }
@@ -1119,9 +1119,32 @@ function help_screen(grout) {
 
 		if (this.inside_margins(x, y)) {
 
-			help_screen_2(this.parent);
+			click_function(this.parent);
 		}
 	});
+
+	return next_button;
+}
+
+// start screen has a blue button, which leads to another screen, and a red button
+function help_screen(grout) {
+
+	var background_pattern = help_screen_background_pattern(grout, 'help');
+
+    help_text = "\"The world's most powerful investment bank is a great vampire squid wrapped around the face of humanity, relentlessly jamming its blood funnel into anything that smells like money.\"";
+
+	var help_text_map = create_help_text_map(grout, 'help')
+      .stamp_text(help_text, 5, 3, 140, 'black')
+      .stamp_text('-Matt Taibbi', 108, 55, 70, 'black');
+
+                 // As they shoot their blood funnels into your money and attempt to compromise institutions you must roam the land taking them out.
+
+                 // Spacebar shoots and arrow keys move left and right. Bankers won't kill you if you touch them so feel free to get close to them and shoot if they are infiltrating.
+
+    //help_text = 'while pretending they strive to strengthen the economy, they instead shoot their blood funnels into your cash. expose and destroy them!';
+
+	var help_button = create_help_back_button(grout, 'help', start_screen);
+	var next_button = create_help_next_button(grout, 'help', help_screen_2);
 
 	// shouldn't need to have this... :[
 	// global click logic receives x, y in pixels
@@ -1138,100 +1161,14 @@ function help_screen(grout) {
 // start screen has a blue button, which leads to another screen, and a red button
 function help_screen_2(grout) {
 
-    // create pixel map for background pattern
-	var background_pattern = grout.map(
-	    'help_screen_background_pattern_2', {
-	    	'group': 'help_2',
-	    	'width': MAP_SIZE_IN_TILES,
-	    	'height': MAP_SIZE_IN_TILES / 2,
-	        'tile_width': TILE_WIDTH * 2,
-	        'tile_height': TILE_HEIGHT * 2
-	    }
-	);
-
-    generate_buildings_background_pattern(grout.maps['help_screen_background_pattern_2'], 3, 6);
-
-    var help_text_map = grout.map(
-        'help_screen_2_text', {
-        	 'group': 'help_2',
-        	 'width': MAP_SIZE_IN_TILES * 2,
-        	 'height': MAP_SIZE_IN_TILES,
-        	 'tile_width': TILE_WIDTH,
-        	 'tile_height': TILE_HEIGHT
-        }
-    );
+	var background_pattern = help_screen_background_pattern(grout, 'help_2');
 
     help_text = 'it is the year 2000. an evil cabal of bankers known as goldman sacks is infiltrating the state, enacting laws that enable them to steal from the populice.';
 
-    help_text_map.stamp_text(help_text, 5, 3, 140, 'black');
+	var help_text_map = create_help_text_map(grout, 'help_2').stamp_text(help_text, 5, 3, 140, 'black');
 
-	var help_button = grout.sprite(
-	    'help_button_2', {
-	        'group': 'help_2',
-	        'tile_width': TILE_WIDTH,
-	        'tile_height': TILE_HEIGHT
-	    }
-	);
-
-	var help_button_colors = {'B': 'blue', 'G': 'grey'};
-
-	help_button.make_sprite(" \
-		******************* \
-		*.................* \
-		*.**...*...**.*.*.* \
-		*.*.*.*.*.*...*.*.* \
-		*.**..***.*...**..* \
-		*.*.*.*.*.*...*.*.* \
-		*.**..*.*..**.*.*.* \
-		*.................* \
-		******************* \
-	", help_button_colors);
-
-	help_button.offset_x = 7;
-	help_button.offset_y = 58;
-
-	// sprite click logic receives x, y in tiles
-	help_button.click(function(x, y) {
-
-		if (this.inside_margins(x, y)) {
-
-			start_screen(this.parent);
-		}
-	});
-
-	var next_button = grout.sprite(
-	    'next_button_2', {
-	        'group': 'help_2',
-	        'tile_width': TILE_WIDTH,
-	        'tile_height': TILE_HEIGHT
-	    }
-	);
-
-	var next_button_colors = {'R': 'red', 'G': 'grey'};
-
-	next_button.make_sprite(" \
-		******************** \
-		*..................* \
-		*.*..*.***.*.*.***.* \
-		*.**.*.*...*.*..*..* \
-		*.*.**.**...*...*..* \
-		*.*..*.*...*.*..*..* \
-		*.*..*.***.*.*..*..* \
-		*..................* \
-		******************** \
-	", next_button_colors);
-
-	next_button.offset_x = 34;
-	next_button.offset_y = 58;
-
-	// sprite click logic receives x, y in tiles
-	next_button.click(function(x, y) {
-
-		if (this.inside_margins(x, y)) {
-
-			help_screen_2(this.parent);
-		}
-	});
+	var help_button = create_help_back_button(grout, 'help_2', help_screen);
+	var next_button = create_help_next_button(grout, 'help_2', help_screen_3);
 
 	// shouldn't need to have this... :[
 	// global click logic receives x, y in pixels
@@ -1243,6 +1180,54 @@ function help_screen_2(grout) {
 	});
 
 	grout.draw_all('help_2');
+}
+
+// start screen has a blue button, which leads to another screen, and a red button
+function help_screen_3(grout) {
+
+	var background_pattern = help_screen_background_pattern(grout, 'help_3');
+
+    help_text = 'As they shoot their blood funnels into your money and attempt to compromise institutions you must roam the land taking them out.';
+
+	var help_text_map = create_help_text_map(grout, 'help_3').stamp_text(help_text, 5, 3, 140, 'black');
+
+	var help_button = create_help_back_button(grout, 'help_3', help_screen_2);
+	var next_button = create_help_next_button(grout, 'help_3', help_screen_4);
+
+	// shouldn't need to have this... :[
+	// global click logic receives x, y in pixels
+	grout.click(function (x, y) {
+	});
+
+	// negate keyboard handling
+	grout.keypress(function(key) {
+	});
+
+	grout.draw_all('help_3');
+}
+
+// start screen has a blue button, which leads to another screen, and a red button
+function help_screen_4(grout) {
+
+	var background_pattern = help_screen_background_pattern(grout, 'help_4');
+
+    help_text = "Spacebar shoots and arrow keys move left and right. Bankers won't kill you if you touch them so feel free to get close to them and shoot if they are infiltrating.";
+
+	var help_text_map = create_help_text_map(grout, 'help_4').stamp_text(help_text, 5, 3, 140, 'black');
+
+	var help_button = create_help_back_button(grout, 'help_4', help_screen_3);
+	var next_button = create_help_next_button(grout, 'help_4', start_screen);
+
+	// shouldn't need to have this... :[
+	// global click logic receives x, y in pixels
+	grout.click(function (x, y) {
+	});
+
+	// negate keyboard handling
+	grout.keypress(function(key) {
+	});
+
+	grout.draw_all('help_4');
 }
 
 function main_screen(grout) {
