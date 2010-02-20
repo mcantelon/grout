@@ -385,9 +385,8 @@ function generate_simple_background_pattern(map) {
 	map.clear();
 
 	map.cycle_through_pixels(function(that, x, y, params) {
-
+		
 		if (Math.floor(Math.random() * 2) == 1) {
-
 			that.pixels[x][y] = '#777777';
 		}
 	});
@@ -517,28 +516,23 @@ function add_to_score(grout, amount) {
 
 function move_bankers(grout) {
 
-	var banker_id;
+	var banker_id, drop, current_frame;
 	var live_bankers = 0;
 
 	var leftmost_x = 9999;
 	var rightmost_x = 0;
 
-	var drop;
-
-	var background = grout.map('background');
-
 	var lowest_x_position    = {};
 	var lowest_at_x_position = {};
 
-	var current_frame;
+	var background = grout.map('background');
+	var new_direction = '';
 
 	if (grout.state['banker_bullets_in_motion'] == undefined) {
-
 		grout.state['banker_bullets_in_motion'] = [];
 	}
 
 	if (grout.state['banker_bullet_id'] == undefined) {
-
 		grout.state['banker_bullet_id'] = 1;
 	}
 
@@ -606,21 +600,17 @@ function move_bankers(grout) {
 		}
 	}
 
-	// change direction of bankers if we near
-	// the edge of the background
+	// change direction of bankers if we near edge of the background
 	if (rightmost_x > (background.width - (grout.state['banker_pixel_movement'] + 1))) {
-		drop = true;
-		grout.state['banker_direction'] = 'left';
+		new_direction = 'left';
+	} else if (leftmost_x < (grout.state['banker_pixel_movement'] + 1)) {
+		new_direction = 'right';
 	}
 
-	if (leftmost_x < (grout.state['banker_pixel_movement'] + 1)) {
-		drop = true;
-		grout.state['banker_direction'] = 'right';
-	}
-
-	// if we've changed directions, drop bankers down
-	if (drop) {
+	// if we've changed direction, drop bankers down a bit
+	if (new_direction != '') {
 		bankers_move_vertically(grout, 1);
+		grout.state['banker_direction'] = new_direction;
 	}
 
 	// if all bankers are dead, set up new attack wave
