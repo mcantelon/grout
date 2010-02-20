@@ -260,7 +260,7 @@ var grout_pixeL_font_single_letter_data;
 // add tolower
 var grout_text_stamp_text = function(text, offset_x, offset_y, max_width, text_color, pixels_between_letters) {
 
-  var words = text.split(' ');
+  var words = text.toLowerCase().split(' ');
   var word;
   var x = 0;
   var y = 0;
