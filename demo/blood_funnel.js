@@ -1,6 +1,7 @@
 var TILE_WIDTH  = 4;
 var TILE_HEIGHT = 4;
 var MAX_PLAYER_BULLETS = 2;
+var SCORE_MAX_WIDTH = 50;
 
 function blood_funnel() {
 
@@ -73,7 +74,7 @@ function blood_funnel() {
 	ship.tile_width  = TILE_WIDTH;
 	ship.tile_height = TILE_HEIGHT;
 
-    var lives = grout.sprite('lives', {
+    grout.sprite('lives', {
         'width': (3 * (ship.width + 1)),
         'height': ship.height,
         'tile_width': TILE_WIDTH,
@@ -81,6 +82,15 @@ function blood_funnel() {
         'offset_x': (tile_map_width * 2) - ((ship.width + 1) * 3),
         'offset_y': tile_map_width - ship.height - 1
     });
+
+    grout.sprite('score', {
+        'width': tile_map_width / 2,
+        'height': 10,
+        'tile_width': TILE_WIDTH,
+        'tile_height': TILE_HEIGHT,
+        'offset_x': 2,
+        'offset_y': tile_map_width - 6
+    }).stamp_text('0', 0, 0, SCORE_MAX_WIDTH, '#444444');
 
 	// create group for paused state
 	var paused = grout.sprite('paused', {
@@ -138,6 +148,7 @@ function restart(grout) {
 	grout.sprites['ship'].offset_x = 30;
 	grout.sprites['ship'].offset_y = grout.maps['background'].height - 11;
 
+	grout.state['score'] = 0;
     grout.state['wave'] = 0;
 	new_attack_wave(grout);
 
@@ -466,6 +477,13 @@ banker_columns = 1;
 	}
 }
 
+function add_to_score(grout, amount) {
+
+	grout.state['score'] += amount;
+
+	grout.sprites['score'].clear().stamp_text(grout.state['score'] + '', 0, 0, SCORE_MAX_WIDTH, '#444444');
+}
+
 function move_bankers(grout) {
 
 	var banker_id;
@@ -515,6 +533,7 @@ function move_bankers(grout) {
 					}
 				}
 				grout.delete_sprite(banker_id);
+				add_to_score(grout, 10);
 			}
 			else {
 
