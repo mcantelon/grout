@@ -183,11 +183,32 @@ function add_money_to_background(background, rows) {
     }
 }
 
-function clean_up_bankers(grout) {
+function clean_up_bankers(grout, diving_only) {
+
+	var banker_id;
 
 	if (grout.state['bankers'] != undefined) {
+
 		for (var i = 0; i < grout.state['bankers'].length; i++) {
-			grout.delete_sprite(grout.state['bankers'][i]);
+
+			banker_id = grout.state['bankers'][i];
+
+			if (diving_only) {
+
+				banker = grout.sprites[banker_id];
+
+				if (banker != undefined
+				  && banker.state['diving'] != undefined
+				  && banker.state['diving']
+				) {
+
+					grout.delete_sprite(banker_id);
+				}
+			}
+			else {
+
+				grout.delete_sprite(banker_id);
+			}
 		}
 	}
 }
@@ -616,7 +637,6 @@ function move_bankers(grout) {
 	// if all bankers are dead, set up new attack wave
 	if (!live_bankers) {
 		new_level_interlude(grout);
-		//new_attack_wave(grout);
 	}
 }
 
@@ -1326,6 +1346,7 @@ function ship_hit(grout) {
 		["this.state['lives']--"],
 		["update_lives(this)"],
 		["clean_up_bullets(this)"],
+		["clean_up_bankers(this, true)"],
 		["if (this.state['lives'] > 0) { get_ready_interlude(this) } else { game_over_interlude(this) }"]
 	]);
 }
