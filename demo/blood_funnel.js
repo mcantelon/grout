@@ -322,7 +322,7 @@ function add_banker_frames(banker, banker_skin_color, banker_hair_color) {
 	", banker_color_map(banker_skin_color, banker_hair_color));
 }
 
-function generate_buildings_background_pattern(grout, map_name, width_min, width_max) {
+function generate_buildings_background_pattern(map, width_min, width_max) {
 
   var rel_x = 0;
   var building_width = 0;
@@ -331,11 +331,11 @@ function generate_buildings_background_pattern(grout, map_name, width_min, width
   var start_y;
   var pixel_color;
 
-  grout.maps[map_name].clear();
+  map.clear();
 
   for (possible_width = width_min; possible_width < width_max; possible_width = possible_width + 2) {
 
-    for (var x = 0; x < Math.floor(grout.maps[map_name].width); x++) {
+    for (var x = 0; x < Math.floor(map.width); x++) {
 
       // if starting a building or completing a building, randomize factors
       if (rel_x >= building_width) {
@@ -343,9 +343,9 @@ function generate_buildings_background_pattern(grout, map_name, width_min, width
         rel_x = 0;
         building_width = Math.floor(Math.random() * possible_width) + 1;
 
-        possible_height = Math.floor(grout.maps[map_name].height) - 1;
+        possible_height = Math.floor(map.height) - 1;
         building_height = Math.floor(Math.random() * possible_height);
-        start_y = Math.floor(grout.maps[map_name].height) - building_height;
+        start_y = Math.floor(map.height) - building_height;
       }
 
       rel_x++;
@@ -361,7 +361,7 @@ function generate_buildings_background_pattern(grout, map_name, width_min, width
         	pixel_color = '#' + ((possible_width + 4) * 1111) + '00';
         }
 
-        grout.maps[map_name].pixels[x][y] = pixel_color;
+        map.pixels[x][y] = pixel_color;
       }
     }
   }
@@ -388,7 +388,7 @@ function new_attack_wave(grout) {
 
     grout.state['wave']++;
 
-    generate_buildings_background_pattern(grout, 'background_pattern', 1, 4);
+    generate_buildings_background_pattern(grout.maps['background_pattern'], 1, 4);
 
     grout.state['banker_pixel_movement'] = 1;
     grout.state['banker_bullet_fire_probability'] = 5;
@@ -884,7 +884,7 @@ function start_screen(grout) {
 	    }
 	);
 
-    generate_buildings_background_pattern(grout, 'start_screen_background_pattern', 3, 6);
+    generate_buildings_background_pattern(grout.maps['start_screen_background_pattern'], 3, 6);
 
     for (var i = 0; i < 6; i++) {
 
@@ -1027,7 +1027,7 @@ function help_screen(grout) {
 	    }
 	);
 
-    generate_buildings_background_pattern(grout, 'help_screen_background_pattern', 3, 6);
+    generate_buildings_background_pattern(grout.maps['help_screen_background_pattern'], 3, 6);
 
     var help_text_map = grout.map(
         'help_screen_text', {
@@ -1137,7 +1137,7 @@ function help_screen_2(grout) {
 	    }
 	);
 
-    generate_buildings_background_pattern(grout, 'help_screen_background_pattern_2', 3, 6);
+    generate_buildings_background_pattern(grout.maps['help_screen_background_pattern_2'], 3, 6);
 
     var help_text_map = grout.map(
         'help_screen_2_text', {
