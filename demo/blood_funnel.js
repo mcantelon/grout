@@ -33,6 +33,21 @@ function chunky_interlude_map(grout, map_name) {
 	return map;
 }
 
+function less_chunky_interlude_map(grout, map_name) {
+
+	var map = grout.map(map_name, {
+		'group': map_name,
+		'width': MAP_SIZE_IN_TILES,
+		'height': MAP_SIZE_IN_TILES / 2,
+		'tile_width': TILE_WIDTH * 2,
+		'tile_height': TILE_HEIGHT * 2
+	});
+
+	generate_simple_background_pattern(map);
+
+	return map;
+}
+
 function create_ship_related_sprites(grout) {
 
 	// create sprite for ship
@@ -112,15 +127,9 @@ function blood_funnel() {
 	// set up chunky interludes
 	chunky_interlude_map(grout, 'get_ready').stamp_text('get ready!', 3, 4, 50);
 	chunky_interlude_map(grout, 'game_over').stamp_text('game over', 7, 4, 50);
+	chunky_interlude_map(grout, 'infiltrated').stamp_text('infiltrated!', 3, 4, 50);
 
-	// create group for new level
-	grout.map('new_level', {
-		'group': 'new_level',
-		'width': MAP_SIZE_IN_TILES,
-		'height': MAP_SIZE_IN_TILES / 2,
-		'tile_width': TILE_WIDTH * 2,
-		'tile_height': TILE_HEIGHT * 2
-	});
+	less_chunky_interlude_map(grout, 'new_level');
 
 	// show start screen
 	start_screen(grout);
@@ -381,6 +390,8 @@ function generate_simple_background_pattern(map) {
 			that.pixels[x][y] = '#777777';
 		}
 	});
+
+	return map;
 }
 
 function new_attack_wave(grout) {
@@ -483,7 +494,7 @@ function generate_bankers(grout, banker_rows, banker_columns) {
                   	if (banker.offset_y > banker.parent.maps['background'].height) {
 
                   		banker.parent.delete_sprite(banker.state['banker_id']);
-                  		ship_hit(banker.parent);
+                  		infiltrated_interlude(banker.parent);
                   	}
                   	else {
                   	    banker.offset_y += 1;
@@ -1345,6 +1356,28 @@ function main_screen(grout) {
 	get_ready_interlude(grout);
 }
 
+function kill_player(grout) {
+	
+	clean_up_bullets(grout)
+
+	grout.state['lives']--
+	update_lives(grout)
+
+	clean_up_bullets(grout)
+	clean_up_bankers(grout, true)
+
+	grout.state['ship_hit'] = false
+
+	if (grout.state['lives'] > 0) {
+
+		get_ready_interlude(grout)
+	}
+	else {
+
+		game_over_interlude(grout)
+	}
+}
+
 function ship_hit(grout) {
 
 	grout.sequence('death', [
@@ -1360,13 +1393,7 @@ function ship_hit(grout) {
 		["this.draw_all()", 100],
 		["this.sprites['ship'].tile_width = TILE_WIDTH"],
 		["this.draw_all()", 100],
-		["clean_up_bullets(this)"],
-		["this.state['ship_hit'] = false"],
-		["this.state['lives']--"],
-		["update_lives(this)"],
-		["clean_up_bullets(this)"],
-		["clean_up_bankers(this, true)"],
-		["if (this.state['lives'] > 0) { get_ready_interlude(this) } else { game_over_interlude(this) }"]
+		["kill_player(this)"]
 	]);
 }
 
@@ -1377,6 +1404,16 @@ function get_ready_interlude(grout) {
 		["this.draw_all('get_ready')", 3000],
 		["this.draw_all()"],
 		["this.start()"]
+	]);
+}
+
+function infiltrated_interlude(grout) {
+
+	grout.sequence('infiltrated', [
+		["this.stop()"],
+		["this.draw_all('infiltrated')", 3000],
+		["this.draw_all()"],
+		["kill_player(this)"]
 	]);
 }
 
@@ -1391,7 +1428,9 @@ function game_over_interlude(grout) {
 
 function new_level_interlude(grout) {
 
-	grout.maps['new_level'].clear().stamp_text('level ' + (grout.state['wave'] + 1), 15, 15, 50);
+	grout.maps['new_level'].clear()
+	generate_simple_background_pattern(grout.maps['new_level'])
+	grout.maps['new_level'].stamp_text('level ' + (grout.state['wave'] + 1), 15, 15, 50)
 
 	grout.sequence('new_level', [
 		["this.stop()"],
