@@ -127,9 +127,10 @@ function blood_funnel() {
 	// set up chunky interludes
 	chunky_interlude_map(grout, 'get_ready').stamp_text('get ready!', 3, 4, 50);
 	chunky_interlude_map(grout, 'game_over').stamp_text('game over', 7, 4, 50);
-	chunky_interlude_map(grout, 'infiltrated').stamp_text('infiltrated!', 3, 4, 50);
+	//chunky_interlude_map(grout, 'infiltrated').stamp_text('infiltrated!', 3, 4, 50);
 
 	less_chunky_interlude_map(grout, 'new_level');
+	less_chunky_interlude_map(grout, 'infiltrated').stamp_text('infiltrated!', 3, 4, 50);
 
 	// show start screen
 	start_screen(grout);
