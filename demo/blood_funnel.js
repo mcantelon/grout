@@ -135,6 +135,7 @@ function restart(grout) {
 	grout.state['banker_dead'] = []
     grout.state['lives'] = 3;
 
+	clean_up_bankers(grout);
 	clean_up_bullets(grout);
 // CLEAN UP BANKERS?
     update_lives(grout);
@@ -180,6 +181,15 @@ function add_money_to_background(background, rows) {
         	x_adjust = 0;
         }
     }
+}
+
+function clean_up_bankers(grout) {
+
+	if (grout.state['bankers'] != undefined) {
+		for (var i = 0; i < grout.state['bankers'].length; i++) {
+			grout.delete_sprite(grout.state['bankers'][i]);
+		}
+	}
 }
 
 function clean_up_bullets(grout) {
@@ -729,7 +739,7 @@ function move_banker_bullets(grout) {
 	return false;
 }
 
-function move_bullets(grout) {
+function move_player_bullets(grout) {
 
 	var bullet;
 	var bullets_still_in_motion;
@@ -821,7 +831,6 @@ function move_bullet_sprites(grout, bullets_in_motion, y_adjustment, max_y, coll
 				else {
 
 					grout.delete_sprite(bullet_id);
-					//delete grout.sprites[bullet_id];
 				}
 			}
 		}
@@ -1283,7 +1292,7 @@ function main_screen(grout) {
 					ship_hit(grout);
 				}
 
-				move_bullets(this);
+				move_player_bullets(this);
 			}
 		});
 	}
