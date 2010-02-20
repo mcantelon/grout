@@ -291,6 +291,8 @@ var grout_text_stamp_text = function(text, offset_x, offset_y, max_width, text_c
       x = x + 5 + pixels_between_letters;
     }
   }
+
+  return this;
 }
 
 Map.prototype.stamp_text = grout_text_stamp_text;

@@ -18,7 +18,7 @@ function standard_map(grout, map_name) {
 
 function chunky_interlude_map(grout, map_name) {
 
-	return grout.map(
+	var map = grout.map(
 		map_name,
 		{
 			'group': map_name,
@@ -27,6 +27,10 @@ function chunky_interlude_map(grout, map_name) {
 			'tile_width': TILE_WIDTH * 4,
 			'tile_height': TILE_HEIGHT * 4
 	});
+
+	generate_simple_background_pattern(map);
+
+	return map;
 }
 
 function create_ship_related_sprites(grout) {
@@ -363,6 +367,19 @@ function generate_buildings_background_pattern(grout, map_name, width_min, width
   }
 }
 
+function generate_simple_background_pattern(map) {
+
+	map.clear();
+
+	map.cycle_through_pixels(function(that, x, y, params) {
+
+		if (Math.floor(Math.random() * 2) == 1) {
+
+			that.pixels[x][y] = '#777777';
+		}
+	});
+}
+
 function new_attack_wave(grout) {
 
 	var banker_number = 1;
@@ -373,18 +390,6 @@ function new_attack_wave(grout) {
     grout.state['wave']++;
 
     generate_buildings_background_pattern(grout, 'background_pattern', 1, 4);
-
-    /*
-    grout.maps['background_pattern'].clear();
-
-    grout.maps['background_pattern'].cycle_through_pixels(function(that, x, y, params) {
-
-        if (Math.floor(Math.random() * 2) == 1) {
-
-            that.pixels[x][y] = '#777777';
-        }
-    });
-    */
 
     grout.state['banker_pixel_movement'] = 1;
     grout.state['banker_bullet_fire_probability'] = 5;
