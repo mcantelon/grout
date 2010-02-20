@@ -183,6 +183,8 @@ var Has_Pixels = {
 
 			that.pixels[x][y] = false;
 		});
+
+		return this;
 	},
 
 	inside_margins:function(x, y) {
