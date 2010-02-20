@@ -141,7 +141,6 @@ function restart(grout) {
 
 	clean_up_bankers(grout);
 	clean_up_bullets(grout);
-// CLEAN UP BANKERS?
     update_lives(grout);
 	new_attack_wave(grout);
 }
@@ -338,7 +337,7 @@ function generate_buildings_background_pattern(grout, map_name, width_min, width
 
     for (var x = 0; x < Math.floor(grout.maps[map_name].width); x++) {
 
-      // 
+      // if starting a building or completing a building, randomize factors
       if (rel_x >= building_width) {
 
         rel_x = 0;
@@ -351,6 +350,7 @@ function generate_buildings_background_pattern(grout, map_name, width_min, width
 
       rel_x++;
 
+      // draw a stripe of the building using current factors
       for (var y = start_y; y < possible_height; y++) {
 
         // closer buildings are the lighter grey they are
@@ -382,7 +382,6 @@ function generate_simple_background_pattern(map) {
 
 function new_attack_wave(grout) {
 
-	var banker_number = 1;
     var banker_rows;
     var banker_columns = 7
     var money_rows;
@@ -429,9 +428,13 @@ banker_columns = 1;
         money_rows = 4;
     }
 
-//banker_columns = 1; banker_rows = 1;
-
     add_money_to_background(grout.maps['background'], money_rows);
+    generate_bankers(grout, banker_rows, banker_columns);
+}
+
+function generate_bankers(grout, banker_rows, banker_columns) {
+
+	var banker_number = 1;
 
 	grout.state['bankers'] = [];
 	grout.state['banker_direction'] = 'right';
