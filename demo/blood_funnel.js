@@ -2,11 +2,11 @@ var TILE_WIDTH  = 4;
 var TILE_HEIGHT = 4;
 var MAX_PLAYER_BULLETS = 2;
 var SCORE_MAX_WIDTH = 50;
+var MAP_SIZE_IN_TILES = 75;
 
 function blood_funnel() {
 
-	var tile_map_width = 75;
-	var canvas_width = TILE_WIDTH * tile_map_width;
+	var canvas_width = TILE_WIDTH * MAP_SIZE_IN_TILES;
 
 	// create new grout
 	var grout = new Grout({
@@ -20,10 +20,10 @@ function blood_funnel() {
 	grout.key_repeat_interval_for[80] = 500;
 
     // create pixel map for background pattern
-	var background_pattern = grout.map(
+	background_pattern = grout.map(
 	    'background_pattern', {
-	    	'width': tile_map_width / 2,
-	    	'height': tile_map_width / 4,
+	    	'width': MAP_SIZE_IN_TILES / 2,
+	    	'height': MAP_SIZE_IN_TILES / 4,
 	        'tile_width': TILE_WIDTH * 4,
 	        'tile_height': TILE_HEIGHT * 4
 	    }
@@ -31,15 +31,14 @@ function blood_funnel() {
 
 	// create pixel map for background
 	var background = grout.map('background', {
-		'width':  tile_map_width * 2,
-		'height': tile_map_width,
+		'width':  MAP_SIZE_IN_TILES * 2,
+		'height': MAP_SIZE_IN_TILES,
 		'tile_width': TILE_WIDTH,
 		'tile_height': TILE_HEIGHT
-	});
-	background.clear();
+	}).clear();
 
 	// create pixel map for collision plane
-	var collision_plane = grout.map('collision_plane', {
+	grout.map('collision_plane', {
 		'width':  background.width,
 		'height': background.height,
 		'tile_width': TILE_WIDTH,
@@ -47,7 +46,7 @@ function blood_funnel() {
 	});
 
 	// create pixel map for collision plane
-	var collision_plane_2 = grout.map('collision_plane_2', {
+	grout.map('collision_plane_2', {
 		'width':  background.width,
 		'height': background.height,
 		'tile_width': TILE_WIDTH,
@@ -55,7 +54,7 @@ function blood_funnel() {
 	});
 
 	// create pixel map for collision plane
-	var collision_plane_3 = grout.map('collision_plane_3', {
+	grout.map('collision_plane_3', {
 		'width':  background.width,
 		'height': background.height,
 		'tile_width': TILE_WIDTH,
@@ -79,21 +78,21 @@ function blood_funnel() {
         'height': ship.height,
         'tile_width': TILE_WIDTH,
         'tile_height': TILE_HEIGHT,
-        'offset_x': (tile_map_width * 2) - ((ship.width + 1) * 3),
-        'offset_y': tile_map_width - ship.height - 1
+        'offset_x': (MAP_SIZE_IN_TILES * 2) - ((ship.width + 1) * 3),
+        'offset_y': MAP_SIZE_IN_TILES - ship.height - 1
     });
 
     grout.sprite('score', {
-        'width': tile_map_width / 2,
+        'width': MAP_SIZE_IN_TILES / 2,
         'height': 10,
         'tile_width': TILE_WIDTH,
         'tile_height': TILE_HEIGHT,
         'offset_x': 2,
-        'offset_y': tile_map_width - 6
+        'offset_y': MAP_SIZE_IN_TILES - 6
     }).stamp_text('0', 0, 0, SCORE_MAX_WIDTH, '#444444');
 
 	// create group for paused state
-	var paused = grout.sprite('paused', {
+	grout.sprite('paused', {
 		'group': 'paused',
 		'tile_width': TILE_WIDTH,
 		'tile_height': TILE_HEIGHT,
@@ -110,8 +109,8 @@ function blood_funnel() {
 	// create group for paused state
 	grout.map('get_ready', {
 		'group': 'get_ready',
-		'width': tile_map_width / 2,
-		'height': tile_map_width / 4,
+		'width': MAP_SIZE_IN_TILES / 2,
+		'height': MAP_SIZE_IN_TILES / 4,
 		'tile_width': TILE_WIDTH * 4,
 		'tile_height': TILE_HEIGHT * 4
 	}).stamp_text('get ready!', 3, 4, 50);
@@ -119,8 +118,8 @@ function blood_funnel() {
 	// create group for paused state
 	grout.map('game_over', {
 		'group': 'game_over',
-		'width': tile_map_width / 2,
-		'height': tile_map_width / 4,
+		'width': MAP_SIZE_IN_TILES / 2,
+		'height': MAP_SIZE_IN_TILES / 4,
 		'tile_width': TILE_WIDTH * 4,
 		'tile_height': TILE_HEIGHT * 4
 	}).stamp_text('game over', 7, 4, 50);
@@ -128,8 +127,8 @@ function blood_funnel() {
 	// create group for paused state
 	grout.map('new_level', {
 		'group': 'new_level',
-		'width': tile_map_width,
-		'height': tile_map_width / 2,
+		'width': MAP_SIZE_IN_TILES,
+		'height': MAP_SIZE_IN_TILES / 2,
 		'tile_width': TILE_WIDTH * 2,
 		'tile_height': TILE_HEIGHT * 2
 	});
@@ -859,14 +858,12 @@ function move_bullet_sprites(grout, bullets_in_motion, y_adjustment, max_y, coll
 // start screen has a blue button, which leads to another screen, and a red button
 function start_screen(grout) {
 
-	var tile_map_width = 75;
-
     // create pixel map for background pattern
 	var background_pattern = grout.map(
 	    'start_screen_background_pattern', {
 	    	'group': 'start',
-	    	'width': tile_map_width,
-	    	'height': tile_map_width / 2,
+	    	'width': MAP_SIZE_IN_TILES,
+	    	'height': MAP_SIZE_IN_TILES / 2,
 	        'tile_width': TILE_WIDTH * 2,
 	        'tile_height': TILE_HEIGHT * 2
 	    }
@@ -990,14 +987,12 @@ function start_screen(grout) {
 // start screen has a blue button, which leads to another screen, and a red button
 function help_screen(grout) {
 
-	var tile_map_width = 75;
-
     // create pixel map for background pattern
 	var background_pattern = grout.map(
 	    'help_screen_background_pattern', {
 	    	'group': 'help',
-	    	'width': tile_map_width,
-	    	'height': tile_map_width / 2,
+	    	'width': MAP_SIZE_IN_TILES,
+	    	'height': MAP_SIZE_IN_TILES / 2,
 	        'tile_width': TILE_WIDTH * 2,
 	        'tile_height': TILE_HEIGHT * 2
 	    }
@@ -1008,8 +1003,8 @@ function help_screen(grout) {
     var help_text_map = grout.map(
         'help_screen_text', {
         	 'group': 'help',
-        	 'width': tile_map_width * 2,
-        	 'height': tile_map_width,
+        	 'width': MAP_SIZE_IN_TILES * 2,
+        	 'height': MAP_SIZE_IN_TILES,
         	 'tile_width': TILE_WIDTH,
         	 'tile_height': TILE_HEIGHT
         }
@@ -1102,14 +1097,12 @@ function help_screen(grout) {
 // start screen has a blue button, which leads to another screen, and a red button
 function help_screen_2(grout) {
 
-	var tile_map_width = 75;
-
     // create pixel map for background pattern
 	var background_pattern = grout.map(
 	    'help_screen_background_pattern_2', {
 	    	'group': 'help_2',
-	    	'width': tile_map_width,
-	    	'height': tile_map_width / 2,
+	    	'width': MAP_SIZE_IN_TILES,
+	    	'height': MAP_SIZE_IN_TILES / 2,
 	        'tile_width': TILE_WIDTH * 2,
 	        'tile_height': TILE_HEIGHT * 2
 	    }
@@ -1120,8 +1113,8 @@ function help_screen_2(grout) {
     var help_text_map = grout.map(
         'help_screen_2_text', {
         	 'group': 'help_2',
-        	 'width': tile_map_width * 2,
-        	 'height': tile_map_width,
+        	 'width': MAP_SIZE_IN_TILES * 2,
+        	 'height': MAP_SIZE_IN_TILES,
         	 'tile_width': TILE_WIDTH,
         	 'tile_height': TILE_HEIGHT
         }
@@ -1374,7 +1367,7 @@ function get_ready_interlude(grout) {
 
 function new_level_interlude(grout) {
 
-	grout.maps['new_level'].stamp_text('level ' + (grout.state['wave'] + 1), 15, 15, 50);
+	grout.maps['new_level'].clear().stamp_text('level ' + (grout.state['wave'] + 1), 15, 15, 50);
 
 	grout.sequence('new_level', [
 		["this.stop()"],
