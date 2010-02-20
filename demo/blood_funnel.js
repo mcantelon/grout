@@ -72,10 +72,6 @@ function blood_funnel() {
 		'key_repeat_interval': 25
 	});
 
-	// make the space bar and pause keys repeat slower
-	grout.key_repeat_interval_for[32] = 500;
-	grout.key_repeat_interval_for[80] = 500;
-
     // create pixel map for background pattern
 	background_pattern = grout.map(
 	    'background_pattern',
@@ -128,25 +124,21 @@ function restart(grout) {
 
 	grout.maps['background'].clear();
 
-    //add_money_to_background(grout.maps['background'], 4);
-
 	grout.sprites['ship'].offset_x = 30;
 	grout.sprites['ship'].offset_y = grout.maps['background'].height - 11;
 
 	grout.state['score'] = 0;
     grout.state['wave'] = 0;
-	new_attack_wave(grout);
-
 	grout.state['turns'] = 0;
+
 	grout.state['ship_hit'] = false;
 	grout.state['banker_dead'] = []
     grout.state['lives'] = 3;
 
 	clean_up_bullets(grout);
-
+// CLEAN UP BANKERS?
     update_lives(grout);
-
-	grout.draw_all();
+	new_attack_wave(grout);
 }
 
 function update_lives(grout) {
@@ -1195,13 +1187,17 @@ function main_screen(grout) {
 	var background = grout.maps['background'];
 	var ship = grout.sprites['ship'];
 
-	// set up keyboard handling
+	// make the space bar and pause keys repeat slower
+	grout.key_repeat_interval_for[32] = 500;
+	grout.key_repeat_interval_for[80] = 500;
+
+	// specify keyboard handling logic
 	grout.keypress(function(key) {
 
 		var margin_space;
 		var response;
 
-		// pause/unpause
+		// pause/unpause handling
 		if (key == 80) {
 
 			grout.stopped = !grout.stopped;
@@ -1214,6 +1210,7 @@ function main_screen(grout) {
 			return;
 		}
 
+		// game input handling if unpaused
 		if (!grout.stopped) {
 
 			// space bar triggers shooting
@@ -1261,50 +1258,42 @@ function main_screen(grout) {
 
 	restart(grout);
 
-	// start animation loop if it isn't paused
+	// start animation loop if it isn't paused --- WHAT HAPPEN IF THIS GONE?
 	if (!grout.stopped) {
 
-// for level advances, bring down animate delay 2 and every two levels maybe
-// lower pile of money (can just lower state point by one and it'll do same thing)
-
-// need to have some kind of logic for when player loses a life
-
-// should see how things work when things are higher res, more bankers
-
-		grout.animate(5, function () {
+		grout.animate(25, function () {
 
 			if (!this.stopped) {
 
-			this.state['turns']++;
+				this.state['turns']++;
 
-			if (this.state['turns'] % grout.state['turns_until_banker_move'] == 0) {
+				if (this.state['turns'] % grout.state['turns_until_banker_move'] == 0) {
 
-				move_bankers(this);
-			}
+					move_bankers(this);
+				}
 
-            // if banker bullets allowed to move this turn, move them
-			if (this.state['turns'] % this.state['banker_bullet_movement_turns'] == 0) {
+        	    // if banker bullets allowed to move this turn, move them
+				if (this.state['turns'] % this.state['banker_bullet_movement_turns'] == 0) {
 
-				move_banker_bullets(this);
-			}
+					move_banker_bullets(this);
+				}
 
-			if (grout.state['ship_hit']) {
+				if (grout.state['ship_hit']) {
 
-				ship_hit(grout);
-			}
-			else {
+					ship_hit(grout);
+				}
 
 				move_bullets(this);
-			}
 			}
 		});
 	}
 	else {
 
-		// restart animation
+		// restart animation --- EH?
 		grout.start();
 	}
 
+	// let player know game is starting
 	get_ready_interlude(grout);
 }
 
@@ -1327,6 +1316,7 @@ function ship_hit(grout) {
 		["this.state['ship_hit'] = false"],
 		["this.state['lives']--"],
 		["update_lives(this)"],
+		["clean_up_bullets(this)"],
 		["if (this.state['lives'] > 0) { get_ready_interlude(this) } else { game_over_interlude(this) }"]
 	]);
 }
