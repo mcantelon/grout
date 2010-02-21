@@ -130,7 +130,7 @@ function blood_funnel() {
 
 	// set less chunky interludes
 	less_chunky_interlude_map(grout, 'new_level');
-	less_chunky_interlude_map(grout, 'infiltrated').stamp_text('infiltrated!', 3, 4, 50);
+	less_chunky_interlude_map(grout, 'infiltrated').stamp_text('infiltrated!', 3, 6, 50);
 
 	// show start screen
 	start_screen(grout);
@@ -1430,9 +1430,14 @@ function game_over_interlude(grout) {
 
 function new_level_interlude(grout) {
 
+	var bonus = grout.maps.background.count_pixels(0, 0, grout.maps.background.width, grout.maps.background.height);
+	add_to_score(grout, bonus)
+
 	grout.maps['new_level'].clear()
 	generate_simple_background_pattern(grout.maps['new_level'])
-	grout.maps['new_level'].stamp_text('level ' + (grout.state['wave'] + 1), 15, 15, 50)
+	grout.maps['new_level']
+	  .stamp_text('level ' + (grout.state['wave'] + 1), 12, 12, 50)
+	  .stamp_text('bonus:' + bonus, 12, 22, 80)
 
 	grout.sequence('new_level', [
 		["this.stop()"],
