@@ -394,24 +394,79 @@ function generate_simple_background_pattern(map) {
 	return map;
 }
 
+function set_attack_wave_properties(grout, wave) {
+
+	var change_state_to = 0;
+	var changed_state;
+
+	// 0 is default, others override if they exist
+	var level_attributes = {
+		0: {
+			'state':
+			{
+				'banker_pixel_movement': 1,
+				'banker_bullet_fire_probability': 6,
+				'banker_dive_probability': 100,
+				'turns_until_banker_move': 10,
+				'banker_bullet_movement_turns': 3
+			},
+			'other':
+			{
+				'banker_rows': 2,
+				'banker_columns': 4,
+				'money_rows': 3
+			}
+		},
+		2: {
+			'state':
+			{
+				'banker_pixel_movement': 1,
+				'banker_bullet_fire_probability': 5,
+				'banker_dive_probability': 100,
+				'turns_until_banker_move': 8,
+				'banker_bullet_movement_turns': 1
+			},
+			'other':
+			{
+				'banker_rows': 2,
+				'banker_columns': 4,
+				'money_rows': 1
+			}
+		},
+	};
+
+	if (level_attributes[wave] != undefined
+	  && level_attributes[wave].state != undefined
+	) {
+
+		change_state_to = wave;
+	}
+
+	for(changed_state in level_attributes[change_state_to].state) {
+		grout.state[changed_state] = level_attributes[change_state_to].state[changed_state];
+		alert('change state ' + changed_state + ' to ' + level_attributes[change_state_to].state[changed_state]);
+	}
+
+	return level_attributes[change_state_to].other;
+}
+
 function new_attack_wave(grout) {
 
-    var banker_rows;
-    var banker_columns = 7
-    var money_rows;
+    var banker_rows, banker_columns, money_rows, level_settings;
 
     grout.state['wave']++;
 
     generate_buildings_background_pattern(grout.maps['background_pattern'], 1, 4);
 
-    grout.state['banker_pixel_movement'] = 1;
-    grout.state['banker_bullet_fire_probability'] = 5;
-	grout.state['banker_dive_probability'] = 100;
-	grout.state['turns_until_banker_move'] = 10;
+	level_settings = set_attack_wave_properties(grout, grout.state['wave']);
+	banker_rows = level_settings.banker_rows;
+	banker_columns = level_settings.banker_columns;
+	money_rows = level_settings.money_rows;
+	// does money row differentiations, etc., work?
 
-	grout.state['banker_death_counter'] = 0;
 	grout.state['banker_deaths_until_pixel_movement_increase'] = 3;
 
+	/*
     // determine number of banker rows
     if (grout.state['wave'] >= 4) {
     	banker_rows = 5;
@@ -420,8 +475,8 @@ function new_attack_wave(grout) {
     	banker_rows = 4;
     }
     else {
-    	banker_rows = 1;
-banker_columns = 1;
+    	banker_rows = 3;
+banker_columns = 3;
     }
 
     // determine number of turns until banker bullet moves
@@ -441,7 +496,9 @@ banker_columns = 1;
     else {
         money_rows = 4;
     }
+	*/
 
+	clean_up_bullets(grout);
     add_money_to_background(grout.maps['background'], money_rows);
     generate_bankers(grout, banker_rows, banker_columns);
 }
