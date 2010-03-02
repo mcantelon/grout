@@ -91,9 +91,28 @@ function blood_funnel() {
 		'key_repeat_interval': 25
 	});
 
-	grout.add_sound('poot', [{'src': 'demo/sound/blood_funnel_tweet.ogg', 'type': 'audio/ogg'}]);
-	grout.add_sound('intro_soundtrack', [{'src': 'http://mikecantelon.com/downloads/bloodfunnel/bloodfunnel_intro.ogg', 'type': 'audio/ogg'}], 'loop="loop"');
-	grout.add_sound('game_soundtrack', [{'src': 'http://mikecantelon.com/downloads/bloodfunnel/bloodfunnel_soundtrack.ogg', 'type': 'audio/ogg'}], 'loop="loop"');
+	var effects = {
+		'shoot': 'demo/sound/blood_funnel_tweet.ogg',
+		'death': 'demo/sound/bloodfunnel_death.ogg',
+		'level': 'demo/sound/bloodfunnel_level.ogg'
+	};
+
+	for (effect in effects) {
+		grout.add_sound(effect, [{
+			'src': effects[effect],
+			'type': 'audio/ogg'
+		}]);
+	}
+
+	grout.add_sound('intro_soundtrack', [{
+		'src': 'http://mikecantelon.com/downloads/bloodfunnel/bloodfunnel_intro.ogg',
+		'type': 'audio/ogg'
+	}], 'loop="loop"');
+
+	grout.add_sound('game_soundtrack', [{
+		'src': 'http://mikecantelon.com/downloads/bloodfunnel/bloodfunnel_soundtrack.ogg',
+		'type': 'audio/ogg'
+	}], 'loop="loop"');
 
 	// take note of original background color as we may mess with it
 	grout.state.background_color = grout.canvas.style['background-color'];
@@ -738,7 +757,7 @@ function shoot_bullet(grout, ship) {
 	if (grout.state['bullets_in_motion'] == undefined
 	  || grout.state['bullets_in_motion'].length < MAX_PLAYER_BULLETS) {
 
-grout.play_sound('poot');
+		grout.play_sound('shoot');
 
 		// get next bullet ID
 		grout.state['bullet_id'] = (grout.state['bullet_id'] == undefined)
@@ -1458,6 +1477,7 @@ function kill_player(grout) {
 function ship_hit(grout) {
 
 	grout.sequence('death', [
+		["this.play_sound('death')"],
 		["this.sprites['ship'].tile_width = 6"],
 		["this.draw_all()", 100],
 		["this.sprites['ship'].tile_width = TILE_WIDTH"],
@@ -1516,6 +1536,7 @@ function new_level_interlude(grout) {
 
 	grout.sequence('new_level', [
 		["this.stop()"],
+		["this.play_sound('level')"],
 		["this.draw_all('new_level')", 3000],
 		["new_attack_wave(this)"],
 		["this.start()"]
