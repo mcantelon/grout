@@ -1310,5 +1310,50 @@ Grout.prototype.mixin({
 	stop:function() {
 		this.stopped = true;
 		this.keys_pressed = {};
+	},
+
+	add_sound:function(id, sources, extra) {
+
+		var source, source_type;
+		var output = '';
+
+		output += '<audio id="' + id + '" ' + extra + '>';
+
+		for (var i in sources) {
+
+			source = (sources[i] instanceof String) ? sources[i] : sources[i].src;
+			source_type = (sources[i] instanceof String) ? 'audio/ogg' : sources[i].type;
+
+			output += '<source src="' + source + '" type="' + source_type + '" />';
+		}
+
+		output += '</audio>';
+
+		document.write(output);
+	},
+
+	play_sound:function(s) {
+
+		document.getElementById(s).play();
+	},
+
+	stop_sound:function(s) {
+
+		if (document.getElementById(s) != undefined) {
+
+			document.getElementById(s).pause();
+
+			if (document.getElementById(s).currentTime > 0) {
+				document.getElementById(s).currentTime = 0.0;
+			}
+		}
+	},
+
+	pause_sound:function(s) {
+
+		if (document.getElementById(s) != undefined) {
+
+			document.getElementById(s).pause();
+		}
 	}
 });
