@@ -91,6 +91,10 @@ function blood_funnel() {
 		'key_repeat_interval': 25
 	});
 
+	grout.add_sound('poot', [{'src': 'demo/sound/blood_funnel_tweet.ogg', 'type': 'audio/ogg'}]);
+	grout.add_sound('intro_soundtrack', [{'src': 'http://mikecantelon.com/downloads/bloodfunnel/bloodfunnel_intro.ogg', 'type': 'audio/ogg'}], 'loop="loop"');
+	grout.add_sound('game_soundtrack', [{'src': 'http://mikecantelon.com/downloads/bloodfunnel/bloodfunnel_soundtrack.ogg', 'type': 'audio/ogg'}], 'loop="loop"');
+
 	// take note of original background color as we may mess with it
 	grout.state.background_color = grout.canvas.style['background-color'];
 
@@ -155,6 +159,10 @@ function restart(grout) {
 	clean_up_bankers(grout);
 	clean_up_bullets(grout);
     update_lives(grout);
+
+	grout.stop_sound('intro_soundtrack');
+	grout.play_sound('game_soundtrack');
+
 	new_attack_wave(grout);
 }
 
@@ -444,7 +452,7 @@ function set_attack_wave_properties(grout, wave) {
 
 	for(changed_state in level_attributes[change_state_to].state) {
 		grout.state[changed_state] = level_attributes[change_state_to].state[changed_state];
-		alert('change state ' + changed_state + ' to ' + level_attributes[change_state_to].state[changed_state]);
+		//alert('change state ' + changed_state + ' to ' + level_attributes[change_state_to].state[changed_state]);
 	}
 
 	return level_attributes[change_state_to].other;
@@ -730,6 +738,8 @@ function shoot_bullet(grout, ship) {
 	if (grout.state['bullets_in_motion'] == undefined
 	  || grout.state['bullets_in_motion'].length < MAX_PLAYER_BULLETS) {
 
+grout.play_sound('poot');
+
 		// get next bullet ID
 		grout.state['bullet_id'] = (grout.state['bullet_id'] == undefined)
 		  ? 1
@@ -946,6 +956,9 @@ function move_bullet_sprites(grout, bullets_in_motion, y_adjustment, max_y, coll
 
 // start screen has a blue button, which leads to another screen, and a red button
 function start_screen(grout) {
+
+	grout.play_sound('intro_soundtrack');
+	grout.stop_sound('game_soundtrack');
 
     // create pixel map for background pattern
 	var background_pattern = grout.map(
@@ -1322,7 +1335,12 @@ function main_screen(grout) {
 
 			if (grout.stopped) {
 
+				grout.pause_sound('game_soundtrack');
 				grout.draw_all('paused');
+			}
+			else {
+				
+				grout.play_sound('game_soundtrack');
 			}
 
 			return;
