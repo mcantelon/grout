@@ -456,10 +456,42 @@ function set_attack_wave_properties(grout, wave) {
 			'other':
 			{
 				'banker_rows': 2,
-				'banker_columns': 4,
+				'banker_columns': 8,
 				'money_rows': 1
 			}
 		},
+		3: {
+			'state':
+			{
+				'banker_pixel_movement': 1,
+				'banker_bullet_fire_probability': 5,
+				'banker_dive_probability': 100,
+				'turns_until_banker_move': 6,
+				'banker_bullet_movement_turns': 1
+			},
+			'other':
+			{
+				'banker_rows': 3,
+				'banker_columns': 8,
+				'money_rows': 1
+			}
+		},
+		4: {
+			'state':
+			{
+				'banker_pixel_movement': 2,
+				'banker_bullet_fire_probability': 5,
+				'banker_dive_probability': 80,
+				'turns_until_banker_move': 6,
+				'banker_bullet_movement_turns': 1
+			},
+			'other':
+			{
+				'banker_rows': 4,
+				'banker_columns': 8,
+				'money_rows': 1
+			}
+		}
 	};
 
 	if (level_attributes[wave] != undefined
