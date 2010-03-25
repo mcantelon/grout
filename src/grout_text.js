@@ -279,57 +279,57 @@ var grout_pixel_font = {
         ....."
 }
 
-var grout_pixeL_font_single_letter_data;
+var grout_pixeL_font_single_letter_data
 
 // add tolower
 var grout_text_stamp_text = function(text, offset_x, offset_y, max_width, text_color, pixels_between_letters) {
 
-  var words = text.toLowerCase().split(' ');
-  var word;
-  var x = 0;
-  var y = 0;
+  var words = text.toLowerCase().split(' ')
+  var word
+  var x = 0
+  var y = 0
 
-  var text_color = this.merge(text_color, true);
-  var pixels_between_letters = this.merge(pixels_between_letters, 1);
+  var text_color = this.merge(text_color, true)
+  var pixels_between_letters = this.merge(pixels_between_letters, 1)
 
   // parse pixel font into pixel arrays for speed
   for(var letter in grout_pixel_font) {
 
     var grout_pixeL_font_single_letter_data = this.pixels_and_size_from_string(
-      grout_pixel_font[letter], {'C': text_color});
+      grout_pixel_font[letter], {'C': text_color})
 
-    grout_pixel_font_data[letter] = grout_pixeL_font_single_letter_data.pixels;
+    grout_pixel_font_data[letter] = grout_pixeL_font_single_letter_data.pixels
   }
 
   for (var i = 0; i < words.length; i++) {
 
-   word = words[i];
+   word = words[i]
 
    if (i > 0) {
       // add space
-      x = x + 5 + pixels_between_letters;
+      x = x + 5 + pixels_between_letters
    }
 
    // each letter is 5 pixels wide with 1 pixel margin
-    word_pixel_width = word.length * 6;
+    word_pixel_width = word.length * 6
 
     // wrap if word will go beyond max width
     if ((x + word_pixel_width) > max_width) {
-      x = 0;
+      x = 0
      // each letter is 5 pixels hight with 1 pixel margin
-      y = y + 5 + pixels_between_letters;
+      y = y + 5 + pixels_between_letters
     }
 
     // stamp each letter of text
     for (var j = 0; j < word.length; j++) {
 
-      this.stamp(grout_pixel_font_data[word[j]], offset_x + x, offset_y+ y);
-      x = x + 5 + pixels_between_letters;
+      this.stamp(grout_pixel_font_data[word[j]], offset_x + x, offset_y+ y)
+      x = x + 5 + pixels_between_letters
     }
   }
 
-  return this;
+  return this
 }
 
-Map.prototype.stamp_text = grout_text_stamp_text;
-Sprite.prototype.stamp_text = grout_text_stamp_text;
+Map.prototype.stamp_text = grout_text_stamp_text
+Sprite.prototype.stamp_text = grout_text_stamp_text
