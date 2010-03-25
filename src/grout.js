@@ -24,13 +24,6 @@ Base.prototype = {
 
 	undefined_or_null:function(value) {
 		return value == undefined || value == null;
-	},
-
-	set_attributes_from_hash:function(params) {
-
-		for(param in params) {
-			this[param] = params[param];
-		}
 	}
 }
 
@@ -942,7 +935,7 @@ Grout.prototype.mixin({
 
 		this.key_repeat_interval = 250;
 
-		this.set_attributes_from_hash(params);
+		this.mixin(params);
 
 		this.initialize_canvas(params);
 
