@@ -83,17 +83,10 @@ var Has_Pixels = {
 			imgd = {'width' : w, 'height' : h, 'data' : new Array(w*h*4)};
 		}
 
-//alert(w); alert(h);
-
 		count = 0;
 
-//var hp = 0;
-
-		for (var y = 0; y < this.height; y++) {
-			
+		for (var y = 0; y < this.height; y++) {			
 			for (var i = 0; i < this.tile_height; i++) {
-//hp++;
-
 				for (var x = 0; x < this.width; x++) {
 
 					if (!this.undefined_or_null(pixels[x][y])
@@ -122,10 +115,10 @@ var Has_Pixels = {
 
 					for (var j = 0; j < this.tile_width; j++) {
 
-						imgd.data[count] = 255;//r;
-						imgd.data[count + 1] = 255; //g;
-						imgd.data[count + 2] = 255; //b;
-						imgd.data[count + 3] = 0; //alpha;
+						imgd.data[count] = 255; // r
+						imgd.data[count + 1] = 255; // g
+						imgd.data[count + 2] = 255; // b
+						imgd.data[count + 3] = 0; // alpha
 
 						count = count + 4;
 					}
@@ -133,13 +126,6 @@ var Has_Pixels = {
 			}
 		}
 
-//alert('H:' + hp);
-
-//		alert(this.width * this.height * this.tile_width * this.tile_height * 4); // GOAT
-		//alert('L:' + imgd.data.length);
-
-		//this.parent.clear_canvas();
-		//this.parent.ctx.putImageData(imgd, 0,0);
 		return imgd;
 	},
 
@@ -252,8 +238,6 @@ var Has_Pixels = {
 
 	margin_horizontal_data:function(pixels) {
 
-		//var margin_data = {}
-
 		var leftmost_row = 999;
 		var leftmost_row_with_pixel = 999;
 		var rightmost_row = 0;
@@ -265,10 +249,6 @@ var Has_Pixels = {
 			if (pixels[x] != undefined) {
 
 				for (var y = 0; y < pixels[x].length; y++) {
-
-		// cycle through each column
-		//for (var x in pixels) {
-		//	for (var y in pixels[x]) {
 
 					if (pixels[x][y] != undefined
 					  && pixels[x][y]) {
@@ -358,8 +338,6 @@ var Has_Pixels = {
 		}
 
 		this.pixels = temp;
-
-		//return temp;
 	},
 
 	overwrite:function(new_pixels) {
@@ -526,9 +504,6 @@ var Has_Pixels = {
 
 		// store click logic
 		this.click_logic = logic;
-
-		// activate click handler
-		//this.parent.canvas.addEventListener('mousedown', this.parent.click_handler, false);
 	}
 };
 
@@ -716,7 +691,6 @@ Sprite.prototype.mixin({
     	    this.current_frame = 0;
     	}
     	this.set_frame(this.current_frame);
-        //this.pixels = this.frames[this.current_sequence][this.current_frame];
     },
 
     set_frame:function(frame) {
@@ -726,7 +700,7 @@ Sprite.prototype.mixin({
         this.pixels = this.frames[this.current_sequence][frame];
 
         if (this.frame_renderings[this.current_sequence][frame] != undefined) {
-        	//alert(this.frame_renderings[this.current_sequence][frame].data.length);
+
 	        this.rendered_pixels = this.frame_renderings[this.current_sequence][frame];
         }
         else {
