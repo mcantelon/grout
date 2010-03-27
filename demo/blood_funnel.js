@@ -35,17 +35,22 @@ function chunky_interlude_map(grout, map_name) {
 
 function less_chunky_interlude_map(grout, map_name) {
 
-	var map = grout.map(map_name, {
-		'group': map_name,
+	var map = less_chunky_map(grout, map_name, map_name)
+
+	generate_simple_background_pattern(map)
+
+	return map
+}
+
+function less_chunky_map(grout, map_name, group) {
+
+	return grout.map(map_name, {
+		'group': group,
 		'width': MAP_SIZE_IN_TILES,
 		'height': MAP_SIZE_IN_TILES / 2,
 		'tile_width': TILE_WIDTH * 2,
 		'tile_height': TILE_HEIGHT * 2
 	})
-
-	generate_simple_background_pattern(map)
-
-	return map
 }
 
 function create_ship_related_sprites(grout) {

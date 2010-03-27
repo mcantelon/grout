@@ -5,15 +5,7 @@ function start_screen(grout) {
 	grout.stop_sound('game_soundtrack')
 
     // create pixel map for background pattern
-	var background_pattern = grout.map(
-	    'start_screen_background_pattern', {
-	    	'group': 'start',
-	    	'width': MAP_SIZE_IN_TILES,
-	    	'height': MAP_SIZE_IN_TILES / 2,
-	        'tile_width': TILE_WIDTH * 2,
-	        'tile_height': TILE_HEIGHT * 2
-	    }
-	)
+	var background_pattern = less_chunky_map(grout, 'start_screen_background_pattern', 'start');
 
     generate_buildings_background_pattern(grout.maps['start_screen_background_pattern'], 3, 6)
 
@@ -140,16 +132,7 @@ function start_screen(grout) {
 
 function help_screen_background_pattern(grout, group) {
 
-    // create pixel map for background pattern
-	var background_pattern = grout.map(
-	    group, {
-	    	'group': group,
-	    	'width': MAP_SIZE_IN_TILES,
-	    	'height': MAP_SIZE_IN_TILES / 2,
-	        'tile_width': TILE_WIDTH * 2,
-	        'tile_height': TILE_HEIGHT * 2
-	    }
-	)
+	var background_pattern = less_chunky_map(grout, group, group)
 
 	generate_buildings_background_pattern(grout.maps[group], 3, 6)
    
