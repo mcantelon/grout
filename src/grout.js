@@ -60,6 +60,7 @@ var Has_Pixels = {
 		}
 	},
 
+	// I may end up discarding this logic...
 	pixels_to_imagedata:function(pixels) {
 
 		var imgd, count, r, g, b, alpha
@@ -330,12 +331,16 @@ var Has_Pixels = {
 		}
 
 		this.pixels = temp
+
+		return this
 	},
 
 	overwrite:function(new_pixels) {
 
 		this.clear()
 		this.stamp(new_pixels)
+
+		return this
 	},
 
 	stamp:function(new_pixels, offset_x, offset_y) {
@@ -366,6 +371,8 @@ var Has_Pixels = {
 			  	}
 			}
 		})
+
+		return this
 	},
 
 	count_pixels:function(start_x, start_y, end_x, end_y) {
@@ -398,6 +405,8 @@ var Has_Pixels = {
 				}
 			}
 		}
+
+		return this
 	},
 
 	copy_tile_range:function(start_x, start_y, end_x, end_y) {
@@ -490,18 +499,24 @@ var Has_Pixels = {
 		this.height = sprite_data.y
 
 		this.pixels = sprite_data.pixels
+
+		return this
 	},
 
 	click:function(logic) {
 
 		// store click logic
 		this.click_logic = logic
+
+		return this
 	}
 }
 
 // Sprite class deals with floating pixel maps
 var Sprite = function (params) {
 	this.initialize(params)
+
+	return this
 }
 
 // Sprite extends Base
@@ -549,6 +564,8 @@ Sprite.prototype.mixin({
 				that.draw_common(that, x, y, real_x, real_y)
 			})
 		}
+
+		return this
 	},
 
 	// bottom margin in relation to some map
@@ -634,6 +651,8 @@ Sprite.prototype.mixin({
 
 		this.offset_x = this.offset_x + offset_x
 		this.offset_y = this.offset_y + offset_y
+
+		return this
 	},
 
 	check_if_move_will_collide_with_pixels:function(offset_x, offset_y, pixels) {
@@ -658,6 +677,8 @@ Sprite.prototype.mixin({
 
         this.frames[this.current_sequence].push(pixels)
         this.frame_renderings[this.current_sequence].push(this.pixels_to_imagedata(pixels))
+
+		return this
     },
 
     add_frame_from_string:function(sprite_string, color_codes) {
@@ -665,6 +686,8 @@ Sprite.prototype.mixin({
         var frame_data = this.pixels_and_size_from_string(sprite_string, color_codes)
 
         this.add_frame(frame_data.pixels)
+
+		return this
     },
 
     next_frame:function(restart_at_frame) {
@@ -683,6 +706,8 @@ Sprite.prototype.mixin({
     	    this.current_frame = 0
     	}
     	this.set_frame(this.current_frame)
+
+		return this
     },
 
     set_frame:function(frame) {
@@ -698,12 +723,15 @@ Sprite.prototype.mixin({
         else {
         	this.rendered_pixels = false
         }
+
+		return this
     }
 });
 
 // Map class deals with pixel maps
 var Map = function (params) {
 	this.initialize(params)
+	return this
 }
 
 // Map extends Base
@@ -850,6 +878,8 @@ Map.prototype.mixin({
 		})
 		
 		this.pixels = this.buffer
+
+		return this
 	},
 
 	draw:function() {
@@ -861,6 +891,8 @@ Map.prototype.mixin({
 
 			that.draw_common(that, x, y, real_x, real_y)
 		})
+
+		return this
 	},
 
 	// Shorthand for setting pixels:
@@ -888,6 +920,8 @@ Map.prototype.mixin({
 				this.pixels[x][y] = color
 			}
 		}
+
+		return this
 	},
 
 	toggle:function(x, y, color) {
@@ -912,12 +946,15 @@ Map.prototype.mixin({
 				this.pixels[x][y] = this.pixels[x][y] ? false : color
 			}
 		}
+
+		return this
 	}
 })
 
 // Grout class manages big picture
 var Grout = function (params) {
 	this.initialize(params)
+	return this
 }
 
 // Grout extends Base
@@ -1024,6 +1061,8 @@ Grout.prototype.mixin({
 		groups[group] = this.merge(groups[group], [])
 		reverse_lookup[name] = group
 		groups[group].push(name)
+
+		return this
 	},
 
 	delete_sprite:function(name) {
@@ -1045,6 +1084,8 @@ Grout.prototype.mixin({
 		}
 
 		delete this.sprites[name]
+
+		return this
 	},
 
 	//
@@ -1061,6 +1102,8 @@ Grout.prototype.mixin({
 
 		// activate click handler
 		this.canvas.addEventListener('mousedown', this.click_handler, false)
+
+		return this
 	},
 
 	keypress:function(logic) {
@@ -1076,6 +1119,16 @@ Grout.prototype.mixin({
 
 		// activate key release handler
 		document.onkeyup = this.key_release_handler
+
+		return this
+	},
+
+	reset_input_handling:function() {
+
+		this.click(function (x, y) {})
+		this.keypress(function(key) {})
+
+		return this
 	},
 
 	key_handler:function(event) {
@@ -1171,6 +1224,8 @@ Grout.prototype.mixin({
 	clear_canvas:function() {
 
 		this.ctx.clearRect(0, 0, this.width, this.height)
+
+		return this
 	},
 
 	draw_all:function(group) {
@@ -1207,6 +1262,8 @@ Grout.prototype.mixin({
 				}
 			}
 		}
+
+		return this
 	},
 
 	sequence:function(name, items) {
@@ -1219,6 +1276,8 @@ Grout.prototype.mixin({
 			this.queue[name] = items
 			this.execute_queue_item(name)
 		}
+
+		return this
 	},
 
 	execute_queue_item:function(name) {
@@ -1270,12 +1329,14 @@ Grout.prototype.mixin({
 
 	start:function() {
 		this.stopped = false
-		this.keys_pressed = {}		
+		this.keys_pressed = {}
+		return this
 	},
 
 	stop:function() {
 		this.stopped = true
 		this.keys_pressed = {}
+		return this
 	},
 
 	add_sound:function(id, sources, extra) {
@@ -1296,11 +1357,15 @@ Grout.prototype.mixin({
 		output += '</audio>'
 
 		document.write(output)
+
+		return this
 	},
 
 	play_sound:function(s) {
 
 		document.getElementById(s).play()
+
+		return this
 	},
 
 	stop_sound:function(s) {
@@ -1313,6 +1378,8 @@ Grout.prototype.mixin({
 				document.getElementById(s).currentTime = 0.0
 			}
 		}
+
+		return this
 	},
 
 	pause_sound:function(s) {
@@ -1321,5 +1388,7 @@ Grout.prototype.mixin({
 
 			document.getElementById(s).pause()
 		}
+
+		return this
 	}
 })
