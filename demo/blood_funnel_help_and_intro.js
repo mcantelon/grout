@@ -1,13 +1,18 @@
-// start screen has a blue button, which leads to another screen, and a red button
+function help_screen_background_pattern(grout, group) {
+
+	var background_pattern = less_chunky_map(grout, group, group)
+
+	generate_buildings_background_pattern(grout.maps[group], 3, 6)
+   
+	return background_pattern
+}
+
 function start_screen(grout) {
 
 	grout.play_sound('intro_soundtrack')
 	grout.stop_sound('game_soundtrack')
 
-    // create pixel map for background pattern
-	var background_pattern = less_chunky_map(grout, 'start_screen_background_pattern', 'start');
-
-    generate_buildings_background_pattern(grout.maps['start_screen_background_pattern'], 3, 6)
+	var background_pattern = help_screen_background_pattern(grout, 'start')
 
     background_pattern.stamp_text('blood funnel', 5, 5, 50, '#444444')
     background_pattern.stamp_text('blood funnel', 4, 4, 50, '#ff0000')
@@ -50,6 +55,16 @@ function start_screen(grout) {
 		..K...K... \
 	", banker_color_map(banker_random_skin_color(), banker_random_hair_color()))
 
+	create_start_screen_start_button(grout)
+	create_start_screen_help_button(grout)
+
+	grout
+	  .reset_input_handling()
+	  .draw_all('start')
+}
+
+function create_start_screen_start_button(grout) {
+
 	var start_button = grout.sprite(
 	    'blue_button', {
 	        'group': 'start',
@@ -57,8 +72,6 @@ function start_screen(grout) {
 	        'tile_height': TILE_HEIGHT
 	    }
 	)
-
-	var start_button_colors = {'B': 'blue', 'G': 'grey'}
 
 	start_button.make_sprite(" \
 		*********************** \
@@ -70,7 +83,7 @@ function start_screen(grout) {
 		*.**...*..*.*.*.*..*..* \
 		*.....................* \
 		*********************** \
-	", start_button_colors)
+	")
 
 	start_button.offset_x = 7
 	start_button.offset_y = 60
@@ -79,10 +92,12 @@ function start_screen(grout) {
 	start_button.click(function(x, y) {
 
 		if (this.inside_margins(x, y)) {
-
 			main_screen(this.parent)
 		}
 	})
+}
+
+function create_start_screen_help_button(grout) {
 
 	var help_button = grout.sprite(
 	    'red_button', {
@@ -91,8 +106,6 @@ function start_screen(grout) {
 	        'tile_height': TILE_HEIGHT   
 	    }
 	)
-
-	var help_button_colors = {'R': 'red', 'G': 'grey'}
 
 	help_button.make_sprite(" \
 		******************* \
@@ -104,7 +117,7 @@ function start_screen(grout) {
 		*.*.*.***.***.*...* \
 		*.................* \
 		******************* \
-	", help_button_colors)
+	")
 
 	help_button.offset_x = 34
 	help_button.offset_y = 60
@@ -113,30 +126,9 @@ function start_screen(grout) {
 	help_button.click(function(x, y) {
 
 		if (this.inside_margins(x, y)) {
-
 			help_screen(this.parent)
 		}
 	})
-
-	// shouldn't need to have this... :[
-	// global click logic receives x, y in pixels
-	grout.click(function (x, y) {
-	})
-
-	// negate keyboard handling
-	grout.keypress(function(key) {
-	})
-
-	grout.draw_all('start')
-}
-
-function help_screen_background_pattern(grout, group) {
-
-	var background_pattern = less_chunky_map(grout, group, group)
-
-	generate_buildings_background_pattern(grout.maps[group], 3, 6)
-   
-	return background_pattern
 }
 
 function create_help_text_map(grout, group) {
@@ -162,8 +154,6 @@ function create_help_back_button(grout, group, click_function) {
 	    }
 	)
 
-	var help_button_colors = {'B': 'blue', 'G': 'grey'}
-
 	help_button.make_sprite(" \
 		******************* \
 		*.................* \
@@ -174,7 +164,7 @@ function create_help_back_button(grout, group, click_function) {
 		*.**..*.*..**.*.*.* \
 		*.................* \
 		******************* \
-	", help_button_colors)
+	")
 
 	help_button.offset_x = 7
 	help_button.offset_y = 60
@@ -183,7 +173,6 @@ function create_help_back_button(grout, group, click_function) {
 	help_button.click(function(x, y) {
 
 		if (this.inside_margins(x, y)) {
-
 			click_function(this.parent)
 		}
 	})
@@ -201,8 +190,6 @@ function create_help_next_button(grout, group, click_function) {
 	    }
 	)
 
-	var next_button_colors = {'R': 'red', 'G': 'grey'}
-
 	next_button.make_sprite(" \
 		******************** \
 		*..................* \
@@ -213,7 +200,7 @@ function create_help_next_button(grout, group, click_function) {
 		*.*..*.***.*.*..*..* \
 		*..................* \
 		******************** \
-	", next_button_colors)
+	")
 
 	next_button.offset_x = 30
 	next_button.offset_y = 60
@@ -222,7 +209,6 @@ function create_help_next_button(grout, group, click_function) {
 	next_button.click(function(x, y) {
 
 		if (this.inside_margins(x, y)) {
-
 			click_function(this.parent)
 		}
 	})
@@ -230,12 +216,13 @@ function create_help_next_button(grout, group, click_function) {
 	return next_button
 }
 
-// start screen has a blue button, which leads to another screen, and a red button
 function help_screen(grout) {
 
 	var background_pattern = help_screen_background_pattern(grout, 'help')
 
-    help_text = "\"The world's most powerful investment bank is a great vampire squid wrapped around the face of humanity, relentlessly jamming its blood funnel into anything that smells like money.\""
+    help_text = "\"The world's most powerful investment bank is a great "
+      + "vampire squid wrapped around the face of humanity, relentlessly "
+      + "jamming its blood funnel into anything that smells like money.\""
 
 	var help_text_map = create_help_text_map(grout, 'help')
       .stamp_text(help_text, 5, 3, 140, 'black')
@@ -244,86 +231,62 @@ function help_screen(grout) {
 	var help_button = create_help_back_button(grout, 'help', start_screen)
 	var next_button = create_help_next_button(grout, 'help', help_screen_2)
 
-	// shouldn't need to have this... :[
-	// global click logic receives x, y in pixels
-	grout.click(function (x, y) {
-	})
-
-	// negate keyboard handling
-	grout.keypress(function(key) {
-	})
-
-	grout.draw_all('help')
+	grout
+	  .reset_input_handling()
+	  .draw_all('help')
 }
 
-// start screen has a blue button, which leads to another screen, and a red button
 function help_screen_2(grout) {
 
 	var background_pattern = help_screen_background_pattern(grout, 'help_2')
 
-    help_text = 'it is the year 2000. an evil cabal of bankers known as goldman sacks is infiltrating world governments, enacting laws that enable them to conduct massive swindles and loot the public coffers.'
+    help_text = "it is the year 2000. an evil cabal of bankers known as "
+      + "goldman sacks is infiltrating world governments, enacting laws "
+      + "that enable them to conduct massive swindles and loot the public "
+      + "coffers."
 
 	var help_text_map = create_help_text_map(grout, 'help_2').stamp_text(help_text, 5, 3, 140, 'black')
 
 	var help_button = create_help_back_button(grout, 'help_2', help_screen)
 	var next_button = create_help_next_button(grout, 'help_2', help_screen_3)
 
-	// shouldn't need to have this... :[
-	// global click logic receives x, y in pixels
-	grout.click(function (x, y) {
-	})
-
-	// negate keyboard handling
-	grout.keypress(function(key) {
-	})
-
-	grout.draw_all('help_2')
+	grout
+	  .reset_input_handling()
+	  .draw_all('help_2')
 }
 
-// start screen has a blue button, which leads to another screen, and a red button
 function help_screen_3(grout) {
 
 	var background_pattern = help_screen_background_pattern(grout, 'help_3')
 
-    help_text = 'As they shoot their blood funnels into your money and attempt to compromise public and private institutions, you must fight them using any means necessary.'
+    help_text = "As they shoot their blood funnels into your money and "
+      + "attempt to compromise public and private institutions, you must "
+      + "fight them using any means necessary."
 
 	var help_text_map = create_help_text_map(grout, 'help_3').stamp_text(help_text, 5, 3, 140, 'black')
 
 	var help_button = create_help_back_button(grout, 'help_3', help_screen_2)
 	var next_button = create_help_next_button(grout, 'help_3', help_screen_4)
 
-	// shouldn't need to have this... :[
-	// global click logic receives x, y in pixels
-	grout.click(function (x, y) {
-	})
-
-	// negate keyboard handling
-	grout.keypress(function(key) {
-	})
-
-	grout.draw_all('help_3')
+	grout
+	  .reset_input_handling()
+	  .draw_all('help_3')
 }
 
-// start screen has a blue button, which leads to another screen, and a red button
 function help_screen_4(grout) {
 
 	var background_pattern = help_screen_background_pattern(grout, 'help_4')
 
-    help_text = "Spacebar shoots. arrow keys move left and right. Bankers won't kill you if you touch them so feel free to get close to them and shoot if they are attempting to infiltrate."
+    help_text = "Spacebar shoots. arrow keys move left and right. Bankers "
+      + "won't kill you if you touch them so feel free to get close to "
+      + "them and shoot if they are attempting to infiltrate."
 
 	var help_text_map = create_help_text_map(grout, 'help_4').stamp_text(help_text, 5, 3, 140, 'black')
 
 	var help_button = create_help_back_button(grout, 'help_4', help_screen_3)
 	var next_button = create_help_next_button(grout, 'help_4', start_screen)
 
-	// shouldn't need to have this... :[
-	// global click logic receives x, y in pixels
-	grout.click(function (x, y) {
-	})
-
-	// negate keyboard handling
-	grout.keypress(function(key) {
-	})
-
-	grout.draw_all('help_4')
+	grout
+	  .reset_input_handling()
+	  .draw_all('help_4')
 }
