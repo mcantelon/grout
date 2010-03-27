@@ -67,11 +67,13 @@ function start_screen(grout) {
 
 function create_start_screen_start_button(grout) {
 
-	var start_button = grout.sprite(
+	grout.sprite(
 	    'blue_button', {
 	        'group': 'start',
 	        'tile_width': TILE_WIDTH,
-	        'tile_height': TILE_HEIGHT
+	        'tile_height': TILE_HEIGHT,
+	        'offset_x': 7,
+	        'offset_y': 60
 	    }
 	)
 	.make_sprite(" \
@@ -88,18 +90,17 @@ function create_start_screen_start_button(grout) {
 	.click_inside(function(grout) {
 		main_screen(grout)
 	})
-
-	start_button.offset_x = 7
-	start_button.offset_y = 60
 }
 
 function create_start_screen_help_button(grout) {
 
-	var help_button = grout.sprite(
+	grout.sprite(
 	    'red_button', {
 	        'group': 'start',
 	        'tile_width': TILE_WIDTH,
-	        'tile_height': TILE_HEIGHT   
+	        'tile_height': TILE_HEIGHT,
+	        'offset_x': 34,
+	        'offset_y': 60
 	    }
 	)
 	.make_sprite(" \
@@ -116,9 +117,6 @@ function create_start_screen_help_button(grout) {
 	.click_inside(function(grout) {
 		help_screen(grout)
 	})
-
-	help_button.offset_x = 34
-	help_button.offset_y = 60
 }
 
 function create_help_text_map(grout, group) {
@@ -136,11 +134,13 @@ function create_help_text_map(grout, group) {
 
 function create_help_back_button(grout, group, click_function) {
 
-	var help_button = grout.sprite(
+	grout.sprite(
 	    group + '_back_button', {
 	        'group': group,
 	        'tile_width': TILE_WIDTH,
-	        'tile_height': TILE_HEIGHT
+	        'tile_height': TILE_HEIGHT,
+	        'offset_x': 7,
+	        'offset_y': 60
 	    }
 	)
 	.make_sprite(" \
@@ -157,20 +157,17 @@ function create_help_back_button(grout, group, click_function) {
 	.click_inside(function(grout) {
 		click_function(grout)
 	})
-
-	help_button.offset_x = 7
-	help_button.offset_y = 60
-
-	//return help_button
 }
 
 function create_help_next_button(grout, group, click_function) {
 
-	var next_button = grout.sprite(
+	grout.sprite(
 	    group + '_next_button', {
 	        'group': group,
 	        'tile_width': TILE_WIDTH,
-	        'tile_height': TILE_HEIGHT
+	        'tile_height': TILE_HEIGHT,
+	        'offset_x': 30,
+	        'offset_y': 60
 	    }
 	)
 	.make_sprite(" \
@@ -187,11 +184,6 @@ function create_help_next_button(grout, group, click_function) {
 	.click_inside(function(grout) {
 		click_function(grout)
 	})
-
-	next_button.offset_x = 30
-	next_button.offset_y = 60
-
-	//return next_button
 }
 
 function help_screen(grout) {
