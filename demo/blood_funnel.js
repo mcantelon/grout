@@ -56,16 +56,17 @@ function less_chunky_map(grout, map_name, group) {
 function create_ship_related_sprites(grout) {
 
 	// create sprite for ship
-	var ship = grout.sprite('ship')
-
-	ship.make_sprite(" \
+	var ship = grout.sprite(
+		'ship', {
+			'tile_width': TILE_WIDTH,
+			'tile_height': TILE_HEIGHT
+		}
+	)
+	.make_sprite(" \
 		..*.. \
 		.***. \
 		**.** \
 	")
-
-	ship.tile_width  = TILE_WIDTH
-	ship.tile_height = TILE_HEIGHT
 
     grout.sprite('lives', {
         'width': (3 * (ship.width + 1)),
@@ -96,6 +97,7 @@ function blood_funnel() {
 		'key_repeat_interval': 25
 	})
 
+	// add local sound effects
 	var effects = {
 		'shoot': 'demo/sound/blood_funnel_tweet.ogg',
 		'death': 'demo/sound/bloodfunnel_death.ogg',
@@ -109,12 +111,13 @@ function blood_funnel() {
 		}])
 	}
 
-	grout.add_sound('intro_soundtrack', [{
+	// specify songs that should stream remotely
+	grout
+	.add_sound('intro_soundtrack', [{
 		'src': 'http://mikecantelon.com/downloads/bloodfunnel/bloodfunnel_intro.ogg',
 		'type': 'audio/ogg'
 	}], 'loop="loop"')
-
-	grout.add_sound('game_soundtrack', [{
+	.add_sound('game_soundtrack', [{
 		'src': 'http://mikecantelon.com/downloads/bloodfunnel/bloodfunnel_soundtrack.ogg',
 		'type': 'audio/ogg'
 	}], 'loop="loop"')
@@ -175,7 +178,6 @@ function restart(grout) {
 	grout.state.score = 0
     grout.state.wave = 0
 	grout.state.turns = 0
-
 	grout.state.ship_hit = false
 	grout.state.banker_dead = []
     grout.state.lives = 3
@@ -336,9 +338,12 @@ function add_banker_frames(banker, banker_skin_color, banker_hair_color) {
 		..N...N.BB \
 		..K...N... \
 		......K... \
-	", banker_color_map(banker_skin_color, banker_hair_color))
-
-	banker.add_frame_from_string(" \
+	", banker_color_map(
+			banker_skin_color,
+			banker_hair_color
+		)
+	)
+	.add_frame_from_string(" \
 		...HHH.... \
 		...FFF.... \
 		...FFF.... \
@@ -350,9 +355,12 @@ function add_banker_frames(banker, banker_skin_color, banker_hair_color) {
 		..N...N.BB \
 		..N...K.BB \
 		..K....... \
-	", banker_color_map(banker_skin_color, banker_hair_color))
-
-	banker.add_frame_from_string(" \
+	", banker_color_map(
+			banker_skin_color,
+			banker_hair_color
+		)
+	)
+	.add_frame_from_string(" \
 		F..HHH..F. \
 		N..FFF..N. \
 		.N.FFF.N.. \
@@ -364,7 +372,11 @@ function add_banker_frames(banker, banker_skin_color, banker_hair_color) {
 		..N...N.BB \
 		..N...N.BB \
 		..K...K.BB \
-	", banker_color_map(banker_skin_color, banker_hair_color))
+	", banker_color_map(
+			banker_skin_color,
+			banker_hair_color
+		)
+	)
 }
 
 function generate_buildings_background_pattern(map, width_min, width_max) {
@@ -947,9 +959,6 @@ function move_player_bullets(grout) {
 				// or, better yet, change their state to "dying"
 				grout.state['banker_dying'].push(banker_id)
 				banker.set_frame(2)
-
-				//grout.delete_sprite(banker_id);
-				//delete grout.sprites[banker_id];
 			}
 		}
 
@@ -1208,6 +1217,7 @@ function new_level_interlude(grout) {
 
 	grout.maps['new_level'].clear()
 	generate_simple_background_pattern(grout.maps['new_level'])
+
 	grout.maps['new_level']
 	  .stamp_text('level ' + (grout.state['wave'] + 1), 12, 12, 50)
 	  .stamp_text('bonus:' + bonus, 12, 22, 80)
