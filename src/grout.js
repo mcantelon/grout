@@ -509,6 +509,17 @@ var Has_Pixels = {
 		this.click_logic = logic
 
 		return this
+	},
+
+	click_inside:function(callback) {
+		this.click(function(x, y) {
+
+			if (this.inside_margins(x, y)) {
+				callback(this.parent)
+			}
+		})
+
+		return this
 	}
 }
 
