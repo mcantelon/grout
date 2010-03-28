@@ -1,0 +1,99 @@
+<html>
+
+<head>
+  <title>Grout Sine Waves Demo</title>
+  <script type="text/javascript" src="src/grout.js"></script>
+  <script type="text/javascript" src="src/grout_text.js"></script>
+  <script type="text/javascript" src="demo/wavetoy.js"></script>
+
+  <style>
+  	#content {
+  		text-align: center;
+	}
+
+	canvas {
+		align: center;
+		border: 1px solid #555555;
+		background-color: #000000;
+	}
+
+	p, h3 {
+		font-family: sans-serif;
+	}
+
+	p {
+		font-size: .8em;
+		color: #eeeeee
+	}
+
+	h3 {
+		color: #444444;
+	}
+
+	#result_message {
+		width: 400px;
+		background-color: #f44;
+	}
+	</style>
+</head>
+
+<body style='background-color: #333333'>
+
+<div id='content'>
+
+<script>
+alert('Use Chrome or Safari for this demo.')
+
+wavetoy_init()
+
+function tweak_plot_logic() {
+
+	var result_message = grout.doc_get('result_message')
+
+	try {
+		grout.state.plot_logic = new Function('x', 'step', 'wavelength', 'amplitude', 'return ' + grout.doc_get('plot_logic').value)
+		result_message.innerHTML = 'Logic updated.'
+	}
+	catch(e) {
+		result_message.innerHTML = 'Error in logic.'
+	}
+}
+
+function refresh_waves() {
+	wavetoy(
+		grout.doc_get("number_of_waves").value,
+		grout.doc_get("tile_size").value
+	)
+	grout.doc_get('result_message').innerHTML = 'Waves created.'
+}
+</script>
+
+<form>
+	<p>
+		Y Calculation:
+		<input type='button' value='Tweak' onClick='javascript:tweak_plot_logic()'>
+	</p>
+	<p>
+		<textarea id='plot_logic' rows='3' cols='60'>Math.sin((x + step) / wavelength) * amplitude</textarea>
+	</p>
+	<p>
+		Waves: <input type='text' id='number_of_waves' size='1' value='2'>
+		Tile Width: <select id='tile_size'>
+			<option value='1'>1</option>
+			<option value='2' selected>2</option>
+			<option value='4'>4</option>
+			<option value='8'>8</option>
+		</select>
+		<input type='button' value='New Waves' onClick='javascript:refresh_waves()'>
+	</p>
+	<p>
+		<span id='result_message'></span>
+	</p>
+
+	<h3>Use Chrome or Safari for this demo. Will make Firefox cry.</h3>
+</form>
+
+</div id='content'>
+
+</body>
+</html>
