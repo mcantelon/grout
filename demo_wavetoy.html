@@ -46,6 +46,10 @@ alert('Use Chrome or Safari for this demo.')
 
 wavetoy_init()
 
+window.onload = function() {
+	grout.doc_get('plot_logic').value = DEFAULT_PLOT_LOGIC
+}
+
 function tweak_plot_logic() {
 
 	var result_message = grout.doc_get('result_message')
@@ -74,7 +78,7 @@ function refresh_waves() {
 		<input type='button' value='Tweak' onClick='javascript:tweak_plot_logic()'>
 	</p>
 	<p>
-		<textarea id='plot_logic' rows='3' cols='60'>Math.sin((x + step) / wavelength) * amplitude</textarea>
+		<textarea id='plot_logic' rows='3' cols='60'></textarea>
 	</p>
 	<p>
 		Waves: <input type='text' id='number_of_waves' size='1' value='2'>

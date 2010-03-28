@@ -1,6 +1,7 @@
 var CANVAS_WIDTH  = 400
 var CANVAS_HEIGHT = 200
 var DEFAULT_TILE_SIZE = 2
+var DEFAULT_PLOT_LOGIC = 'Math.sin((x + step) / wavelength) * amplitude'
 var grout
 
 function wavetoy_init() {
@@ -12,7 +13,7 @@ function wavetoy_init() {
 		'key_repeat_interval': 25
 	})
 
-	grout.state.plot_logic = new Function('x', 'step', 'wavelength', 'amplitude', 'return Math.sin((x + step) / wavelength) * amplitude')
+	grout.state.plot_logic = new Function('x', 'step', 'wavelength', 'amplitude', 'return ' + DEFAULT_PLOT_LOGIC)
 
 	wavetoy(2, DEFAULT_TILE_SIZE)
 }
