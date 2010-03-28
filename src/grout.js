@@ -520,7 +520,66 @@ var Has_Pixels = {
 		})
 
 		return this
+	},
+
+
+
+	// Shorthand for setting pixels:
+	// my_grout.poke(1, 4, 'red'); <- set individual pixel to red
+	// my_grout.poke([[2, 5], [3, 4, 'green']]); <- set one to black, one to green
+	poke:function(x, y, color) {
+
+		x = Math.round(x)
+		y = Math.round(y)
+
+		color = color || true
+
+		// allow x to be a set of points to poke
+		if (typeof x == 'object') {
+
+			for (var i in x) {
+				this.poke(x[i][0], x[i][1], x[i][2])
+			}
+		}
+		else {
+
+			if (this.pixels.length >= (x + 1)
+				&& this.pixels[x].length >= (y + 1)
+			) {
+
+				this.pixels[x][y] = color
+			}
+		}
+
+		return this
+	},
+
+	toggle:function(x, y, color) {
+
+		// allow x to be a set of points to poke
+		if (typeof x == 'object') {
+
+			for (var i in x) {
+				this.toggle(x[i][0], x[i][1], x[i][2])
+			}
+		}
+		else {
+
+			if (this.pixels.length >= (x + 1)
+				&& this.pixels[x].length >= (y + 1)
+			) {
+
+				if (this.undefined_or_null(color)) {
+					color = true
+				}
+
+				this.pixels[x][y] = this.pixels[x][y] ? false : color
+			}
+		}
+
+		return this
 	}
+
 }
 
 // Sprite class deals with floating pixel maps
@@ -904,61 +963,6 @@ Map.prototype.mixin({
 		})
 
 		return this
-	},
-
-	// Shorthand for setting pixels:
-	// my_grout.poke(1, 4, 'red'); <- set individual pixel to red
-	// my_grout.poke([[2, 5], [3, 4, 'green']]); <- set one to black, one to green
-	poke:function(x, y, color) {
-
-		// allow x to be a set of points to poke
-		if (typeof x == 'object') {
-
-			for (var i in x) {
-				this.poke(x[i][0], x[i][1], x[i][2])
-			}
-		}
-		else {
-
-			if (this.pixels.length >= (x + 1)
-				&& this.pixels[x].length >= (y + 1)
-			) {
-
-				if (this.undefined_or_null(color)) {
-					color = true
-				}
-
-				this.pixels[x][y] = color
-			}
-		}
-
-		return this
-	},
-
-	toggle:function(x, y, color) {
-
-		// allow x to be a set of points to poke
-		if (typeof x == 'object') {
-
-			for (var i in x) {
-				this.toggle(x[i][0], x[i][1], x[i][2])
-			}
-		}
-		else {
-
-			if (this.pixels.length >= (x + 1)
-				&& this.pixels[x].length >= (y + 1)
-			) {
-
-				if (this.undefined_or_null(color)) {
-					color = true
-				}
-
-				this.pixels[x][y] = this.pixels[x][y] ? false : color
-			}
-		}
-
-		return this
 	}
 })
 
@@ -1074,6 +1078,12 @@ Grout.prototype.mixin({
 		groups[group].push(name)
 
 		return this
+	},
+
+	delete_sprites:function() {
+		for(sprite in this.sprites) {
+			this.delete_sprite(sprite)
+		}
 	},
 
 	delete_sprite:function(name) {
@@ -1319,15 +1329,26 @@ Grout.prototype.mixin({
 		}
 	},
 
-	animate:function(speed, logic) {
+	clear_animation:function() {
+		this.animate_logic = {}
+	},
 
-		if (!this.animate_logic) {
-			this.animate_logic = logic
+	animate:function(speed, logic, queue) {
+
+		queue = queue || 'main'
+
+		this.animate_logic = this.animate_logic || {}
+
+		if (typeof logic == 'function') {
+			this.animate_logic[queue] = logic
 		}
 
 		if (!this.stopped) {
 
-			this.animate_logic()
+			this.current_queue = queue
+			if (this.animate_logic[queue]) {
+				this.animate_logic[queue].apply(this)
+			}
 
 			// allow animation logic to stop itself
 			if (!this.stopped) {
@@ -1335,7 +1356,7 @@ Grout.prototype.mixin({
 			}
 		}
 
-		setTimeout('document.getElementById("' + this.canvas_id + '").grout.animate(' + speed + ')', speed)
+		setTimeout('document.getElementById("' + this.canvas_id + '").grout.animate(' + speed + ', "", "' + queue + '")', speed)
 	},
 
 	start:function() {
