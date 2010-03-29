@@ -1,0 +1,38 @@
+#content {
+	text-align: center;
+}
+
+canvas {
+	align: center;
+	border: 1px solid #555555;
+	background-color: #000000;
+}
+
+p, h3, li {
+	font-family: sans-serif;
+}
+
+p, li {
+	font-size: .8em;
+	color: #eeeeee
+}
+
+#variable_legend {
+	width: 400px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+}
+
+ul {
+	margin-left: 10px;
+}
+
+h3 {
+	color: #444444;
+}
+
+#result_message {
+	width: 400px;
+	background-color: #f44;
+}
