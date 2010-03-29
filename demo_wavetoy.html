@@ -17,13 +17,24 @@
 		background-color: #000000;
 	}
 
-	p, h3 {
+	p, h3, li {
 		font-family: sans-serif;
 	}
 
-	p {
+	p, li {
 		font-size: .8em;
 		color: #eeeeee
+	}
+
+	#variable_legend {
+		width: 400px;
+		margin-left: auto;
+		margin-right: auto;
+		text-align: left;
+	}
+
+	ul {
+		margin-left: 10px;
 	}
 
 	h3 {
@@ -80,6 +91,14 @@ function refresh_waves() {
 	<p>
 		<textarea id='plot_logic' rows='3' cols='60'></textarea>
 	</p>
+	<div id='variable_legend'>
+		<ul>
+			<li><em>x:</em> horizontal plot position</li>
+			<li><em>step:</em> is a continually incrementing number</li>
+			<li><em>wavelength:</em> is a random number for each wave</li>
+			<li><em>amplitude:</em> is a random number for each wave and oscillates</li>
+		</ul>
+	</div>
 	<p>
 		Waves: <input type='text' id='number_of_waves' size='1' value='2'>
 		Tile Width: <select id='tile_size'>

@@ -54,8 +54,6 @@ function wave_plot(sprite, step, colour) {
 	for (var x = 0; x < sprite.width; x++) {
 		plot_logic = grout.state.plot_logic
 		if (plot_logic) {
-			//alert(plot_logic(x, step, wavelength, amplitude))
-			//alert(plot_logic.value)
 			var top_y = plot_logic(x, step, wavelength, amplitude) + (sprite.height / 2)
 			sprite.pixels[Math.round(x)][Math.round(top_y)] = colour
 		}
