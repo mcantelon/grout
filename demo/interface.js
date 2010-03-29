@@ -27,14 +27,11 @@ function interface() {
 		blue_button.offset_x = 1;
 		blue_button.offset_y = 1;
 
-		// sprite click logic receives x, y in tiles
-		blue_button.click(function(x, y) {
+		// sprite click_inside logic receives clicks within margin
+		blue_button.click_inside(function(grout) {
 
-			if (this.inside_margins(x, y)) {
-
-				alert('You clicked the blue button!');
-				another_screen(this.parent);
-			}
+			alert('You clicked the blue button!');
+			another_screen(grout);
 		});
 
 		var red_button = grout.sprite('red_button', {'group': 'start'});
@@ -53,7 +50,6 @@ function interface() {
 		red_button.click(function(x, y) {
 
 			if (this.inside_margins(x, y)) {
-
 				alert('You clicked the red button!');
 			}
 		});
