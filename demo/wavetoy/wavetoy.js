@@ -1,7 +1,7 @@
 var CANVAS_WIDTH  = 200
 var CANVAS_HEIGHT = 200
 var DEFAULT_TILE_SIZE = 2
-var DEFAULT_PLOT_LOGIC = 'Math.sin((x + step) / wavelength) * amplitude'
+var DEFAULT_PLOT_LOGIC = 'sin((x + step) / wavelength) * amplitude'
 var grout
 
 function wavetoy_init() {
@@ -13,9 +13,16 @@ function wavetoy_init() {
 		'key_repeat_interval': 25
 	})
 
-	grout.state.plot_logic = new Function('x', 'step', 'wavelength', 'amplitude', 'return ' + DEFAULT_PLOT_LOGIC)
+	set_plot_logic(grout, DEFAULT_PLOT_LOGIC)
 
 	wavetoy(2, DEFAULT_TILE_SIZE)
+}
+
+function set_plot_logic(grout, logic) {
+
+	// we create a new function rather than use eval because the eval is slow...
+	// within the function we create we use local variables as aliases to Math methods
+	grout.state.plot_logic = new Function('x', 'step', 'wavelength', 'amplitude', 'var sin = Math.sin; var cos = Math.cos; var abs = Math.abs; return ' + logic)
 }
 
 function shuffle_wave_colour_patterns() {

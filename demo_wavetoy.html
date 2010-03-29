@@ -26,7 +26,7 @@ function tweak_plot_logic() {
 	var result_message = grout.doc_get('result_message')
 
 	try {
-		grout.state.plot_logic = new Function('x', 'step', 'wavelength', 'amplitude', 'return ' + grout.doc_get('plot_logic').value)
+		set_plot_logic(grout, grout.doc_get('plot_logic').value)
 		result_message.innerHTML = 'Logic updated.'
 	}
 	catch(e) {
