@@ -1,4 +1,4 @@
-var CANVAS_WIDTH  = 400
+var CANVAS_WIDTH  = 200
 var CANVAS_HEIGHT = 200
 var DEFAULT_TILE_SIZE = 2
 var DEFAULT_PLOT_LOGIC = 'Math.sin((x + step) / wavelength) * amplitude'
