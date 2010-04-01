@@ -27,7 +27,7 @@ function set_plot_logic(grout, logic) {
 
 function shuffle_wave_colour_patterns() {
 
-	// sine wave colour patterns (one green-ish, one red-ish, one blue-ish)
+	// wave colour patterns (one green-ish, one red-ish, one blue-ish)
 	var available_wave_colour_patterns = ['f**', '*f*', '**b'],
 		wave_colour_patterns = [],
 		pattern_index,
@@ -47,7 +47,7 @@ function shuffle_wave_colour_patterns() {
 	return wave_colour_patterns
 }
 
-// sine wave plotting logic
+// wave plotting logic
 function wave_plot(sprite, step, colour) {
 
 	var wavelength = sprite.state['wavelength'],
@@ -57,12 +57,12 @@ function wave_plot(sprite, step, colour) {
 	// oscillate amplitude
 	amplitude = Math.abs(Math.sin(step / 32)) * amplitude
 
-	// plot each dot of sine
+	// plot each tile of wave
 	for (var x = 0; x < sprite.width; x++) {
 		plot_logic = grout.state.plot_logic
 		if (plot_logic) {
-			var top_y = plot_logic(x, step, wavelength, amplitude) + (sprite.height / 2)
-			sprite.pixels[Math.round(x)][Math.round(top_y)] = colour
+			var y = plot_logic(x, step, wavelength, amplitude) + (sprite.height / 2)
+			sprite.pixels[Math.round(x)][Math.round(y)] = colour
 		}
 	}
 }
@@ -75,12 +75,12 @@ function wavetoy(number_of_waves, tile_size) {
 	grout.clear_animation()
 	grout.delete_sprites()
 
-	// make sine sprites and give them random characteristics
+	// make wave sprites and give them random characteristics
 	for (var i = 0; i < number_of_waves; i++) {
 
-		// create sprite for sine wave
+		// create sprite for wave
 		var wave_sprite = grout.sprite(
-			'sine_' + i, {
+			'wave_' + i, {
 				'width': CANVAS_WIDTH / tile_size,
 				'height': CANVAS_HEIGHT / tile_size,
 				'tile_width': tile_size,
@@ -88,7 +88,7 @@ function wavetoy(number_of_waves, tile_size) {
 			}
 		)
 
-		// use sine wave sprite's state to give unique characteristics
+		// use wave sprite's state to give unique characteristics
 		wave_sprite.state = {
 			'wavelength': Math.floor(Math.random() * 16) + 2,
 			'step': 0,
@@ -99,7 +99,7 @@ function wavetoy(number_of_waves, tile_size) {
 		// animate by different intervals to make things more interesting
 		var animation_interval = (i + 1) * 30
 
-		// activate animation channel for sine wave sprite
+		// activate animation channel for wave sprite
 		grout.animate(animation_interval, function() {
 
 			// we use the channel name to determine which sprite
@@ -109,7 +109,7 @@ function wavetoy(number_of_waves, tile_size) {
 			// clear sprite pixels
 			wave_sprite.clear()
 
-			// plot a number of steps of the sine in different colours
+			// plot a number of steps of the wave in different colours
 			for (var i = 0; i < 14; i += 2) {
 				// replace "*"s in colour pattern with other values to give colour shades
 				var colour = wave_sprite.state['colour_pattern'].replace(/\*/g, i.toString(16))
@@ -118,6 +118,6 @@ function wavetoy(number_of_waves, tile_size) {
 
 			wave_sprite.state['step']++;
 
-		}, 'sine_' + i) // the channel is given same name as wave sprite
+		}, 'wave_' + i) // the channel is given same name as wave sprite
 	}
 }
