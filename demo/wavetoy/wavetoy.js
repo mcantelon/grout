@@ -22,7 +22,7 @@ function set_plot_logic(grout, logic) {
 
 	// we create a new function rather than use eval because the eval is slow...
 	// within the function we create we use local variables as aliases to Math methods
-	grout.state.plot_logic = new Function('x', 'step', 'wavelength', 'amplitude', 'var sin = Math.sin; var cos = Math.cos; var abs = Math.abs; return ' + logic)
+	grout.state.plot_logic = new Function('x', 'step', 'wavelength', 'amplitude', 'var sin = Math.sin; var cos = Math.cos; var tan=Math.tan; var abs = Math.abs; return ' + logic)
 }
 
 function shuffle_wave_colour_patterns() {
@@ -68,16 +68,6 @@ function wave_plot(sprite, step, colour) {
 }
 
 function wavetoy(number_of_waves, tile_size) {
-
-    // create pixel map for background pattern
-	background = grout.map(
-	    'background', {
-	    	'width': CANVAS_WIDTH / DEFAULT_TILE_SIZE,
-	    	'height': CANVAS_HEIGHT / DEFAULT_TILE_SIZE,
-	        'tile_width': DEFAULT_TILE_SIZE,
-	        'tile_height': DEFAULT_TILE_SIZE
-	    }
-	)
 
 	var wave_colour_patterns = shuffle_wave_colour_patterns()
 
