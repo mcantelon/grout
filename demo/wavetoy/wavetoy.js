@@ -1,6 +1,5 @@
 var CANVAS_WIDTH  = 200
 var CANVAS_HEIGHT = 200
-var DEFAULT_TILE_SIZE = 2
 var DEFAULT_PLOT_LOGIC = 'sin((x + step) / wavelength) * amplitude'
 var grout
 
@@ -14,8 +13,6 @@ function wavetoy_init() {
 	})
 
 	set_plot_logic(grout, DEFAULT_PLOT_LOGIC)
-
-	wavetoy(2, DEFAULT_TILE_SIZE)
 }
 
 function set_plot_logic(grout, logic) {
@@ -67,7 +64,12 @@ function wave_plot(sprite, step, colour) {
 	}
 }
 
-function wavetoy(number_of_waves, tile_size) {
+function wavetoy(params) {
+
+	var number_of_waves = parseInt(params.number_of_waves || 2)
+	var tile_size = parseInt(params.tile_size || 2)
+	var number_of_iterations_to_show = parseInt(params.number_of_iterations_to_show || 7)
+	var steps_between_iterations = parseInt(params.steps_between_iterations || 2)
 
 	var wave_colour_patterns = shuffle_wave_colour_patterns()
 
@@ -110,7 +112,11 @@ function wavetoy(number_of_waves, tile_size) {
 			wave_sprite.clear()
 
 			// plot a number of steps of the wave in different colours
-			for (var i = 0; i < 14; i += 2) {
+			for (
+				var i = 0;
+				i < (number_of_iterations_to_show * steps_between_iterations);
+				i += steps_between_iterations
+			) {
 				// replace "*"s in colour pattern with other values to give colour shades
 				var colour = wave_sprite.state['colour_pattern'].replace(/\*/g, i.toString(16))
 				wave_plot(wave_sprite, wave_sprite.state['step'] - i, colour)

@@ -1,7 +1,7 @@
 <html>
 
 <head>
-	<title>Grout Sine Waves Demo</title>
+	<title>Grout Wavetoy Demo</title>
 	<style type="text/css" media="all">@import "demo/wavetoy/wavetoy.css";</style>
 	<script type="text/javascript" src="src/grout.js"></script>
 	<script type="text/javascript" src="src/grout_text.js"></script>
@@ -19,6 +19,7 @@ wavetoy_init()
 
 window.onload = function() {
 	grout.doc_get('plot_logic').value = DEFAULT_PLOT_LOGIC
+	refresh_waves()
 }
 
 function tweak_plot_logic() {
@@ -35,10 +36,13 @@ function tweak_plot_logic() {
 }
 
 function refresh_waves() {
-	wavetoy(
-		grout.doc_get("number_of_waves").value,
-		grout.doc_get("tile_size").value
-	)
+
+	wavetoy({
+		'number_of_waves': grout.doc_get('number_of_waves').value,
+		'tile_size': grout.doc_get('tile_size').value,
+		'number_of_iterations_to_show': grout.doc_get('number_of_iterations_to_show').value,
+		'steps_between_iterations': grout.doc_get('steps_between_iterations').value,
+	})
 	grout.doc_get('result_message').innerHTML = 'Waves created.'
 }
 </script>
@@ -68,6 +72,10 @@ function refresh_waves() {
 			<option value='4'>4</option>
 			<option value='8'>8</option>
 		</select>
+	</p>
+	<p>
+		Iterations: <input type='text' id='number_of_iterations_to_show' size='1' value='7'>
+		Steps Between: <input type='text' id='steps_between_iterations' size='1' value='2'>
 		<input type='button' value='New Waves' onClick='javascript:refresh_waves()'>
 	</p>
 	<p>
