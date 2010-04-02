@@ -8,8 +8,7 @@ function wavetoy_init() {
 	// establish grout as a global variable
 	grout = new Grout({
 		'width':  CANVAS_WIDTH,
-		'height': CANVAS_HEIGHT,
-		'key_repeat_interval': 25
+		'height': CANVAS_HEIGHT
 	})
 
 	set_plot_logic(grout, DEFAULT_PLOT_LOGIC)
