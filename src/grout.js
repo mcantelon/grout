@@ -491,6 +491,22 @@ var Has_Pixels = {
         }
     },
 
+	export_pixels:function() {
+
+		return JSON.stringify({
+			'width': this.width,
+			'height': this.height,
+			'pixels': this.pixels
+		})
+	},
+
+	import_pixels:function(export) {
+
+		this.width = export.width
+		this.height = export.height
+		this.pixels = export.pixels
+	},
+
 	make_sprite:function(sprite_string, color_codes) {
 
         var sprite_data = this.pixels_and_size_from_string(sprite_string, color_codes)
@@ -507,6 +523,11 @@ var Has_Pixels = {
 
 		// store click logic
 		this.click_logic = logic
+
+		// activate grout click logic if not already activated
+		if (!this.parent.click_logic) {
+			this.parent.click(function() {})
+		}
 
 		return this
 	},
