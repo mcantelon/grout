@@ -500,11 +500,15 @@ var Has_Pixels = {
 		})
 	},
 
-	import_pixels:function(export) {
+	import_pixels:function(exported_json) {
 
-		this.width = export.width
-		this.height = export.height
-		this.pixels = export.pixels
+		if (exported_json) {
+			export = JSON.parse(exported_json)
+
+			this.width = export.width
+			this.height = export.height
+			this.pixels = export.pixels
+		}
 	},
 
 	make_sprite:function(sprite_string, color_codes) {
