@@ -254,12 +254,10 @@ function spritemaker_publish() {
 		alert('R:' + response)
 	}
 
-	/*
-	//result=request.responseText
+	result=request.responsetext
 	alert(JSON.stringify(request))
 
 	alert(result)
-	*/
 
 	alert('aaa')
 }
