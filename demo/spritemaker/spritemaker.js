@@ -248,10 +248,18 @@ function spritemaker_publish() {
 	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
 	request.send('id=1&user=aaaa&password=bbbb')
 
+	request.onreadystatechange = function() {
+		if (request.readystate != 4) { return; }
+		var response = request.responsetext
+		alert('R:' + response)
+	}
+
+	/*
 	//result=request.responseText
 	alert(JSON.stringify(request))
 
 	alert(result)
+	*/
 
 	alert('aaa')
 }
