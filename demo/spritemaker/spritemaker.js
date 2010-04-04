@@ -238,3 +238,20 @@ function decimalToHex(d, padding) {
 
 	return hex;
 }
+
+function spritemaker_publish() {
+
+	var request = new window.XMLHttpRequest,
+		result
+
+	request.open('POST','http://mikecantelon.com/test.php',true)
+	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+	request.send('id=1&user=aaaa&password=bbbb')
+
+	//result=request.responseText
+	alert(JSON.stringify(request))
+
+	alert(result)
+
+	alert('aaa')
+}
