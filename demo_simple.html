@@ -1,0 +1,89 @@
+<html>
+
+<head>
+	<title>Grout Simple Example</title>
+	<script type="text/javascript" src="src/grout.js"></script>
+</head>
+
+<body style='background-color: #777777'>
+
+<div id='my_grout'></div id='my_grout'>
+
+<script>
+var width_in_tiles = 30
+var height_in_tiles = 60
+var tile_size = 8
+
+// create new Grout instance
+var my_grout = new Grout({
+	'width':  width_in_tiles * tile_size,
+	'height': height_in_tiles * tile_size,
+	'canvas_id': 'editor'
+})
+
+// create new map
+var my_map = my_grout.map(
+	'my_map', {
+		'width': width_in_tiles,
+		'height': height_in_tiles,
+		'tile_width': tile_size,
+		'tile_height': tile_size
+	}
+)
+
+// create ball sprite
+var my_ball = my_grout.sprite(
+	'my_ball', {
+		'tile_width': tile_size,
+		'tile_height': tile_size
+	}
+)
+.make_sprite(" \
+		..RS.. \
+		.RRRS. \
+		RRRRSS \
+		.RRRS. \
+		..RS.. \
+", {'R': 'red', 'S': '#f33'}
+)
+
+// keep track of how many times ball has moved
+my_ball.state['moves'] = 0
+
+// clear and initialize map
+my_map.clear()
+
+// draw random pixels: on or off
+for (var y = 0; y < my_map.height; y++) {
+	for (var x = 0; x < my_map.width; x++) {
+		if (Math.floor(Math.random() * 2) == 1) {
+			my_map.pixels[x][y] = true
+		}
+	}
+}
+
+//my_grout.draw_all()
+
+my_grout.animate(40, function() {
+
+	var max_vertical_distance = my_map.height - (my_ball.height * 2)
+
+	// make ball bounce
+	my_ball.offset_y
+	  = (max_vertical_distance + my_ball.height) - max_vertical_distance
+	  * Math.abs(Math.sin(my_ball.state['moves'] / 8))
+
+	// shift ball horizontally
+	if (my_ball.margin_right(my_map) > 0 - my_ball.width) {
+		my_ball.offset_x++
+	}
+	else {
+		my_ball.offset_x = 0 - my_ball.width
+	}
+
+	my_ball.state['moves']++
+})
+</script>
+
+</body>
+</html>
