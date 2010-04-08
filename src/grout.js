@@ -502,10 +502,12 @@ var Has_Pixels = {
 
 	import_pixels:function(exported_json) {
 
-		if (exported_json) {
-			export = JSON.parse(exported_json)
+		var export_data
 
-			if (export != undefined) {
+		if (exported_json) {
+			export_data = JSON.parse(exported_json)
+
+			if (export_data != undefined) {
 				this.width = export.width
 				this.height = export.height
 				this.pixels = export.pixels
