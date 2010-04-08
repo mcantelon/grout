@@ -5,7 +5,7 @@ var PREVIEW_TILE_SIZE = 5
 
 function spritemaker() {
 
-	var preview = spritemaker_preview()
+	//var preview = spritemaker_preview()
 	var editor = spritemaker_editor()
 	var picker = spritemaker_colour_picker()
 }
@@ -42,15 +42,15 @@ function spritemaker_editor() {
 		}
 		else {
 
-			var preview = document.getElementById('preview').grout
+			//var preview = document.getElementById('preview').grout
 
 			// toggle pixel in editor and preview
 			this.toggle(x, y, this.parent.doc_get('colour').value)
-			preview.maps.preview.toggle(x, y, this.parent.doc_get('colour').value)
+			//preview.maps.preview.toggle(x, y, this.parent.doc_get('colour').value)
 
 			// refresh editor and preview
 			this.parent.draw_all()
-			preview.draw_all()
+			//preview.draw_all()
 		}
 	})
 

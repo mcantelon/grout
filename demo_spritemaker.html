@@ -8,21 +8,10 @@
 <style>
 #content {
 	text-align: center;
-	width: 600px;
-	background-color: #00ff00;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-#left_pane {
-	background-color: #ff0000;
-	float: left;
 }
 
 #right_pane {
 	text-align: center;
-	width: 350;
-	float: right;
 }
 
 canvas {
@@ -44,24 +33,16 @@ canvas {
 
 <div id='content'>
 
-	<div id='left_pane'>
-
-		<canvas id='preview'></canvas>
-
-	</div id='left_pane'>
-
 	<div id='right_pane'>
 
 		<div><canvas id='editor'></canvas></div>
 		<div><canvas id='picker'></canvas></div>
 
 		<div>
-			<!-- <form onSubmit='return false'>-->
 				<span id='foreground_colour_indicator'>Colour:</span>
 				<input id='colour' size='6' onChange='set_foreground_indicator(this.value);' />
 				<input type='button' value='Pick Colour' onClick='spritemaker_pick_colour()' />
 				<input type='button' value='Clear' onClick='spritemaker_clear()' />
-			<!--</form>-->
 		</div>
 
 		<textarea id='import_export_area' rows='5' cols='40'></textarea>
