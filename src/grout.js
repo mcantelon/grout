@@ -508,9 +508,9 @@ var Has_Pixels = {
 			export_data = JSON.parse(exported_json)
 
 			if (export_data != undefined) {
-				this.width = export.width
-				this.height = export.height
-				this.pixels = export.pixels
+				this.width = export_data.width
+				this.height = export_data.height
+				this.pixels = export_data.pixels
 			}
 		}
 	},
