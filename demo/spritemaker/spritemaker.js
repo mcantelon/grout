@@ -251,13 +251,7 @@ function spritemaker_publish() {
 	request.onreadystatechange = function() {
 		if (request.readystate != 4) { return; }
 		var response = request.responseText
-		alert('R:' + response)
 	}
 
 	result=request.responseText
-	alert(JSON.stringify(request))
-
-	alert(result)
-
-	alert('aaa')
 }
