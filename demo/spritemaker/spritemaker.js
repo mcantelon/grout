@@ -241,6 +241,11 @@ function decimalToHex(d, padding) {
 
 function spritemaker_publish() {
 
+	document.getElementById('publish_data_form').setAttribute('target', 'frame_proxy')
+	document.getElementById('data_to_publish').innerHTML = 'aaaaaaaieeee'
+	document.getElementById('publish_data_form').submit()
+
+	/*
 	var request = new window.XMLHttpRequest,
 		result
 
@@ -254,4 +259,5 @@ function spritemaker_publish() {
 	}
 
 	result=request.responseText
+	*/
 }
