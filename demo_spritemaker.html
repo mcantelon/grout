@@ -49,18 +49,11 @@ canvas {
 		<div>
 			<input type='button' value='Import' onClick='spritemaker_import()' />
 			<input type='button' value='Export' onClick='spritemaker_export()' />
-			<input type='button' value='Publish' onClick='spritemaker_publish()' />
 		</div>
 
 	</div id='right_pane'>
 	
 </div id='content'>
-
-<iframe id='frame_proxy' name='frame_proxy' src='blank.html' style='display:none'></iframe>
-
-<form id='publish_data_form' action="http://www.mikecantelon.com/test.php" onSubmit='javascript:return false;' method='post'>
-	<textarea id='data_to_publish' name='json_data' style='display: none'></textarea>
-</form>
 
 <script>
 spritemaker()
