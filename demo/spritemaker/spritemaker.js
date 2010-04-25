@@ -238,26 +238,3 @@ function decimalToHex(d, padding) {
 
 	return hex;
 }
-
-function spritemaker_publish() {
-
-	document.getElementById('publish_data_form').setAttribute('target', 'frame_proxy')
-	document.getElementById('data_to_publish').innerHTML = 'aaaaaaaieeee'
-	document.getElementById('publish_data_form').submit()
-
-	/*
-	var request = new window.XMLHttpRequest,
-		result
-
-	request.open('POST','http://mikecantelon.com/test.php',true)
-	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
-	request.send('id=1&user=aaaa&password=bbbb')
-
-	request.onreadystatechange = function() {
-		if (request.readystate != 4) { return; }
-		var response = request.responseText
-	}
-
-	result=request.responseText
-	*/
-}
