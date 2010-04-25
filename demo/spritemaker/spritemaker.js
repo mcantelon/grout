@@ -6,8 +6,14 @@ var PREVIEW_TILE_SIZE = 5
 function spritemaker() {
 
 	//var preview = spritemaker_preview()
+
 	var editor = spritemaker_editor()
-	var picker = spritemaker_colour_picker()
+
+	var picker = grout_palette({}, function (x, y) {
+                var colour = this.pixels[x][y]
+                spritemaker_set_color(colour)
+                this.parent.draw_all()
+        })
 }
 
 function spritemaker_editor() {
@@ -114,49 +120,10 @@ function spritemaker_preview() {
 	)
 }
 
-function spritemaker_colour_picker() {
-	
-	// establish grout as a global variable
-	var picker = new Grout({
-		'width':  306,
-		'height': 17,
-		'canvas_id': 'picker'
-	})
-
-	// create editor map
-	var picker_map = picker.map(
-		'picker', {
-			'width': picker.width,
-			'height': picker.height,
-			'tile_width': 1,
-			'tile_height': 1
-		}
-	)
-
-	picker_map.clear()
-	draw_colour_pallette(picker_map)
-	picker.draw_all()
-
-	picker_map.click(function (x, y) {
-		var colour = this.pixels[x][y]
-		spritemaker_set_color(colour)
-		this.parent.draw_all()
-	})
-
-	return picker
-}
-
 function spritemaker_set_color(colour) {
 
 	document.getElementById('colour').value = colour
 	set_foreground_indicator(colour)
-}
-
-function spritemaker_pick_colour() {
-
-	var editor = document.getElementById('editor').grout
-
-	editor.state['mode'] = 'pick_color'
 }
 
 function set_foreground_indicator(colour) {
@@ -166,75 +133,9 @@ function set_foreground_indicator(colour) {
 	document.getElementById('foreground_colour_indicator').style['background-color'] = colour
 }
 
-function draw_colour_pallette(picker_map) {
+function spritemaker_pick_colour() {
 
-	var current_colour_action = 0,
-		r = 255,
-		g = 0,
-		b = 0,
-		x_step = 5,
-		colour_alter,
-		altered_r,
-		alerted_g,
-		alerted_b
+	var editor = document.getElementById('editor').grout
 
-	var colour_actions = [
-		'g +',
-		'r -',
-		'b +',
-		'g -',
-		'r +',
-		'b -'
-	]
-
-	// use colour actions to create a colour pallette
-	for (var x = 0; x < picker_map.width; x++) {
-
-		// every time a colour action has changed colour 255 shades,
-		// change current colour action
-		if (x % (255 / x_step) == 0) {
-
-			var colour_action = colour_actions[current_colour_action]
-
-			if (current_colour_action < (colour_actions.length - 1)) {
-				current_colour_action++
-			}
-		}
-
-		function colour_alter_calc(colour, colour_alter) {
-			return (colour + colour_alter > 0) ? colour + colour_alter : 0
-		}
-
-		for (var y = 0; y < picker_map.height; y++) {
-			colour_alter = 0 - (y * 15)
-			altered_r = (r + colour_alter > 0) ? r + colour_alter : 0
-			altered_g = (g + colour_alter > 0) ? g + colour_alter : 0
-			altered_b = (b + colour_alter > 0) ? b + colour_alter : 0
-			picker_map.poke(x, y, rgb_to_hex(altered_r, altered_g, altered_b))
-		}
-
-		// change colour according to current action
-		eval(colour_action + '= ' + x_step)
-	}
-}
-
-function rgb_to_hex(r, g, b) {
-
-	var r_hex = decimalToHex(r, 2)
-	var g_hex = decimalToHex(g, 2)
-	var b_hex = decimalToHex(b, 2)
-	return '#' + r_hex + g_hex + b_hex
-}
-
-// http://stackoverflow.com/questions/57803/how-to-convert-decimal-to-hex-in-javascript
-function decimalToHex(d, padding) {
-
-	var hex = Number(d).toString(16);		
-	padding = typeof (padding) === "undefined" || padding === null ? padding = 2 : padding;
-
-	while (hex.length < padding) {
-		hex = "0" + hex;
-	}
-
-	return hex;
+	editor.state['mode'] = 'pick_color'
 }
