@@ -643,7 +643,7 @@ Sprite.prototype.mixin({
 	draw:function() {
 
 		var real_x = (x + this.offset_x) * this.tile_width
-		var real_y = (y + this.offset_y) * this.tile_width
+		var real_y = (y + this.offset_y) * this.tile_height
 
 		// disabled this functionality until now... can't get it to work right
 		if (0 && this.rendered_pixels != undefined && this.rendered_pixels != false) {
@@ -658,7 +658,7 @@ Sprite.prototype.mixin({
 			this.cycle_through_pixels(function(that, x, y, params) {
 
 				var real_x = (x + that.offset_x) * that.tile_width
-				var real_y = (y + that.offset_y) * that.tile_width
+				var real_y = (y + that.offset_y) * that.tile_height
 
 				that.draw_common(that, x, y, real_x, real_y)
 			})
@@ -986,7 +986,7 @@ Map.prototype.mixin({
 		this.cycle_through_pixels(function(that, x, y, params) {
 
 			var real_x = x * that.tile_width
-			var real_y = y * that.tile_width
+			var real_y = y * that.tile_height
 
 			that.draw_common(that, x, y, real_x, real_y)
 		})
