@@ -3,17 +3,22 @@ var EDITOR_HEIGHT_IN_TILES = 30
 var EDITOR_TILE_SIZE = 10
 var PREVIEW_TILE_SIZE = 5
 
+var THING = []
+
 function spritemaker() {
 
 	//var preview = spritemaker_preview()
 
 	var editor = spritemaker_editor()
 
-	var picker = grout_palette({}, function (x, y) {
-                var colour = this.pixels[x][y]
-                spritemaker_set_color(colour)
-                this.parent.draw_all()
-        })
+	var picker = grout_palette(
+		{'preset': 'medium'},
+		function (x, y) {
+			var colour = this.pixels[x][y]
+			spritemaker_set_color(colour)
+			this.parent.draw_all()
+        }
+	)
 }
 
 function spritemaker_editor() {
