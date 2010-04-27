@@ -1,45 +1,115 @@
+function grout_palette_preset(preset, click_logic) {
+
+	if (preset == 'large') {
+
+		return grout_palette({
+				'height': 17 * 18,
+				'tile_width': 6,
+				'tile_height': 3
+			},
+			click_logic,
+        	function (x, y, colour, current_colour_action) {
+        		var shift_x,
+        			shift_y,
+        			colour_action_shift = {
+        				0: {x: 0, y: 0},
+        				1: {x: -51, y: 17},
+        				2: {x: -102, y: 34},
+        				3: {x: -153, y: 51},
+        				4: {x: -204, y: 68},
+        				5: {x: -255, y: 85}
+        			}
+
+        		shift_x = colour_action_shift[current_colour_action].x
+        		shift_y = colour_action_shift[current_colour_action].y
+
+       	 		this.poke(x + shift_x, y + shift_y, colour)
+			}
+		)
+	}
+	else if (preset == 'medium') {
+
+		return grout_palette({
+				'height': 17 * 9,
+				'tile_width': 3,
+				'tile_height': 3
+			},
+			click_logic,
+    	    function (x, y, colour, current_colour_action) {
+        		var shift_x,
+        			shift_y,
+        			colour_action_shift = {
+        				0: {x: 0, y: 0},
+        				1: {x: 0, y: 0},
+       	 				2: {x: -102, y: 17},
+        				3: {x: -102, y: 17},
+        				4: {x: -204, y: 34},
+        				5: {x: -204, y: 34}
+        			}
+
+        		shift_x = colour_action_shift[current_colour_action].x
+        		shift_y = colour_action_shift[current_colour_action].y
+
+        		this.poke(x + shift_x, y + shift_y, colour)
+        	}
+		)
+	}
+}
+
 function grout_palette(params, click_logic, render_logic) {
 
-	var grout_params = {
-		'width': 306,
-		'height': 17,
-		'canvas_id': 'picker'
-	}
+	if (params['preset'] != undefined) {
 
-	// allow defaults to be overridden
-	for (index in params)
-		grout_params[index] = params[index]
-
-	// establish grout as a global variable
-	var picker = new Grout(grout_params)
-
-	// create editor map
-	var picker_map = picker.map(
-		'picker', {
-			'width': picker.width,
-			'height': picker.height,
-			'tile_width': 1,
-			'tile_height': 1
-		}
-	)
-
-	picker_map.clear()
-	draw_colour_pallette(picker_map, render_logic)
-	picker.draw_all()
-
-	if (click_logic != undefined) {
-		picker_map.click(click_logic)
+		return grout_palette_preset(params['preset'], click_logic)
 	}
 	else {
-		var colour = this.pixels[x][y]
-		alert('You clicked ' + colour + '.')
-	}
 
-	return picker
+		// palette defaults
+		var grout_params = {
+			'width': 306,
+			'height': 17,
+			'canvas_id': 'picker'
+		}
+
+		var tile_width = params['tile_width'] || 1
+		var tile_height = params['tile_height'] || 1
+
+		// allow defaults to be overridden
+		for (index in params)
+			grout_params[index] = params[index]
+
+		// establish grout as a global variable
+		var picker = new Grout(grout_params)
+
+		// create editor map
+		var picker_map = picker.map(
+			'picker', {
+				'width': picker.width,
+				'height': picker.height,
+				'tile_width': tile_width,
+				'tile_height': tile_height
+			}
+		)
+
+		picker_map.clear()
+		draw_colour_pallette(picker_map, render_logic)
+		picker.draw_all()
+
+		if (click_logic != undefined) {
+			picker_map.click(click_logic)
+		}
+		else {
+			var colour = picker_map.pixels[x][y]
+			alert('You clicked ' + colour + '.')
+		}
+
+		return picker
+	}
 
 	function draw_colour_pallette(picker_map, render_logic) {
 
-		var current_colour_action = 0,
+		var next_colour_action = 0,
+			current_colour_action = 0,
 			r = 255,
 			g = 0,
 			b = 0,
@@ -67,10 +137,11 @@ function grout_palette(params, click_logic, render_logic) {
 			// change current colour action
 			if (x % (255 / x_step) == 0) {
 
-				var colour_action = colour_actions[current_colour_action]
+				var colour_action = colour_actions[next_colour_action]
+				current_colour_action = next_colour_action
 
-				if (current_colour_action < (colour_actions.length - 1)) {
-					current_colour_action++
+				if (next_colour_action < (colour_actions.length - 1)) {
+					next_colour_action++
 				}
 			}
 
@@ -90,7 +161,8 @@ function grout_palette(params, click_logic, render_logic) {
 					picker_map.poke(x, y, colour)
 				}
 				else {
-					render_logic(x, y, colour, current_colour_action)
+					// call rendering function using picker_map as context
+					render_logic.call(picker_map, x, y, colour, current_colour_action)
 				}
 			}
 
