@@ -4,7 +4,7 @@ function grout_palette_preset(preset, click_logic) {
 
 		return grout_palette({
 				'height': 17 * 18,
-				'tile_width': 6,
+				'tile_width': 18,
 				'tile_height': 3
 			},
 			click_logic,
@@ -13,13 +13,15 @@ function grout_palette_preset(preset, click_logic) {
         			shift_y,
         			colour_action_shift = {
         				0: {x: 0, y: 0},
-        				1: {x: -51, y: 17},
-        				2: {x: -102, y: 34},
-        				3: {x: -153, y: 51},
-        				4: {x: -204, y: 68},
-        				5: {x: -255, y: 85}
+        				1: {x: -17, y: 17},
+        				2: {x: -34, y: 34},
+        				3: {x: -51, y: 51},
+        				4: {x: -68, y: 68},
+        				5: {x: -85, y: 85}
         			}
 
+				//shift_x = 0
+				shift_y = 0
         		shift_x = colour_action_shift[current_colour_action].x
         		shift_y = colour_action_shift[current_colour_action].y
 
@@ -31,7 +33,7 @@ function grout_palette_preset(preset, click_logic) {
 
 		return grout_palette({
 				'height': 17 * 9,
-				'tile_width': 3,
+				'tile_width': 9,
 				'tile_height': 3
 			},
 			click_logic,
@@ -41,10 +43,10 @@ function grout_palette_preset(preset, click_logic) {
         			colour_action_shift = {
         				0: {x: 0, y: 0},
         				1: {x: 0, y: 0},
-       	 				2: {x: -102, y: 17},
-        				3: {x: -102, y: 17},
-        				4: {x: -204, y: 34},
-        				5: {x: -204, y: 34}
+       	 				2: {x: -34, y: 17},
+        				3: {x: -34, y: 17},
+        				4: {x: -68, y: 34},
+        				5: {x: -68, y: 34}
         			}
 
         		shift_x = colour_action_shift[current_colour_action].x
@@ -71,7 +73,7 @@ function grout_palette(params, click_logic, render_logic) {
 			'canvas_id': 'picker'
 		}
 
-		var tile_width = params['tile_width'] || 1
+		var tile_width = params['tile_width'] || 3
 		var tile_height = params['tile_height'] || 1
 
 		// allow defaults to be overridden
@@ -113,7 +115,7 @@ function grout_palette(params, click_logic, render_logic) {
 			r = 255,
 			g = 0,
 			b = 0,
-			x_step = 5,
+			x_step = 15,
 			colour_alter,
 			altered_r,
 			alerted_g,
