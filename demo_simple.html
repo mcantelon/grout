@@ -16,8 +16,10 @@ var tile_size = 8
 
 // create new Grout instance
 var my_grout = new Grout({
-	'width':  width_in_tiles * tile_size,
-	'height': height_in_tiles * tile_size,
+	'width':  width_in_tiles,
+	'height': height_in_tiles,
+	'tile_width': tile_size,
+	'tile_height': tile_size,
 	'canvas_id': 'editor'
 })
 
@@ -44,7 +46,7 @@ var my_ball = my_grout.sprite(
 		RRRRSS \
 		.RRRS. \
 		..RS.. \
-", {'R': 'red', 'S': '#f33'}
+", {'R': [240, 0, 0], 'S': [255, 30, 30]}
 )
 
 // keep track of how many times ball has moved
@@ -62,16 +64,14 @@ for (var y = 0; y < my_map.height; y++) {
 	}
 }
 
-//my_grout.draw_all()
-
-my_grout.animate(40, function() {
+my_grout.animate(30, function() {
 
 	var max_vertical_distance = my_map.height - (my_ball.height * 2)
 
 	// make ball bounce
 	my_ball.offset_y
-	  = (max_vertical_distance + my_ball.height) - max_vertical_distance
-	  * Math.abs(Math.sin(my_ball.state['moves'] / 8))
+	  = Math.round((max_vertical_distance + my_ball.height) - max_vertical_distance
+	  * Math.abs(Math.sin(my_ball.state['moves'] / 8)))
 
 	// shift ball horizontally
 	if (my_ball.margin_right(my_map) > 0 - my_ball.width) {
@@ -80,6 +80,8 @@ my_grout.animate(40, function() {
 	else {
 		my_ball.offset_x = 0 - my_ball.width
 	}
+
+//if (my_ball.state['moves'] > 0) { fff() }
 
 	my_ball.state['moves']++
 })
