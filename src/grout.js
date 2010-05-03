@@ -61,6 +61,82 @@ var Has_Pixels = {
 	},
 
 	// I may end up discarding this logic...
+	pixels_to_imagedata_new:function(pixels) {
+
+		var imgd, count, r, g, b, alpha
+		var w = this.width
+		var h = this.height
+
+		// Not all browsers implement createImageData
+		if (this.parent.ctx.createImageData) {
+			imgd = this.parent.ctx.createImageData(w, h)
+		} else if (this.parent.ctx.getImageData) {
+			imgd = this.parent.ctx.getImageData(0, 0, w, h)
+		} else {
+			imgd = {'width' : w, 'height' : h, 'data' : new Array(w*h*4)}
+		}
+
+		count = 0
+
+		for (var y = 0; y < this.height; y++) {
+			for (var x = 0; x < this.width; x++) {
+
+				if (!this.undefined_or_null(pixels[x][y])
+				  && pixels[x][y]
+				) {
+					if (pixels[x][y] == true) {
+						r = 0
+						g = 0
+						b = 0
+					}
+					else {
+						if (typeof pixels[x][y] == 'object') {
+
+							r = pixels[x][y][0]
+							g = pixels[x][y][1]
+							b = pixels[x][y][2]
+						}
+						else if (pixels[x][y][0] == '#') {
+
+							r = parseInt(pixels[x][y].substring(1, 3), 16)
+							g = parseInt(pixels[x][y].substring(3, 5), 16)
+							b = parseInt(pixels[x][y].substring(5, 7), 16)
+
+							/*
+							// test for now
+							// ADD LOGIC TO PARSE FROM HEX VALUE
+							r = 0
+							g = 255
+							b = 0
+							*/
+						}
+						else {
+							alert('Invalid colour: "' + pixels[x][y] + '".Pixels must be specified using an array or hex values.')
+						}
+					}
+
+					alpha = 255
+				}
+				else {
+					r = 0
+					g = 0
+					b = 0
+					alpha = 0
+				}
+
+				imgd.data[count] = r
+				imgd.data[count + 1] = g
+				imgd.data[count + 2] = b
+				imgd.data[count + 3] = alpha
+
+				count = count + 4
+			}
+		}
+
+		return imgd
+	},
+
+	// I may end up discarding this logic...
 	pixels_to_imagedata:function(pixels) {
 
 		var imgd, count, r, g, b, alpha
@@ -126,7 +202,10 @@ var Has_Pixels = {
 
 		if (that.pixels[x] != undefined) {
 
-			if (that.pixels[x][y] == true) {
+			if (typeof that.pixels[x][y] == 'object') {
+				that.parent.ctx.fillStyle = that.parent.rgb_to_hex(that.pixels[x][y])
+			}
+			else if (that.pixels[x][y] == true) {
 
 				that.parent.ctx.fillStyle = 'black'
 			}
@@ -642,27 +721,13 @@ Sprite.prototype.mixin({
 
 	draw:function() {
 
-		var real_x = (x + this.offset_x) * this.tile_width
-		var real_y = (y + this.offset_y) * this.tile_height
+		this.cycle_through_pixels(function(that, x, y, params) {
 
-		// disabled this functionality until now... can't get it to work right
-		if (0 && this.rendered_pixels != undefined && this.rendered_pixels != false) {
-			this.parent.ctx.putImageData(
-				this.rendered_pixels,
-				this.offset_x * this.tile_width,
-				this.offset_y * this.tile_height
-			)
-		}
-		else {
+			var real_x = (x + that.offset_x) * that.tile_width
+			var real_y = (y + that.offset_y) * that.tile_height
 
-			this.cycle_through_pixels(function(that, x, y, params) {
-
-				var real_x = (x + that.offset_x) * that.tile_width
-				var real_y = (y + that.offset_y) * that.tile_height
-
-				that.draw_common(that, x, y, real_x, real_y)
-			})
-		}
+			that.draw_common(that, x, y, real_x, real_y)
+		})
 
 		return this
 	},
@@ -983,13 +1048,25 @@ Map.prototype.mixin({
 
 	draw:function() {
 
-		this.cycle_through_pixels(function(that, x, y, params) {
+		// disabled this functionality until now... can't get it to work right
+		if (this.rendered_pixels != undefined && this.rendered_pixels != false) {
+			this.parent.ctx.putImageData(
+				this.rendered_pixels,
+				0,
+				0
+			)
+		}
+		else {
 
-			var real_x = x * that.tile_width
-			var real_y = y * that.tile_height
+console.log('drawing legacy map')
+			this.cycle_through_pixels(function(that, x, y, params) {
 
-			that.draw_common(that, x, y, real_x, real_y)
-		})
+				var real_x = (x + that.offset_x) * that.tile_width
+				var real_y = (y + that.offset_y) * that.tile_height
+
+				that.draw_common(that, x, y, real_x, real_y)
+			})
+		}
 
 		return this
 	}
@@ -1014,6 +1091,7 @@ Grout.prototype.mixin({
 		this.id = grout_id
 
 		this.key_repeat_interval = 250
+		this.render_mode = 'fast'
 
 		this.mixin(params)
 
@@ -1022,6 +1100,8 @@ Grout.prototype.mixin({
 		// hashes where maps and sprites live
 		this.maps    = {}
 		this.sprites = {}
+
+		this.map('draw_temp', params)
 
 		// group-related data
 		this.active_group = 'main'
@@ -1058,6 +1138,10 @@ Grout.prototype.mixin({
 		this.canvas.setAttribute('width',  this.width)
 		this.canvas.setAttribute('height', this.height)
 
+		// create pixelization
+		this.canvas.style['width'] = this.width * this.tile_width
+		this.canvas.style['height'] = this.height * this.tile_height
+
 		// put reference to this object in canvas
 		this.canvas.grout = this
 
@@ -1077,7 +1161,9 @@ Grout.prototype.mixin({
 		if (!this.maps[name]) {
 			this.maps[name] = new Map(params)
 			this.maps[name].parent = this
-			this.add_to_group(this.group_maps, this.map_group, group, name)
+			if (name != 'draw_temp') {
+				this.add_to_group(this.group_maps, this.map_group, group, name)
+			}
 		}
 
 		return this.maps[name]
@@ -1280,7 +1366,12 @@ Grout.prototype.mixin({
 
 	draw_all:function(group) {
 
-		var map
+		var map,
+			sprite,
+			sprite_id,
+			temp = this.maps['draw_temp']
+
+		temp.clear()
 
 		group = this.merge(group, 'main')
 
@@ -1296,7 +1387,12 @@ Grout.prototype.mixin({
 
 				if (map != undefined) {
 
-					this.maps[map].draw()
+					if (this.render_mode == 'fast') {
+						temp.stamp(this.maps[map].pixels, 0, 0)
+					}
+					else {
+						this.maps[map].draw()
+					}
 				}
 			}
 		}
@@ -1304,13 +1400,24 @@ Grout.prototype.mixin({
 		if (this.group_sprites[group] != undefined) {
 
 			for (var i = 0; i < this.group_sprites[group].length; i++) {
-				sprite = this.group_sprites[group][i]
+				sprite_id = this.group_sprites[group][i]
+				sprite = this.sprites[sprite_id]
 
 				if (sprite != undefined) {
 
-					this.sprites[sprite].draw()
+					if (this.render_mode == 'fast') {
+						temp.stamp(sprite.pixels, sprite.offset_x, sprite.offset_y)
+					}
+					else {
+						sprite.draw()
+					}
 				}
 			}
+		}
+
+		if (this.render_mode == 'fast') {
+			temp.rendered_pixels = temp.pixels_to_imagedata_new(temp.pixels)
+			temp.draw()
 		}
 
 		return this
@@ -1451,5 +1558,26 @@ Grout.prototype.mixin({
 		}
 
 		return this
+	},
+
+	rgb_to_hex:function(r, g, b) {
+
+		var r_hex = decimalToHex(r, 2)
+		var g_hex = decimalToHex(g, 2)
+		var b_hex = decimalToHex(b, 2)
+		return '#' + r_hex + g_hex + b_hex
+
+		// http://stackoverflow.com/questions/57803/how-to-convert-decimal-to-hex-in-javascript
+		function decimalToHex(d, padding) {
+
+			var hex = Number(d).toString(16);		
+			padding = typeof (padding) === "undefined" || padding === null ? padding = 2 : padding;
+
+			while (hex.length < padding) {
+				hex = "0" + hex;
+			}
+
+			return hex;
+		}
 	}
 })
