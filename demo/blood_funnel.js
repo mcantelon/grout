@@ -221,7 +221,7 @@ function add_money_to_background(background, rows) {
         if (y % 2) {
             for (var x = 0; x < background.width; x++) {
             	if ((x + x_adjust) % 3) {
-      	            background.pixels[x][y] = 'green'
+      	            background.pixels[x][y] = '#008000'
             	}
             }
         }
@@ -286,10 +286,10 @@ function banker_color_map(banker_skin_color, banker_hair_color) {
 
 	return {
 		'H': banker_hair_color,
-		'B': '#220',
+		'B': '#222200',
 		'F': banker_skin_color,
-		'K': 'black',
-		'N': 'navy'
+		'K': '#000000',
+		'N': [0, 0, 128]
 	}
 }
 
@@ -789,7 +789,7 @@ function banker_chance_to_shoot_bullet(grout, banker_id) {
 			grout.sprites[banker_id].offset_y + 9,
 			'R \
 			 R',
-			{'R': 'red'}
+			{'R': '#ff0000'}
 		)
 
 		grout.state['banker_bullets_in_motion'].push(bullet_id)
@@ -822,7 +822,7 @@ function shoot_bullet(grout, ship) {
 			ship.offset_x + 2,
 			ship.offset_y,
 			'B',
-			{'B': 'black'}
+			{'B': [0, 0, 0]}
 		)
 
 		// add bullet ID to list 
