@@ -25,8 +25,10 @@ function spritemaker_editor() {
 
 	// establish grout as a global variable
 	var editor = new Grout({
-		'width':  EDITOR_WIDTH_IN_TILES * EDITOR_TILE_SIZE,
-		'height': EDITOR_HEIGHT_IN_TILES * EDITOR_TILE_SIZE,
+		'width':  EDITOR_WIDTH_IN_TILES,
+		'height': EDITOR_HEIGHT_IN_TILES,
+		'tile_width': EDITOR_TILE_SIZE,
+		'tile_height': EDITOR_TILE_SIZE,
 		'canvas_id': 'editor'
 	})
 
@@ -47,7 +49,7 @@ function spritemaker_editor() {
 		if (this.parent.state['mode'] == 'pick_color') {
 
 			if (this.pixels[x][y]) {
-				spritemaker_set_color(this.pixels[x][y])
+				spritemaker_set_color(grout_palette_hex_to_rgb(this.pixels[x][y]))
 			}
 			this.parent.state['mode'] = ''
 		}
@@ -56,7 +58,7 @@ function spritemaker_editor() {
 			//var preview = document.getElementById('preview').grout
 
 			// toggle pixel in editor and preview
-			this.toggle(x, y, this.parent.doc_get('colour').value)
+			this.toggle(x, y, grout_palette_hex_to_rgb(this.parent.doc_get('colour').value))
 			//preview.maps.preview.toggle(x, y, this.parent.doc_get('colour').value)
 
 			// refresh editor and preview
@@ -127,7 +129,8 @@ function spritemaker_preview() {
 
 function spritemaker_set_color(colour) {
 
-	document.getElementById('colour').value = colour
+	var colour_hex = grout_palette_rgb_to_hex(colour[0], colour[1], colour[2])
+	document.getElementById('colour').value = colour_hex
 	set_foreground_indicator(colour)
 }
 
