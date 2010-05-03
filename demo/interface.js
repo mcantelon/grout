@@ -2,11 +2,12 @@ function interface() {
 
 	var tile_width     = 10;
 	var width_in_tiles = 11;
-	var canvas_width   = tile_width * width_in_tiles;
 
 	var grout = new Grout({
-		'width':  canvas_width,
-		'height': canvas_width
+		'width':  width_in_tiles,
+		'height': width_in_tiles,
+		'tile_width': tile_width,
+		'tile_height': tile_width
 	});
 
 	// show start screen
@@ -16,7 +17,7 @@ function interface() {
 	function start_screen(grout) {
 
 		var blue_button = grout.sprite('blue_button', {'group': 'start'});
-		var blue_button_colors = {'B': 'blue', 'G': 'grey'};
+		var blue_button_colors = {'B': [0, 0, 240], 'G': [120, 120, 120]};
 
 		blue_button.make_sprite(" \
 			BBBB \
@@ -35,7 +36,7 @@ function interface() {
 		});
 
 		var red_button = grout.sprite('red_button', {'group': 'start'});
-		var red_button_colors = {'R': 'red', 'G': 'grey'};
+		var red_button_colors = {'R': [240, 0, 0], 'G': [120, 120, 120]};
 
 		red_button.make_sprite(" \
 			RRRR \
@@ -74,7 +75,7 @@ function interface() {
 	function another_screen(grout) {
 
 		var yellow_button = grout.sprite('yellow_button', {'group': 'another'});
-		var yellow_button_colors = {'Y': 'yellow', 'G': 'grey'};
+		var yellow_button_colors = {'Y': [240, 240, 0], 'G': [120, 120, 120]};
 
 		yellow_button.make_sprite(" \
 			YYYYYY \
