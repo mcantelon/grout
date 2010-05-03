@@ -1,21 +1,26 @@
 function groutwis() {
 
 	var tile_width     = 10;
+	var tile_height    = 10;
 	var tile_map_width = 10;
 	var canvas_width    = tile_width * tile_map_width;
 
 	// create new grout for playing area
 	var grout_main = new Grout({
-		'width':  canvas_width,
-		'height': canvas_width * 2
+		'width':  tile_map_width,
+		'height': tile_map_width * 2,
+		'tile_width': tile_width,
+		'tile_height': tile_height
 	});
 
 	grout_main.key_repeat_interval = 250;
 
 	// create square grout for piece preview
 	var grout_preview = new Grout({
-		'width':  tile_width * 4,
-		'height': tile_width * 4
+		'width':  4,
+		'height': 4,
+		'tile_width': tile_width,
+		'tile_height': tile_height
 	});
 
 	// grout's state array is a place for ad-hoc data
@@ -202,13 +207,13 @@ function generate_piece(piece) {
 
 	// define color pallette for pieces
 	var color_codes = {
-		'C': 'cyan',
-		'B': 'blue',
-		'O': 'orange',
-		'Y': 'yellow',
-		'G': 'green',
-		'P': 'purple',
-		'R': 'red'
+		'C': [0, 240, 240],
+		'B': [0, 0, 240],
+		'O': [240, 160, 0],
+		'Y': [240, 240, 0],
+		'G': [0, 240, 0],
+		'P': [160, 0, 240],
+		'R': [240, 0, 0]
 	}
 
 	// we define a square of pixels so rotation is easy
