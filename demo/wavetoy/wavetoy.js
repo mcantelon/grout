@@ -1,5 +1,5 @@
-var CANVAS_WIDTH  = 200
-var CANVAS_HEIGHT = 200
+var GROUT_WIDTH  = 100
+var GROUT_HEIGHT = 100
 var DEFAULT_PLOT_LOGIC = 'sin((x + step) / wavelength) * amplitude'
 var grout
 
@@ -7,8 +7,8 @@ function wavetoy_init() {
 
 	// establish grout as a global variable
 	grout = new Grout({
-		'width':  CANVAS_WIDTH,
-		'height': CANVAS_HEIGHT
+		'width':  GROUT_WIDTH,
+		'height': GROUT_HEIGHT
 	})
 
 	set_plot_logic(grout, DEFAULT_PLOT_LOGIC)
@@ -24,7 +24,7 @@ function set_plot_logic(grout, logic) {
 function shuffle_wave_colour_patterns() {
 
 	// wave colour patterns (one green-ish, one red-ish, one blue-ish)
-	var available_wave_colour_patterns = ['f**', '*f*', '**b'],
+	var available_wave_colour_patterns = ['#ff****', '#**ff**', '#****bb'],
 		wave_colour_patterns = [],
 		pattern_index,
 		colour_pattern
@@ -82,8 +82,8 @@ function wavetoy(params) {
 		// create sprite for wave
 		var wave_sprite = grout.sprite(
 			'wave_' + i, {
-				'width': CANVAS_WIDTH / tile_size,
-				'height': CANVAS_HEIGHT / tile_size,
+				'width': GROUT_WIDTH,
+				'height': GROUT_HEIGHT,
 				'tile_width': tile_size,
 				'tile_height': tile_size
 			}
