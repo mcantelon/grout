@@ -94,7 +94,8 @@ function blood_funnel() {
 	var grout = new Grout({
 		'width':  canvas_width * 2,
 		'height': canvas_width,
-		'key_repeat_interval': 25
+		'key_repeat_interval': 25,
+		'render_mode': 'slow'
 	})
 
 	// add local sound effects
@@ -289,7 +290,7 @@ function banker_color_map(banker_skin_color, banker_hair_color) {
 		'B': '#222200',
 		'F': banker_skin_color,
 		'K': '#000000',
-		'N': [0, 0, 128]
+		'N': '#000080'
 	}
 }
 

@@ -195,8 +195,8 @@ function help_screen(grout) {
       + "jamming its blood funnel into anything that smells like money.\""
 
 	create_help_text_map(grout, 'help')
-      .stamp_text(help_text, 5, 3, 140, 'black')
-      .stamp_text('-Matt Taibbi', 108, 55, 70, 'black')
+      .stamp_text(help_text, 5, 3, 140, '#000000')
+      .stamp_text('-Matt Taibbi', 108, 55, 70, '#000000')
 
 	create_help_back_button(grout, 'help', start_screen)
 	create_help_next_button(grout, 'help', help_screen_2)
@@ -215,7 +215,7 @@ function help_screen_2(grout) {
       + "that enable them to conduct massive swindles and loot the public "
       + "coffers."
 
-	create_help_text_map(grout, 'help_2').stamp_text(help_text, 5, 3, 140, 'black')
+	create_help_text_map(grout, 'help_2').stamp_text(help_text, 5, 3, 140, '#000000')
 
 	create_help_back_button(grout, 'help_2', help_screen)
 	create_help_next_button(grout, 'help_2', help_screen_3)
@@ -233,7 +233,7 @@ function help_screen_3(grout) {
       + "attempt to compromise public and private institutions, you must "
       + "fight them using any means necessary."
 
-	create_help_text_map(grout, 'help_3').stamp_text(help_text, 5, 3, 140, 'black')
+	create_help_text_map(grout, 'help_3').stamp_text(help_text, 5, 3, 140, '#000000')
 
 	create_help_back_button(grout, 'help_3', help_screen_2)
 	create_help_next_button(grout, 'help_3', help_screen_4)
@@ -251,7 +251,7 @@ function help_screen_4(grout) {
       + "won't kill you if you touch them so feel free to get close to "
       + "them and shoot if they are attempting to infiltrate."
 
-	create_help_text_map(grout, 'help_4').stamp_text(help_text, 5, 3, 140, 'black')
+	create_help_text_map(grout, 'help_4').stamp_text(help_text, 5, 3, 140, '#000000')
 
 	create_help_back_button(grout, 'help_4', help_screen_3)
 	create_help_next_button(grout, 'help_4', start_screen)
