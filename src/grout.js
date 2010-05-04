@@ -216,6 +216,8 @@ var Has_Pixels = {
 
 			if (that.pixels[x][y]) {
 
+//console.log('rx:' + real_x + '/ry:' + real_y + '/w:' + that.tile_width + '/h:' + that.tile_height)
+
 				// hide canvas errors
 				try {
 					that.parent.ctx.fillRect(
@@ -1058,11 +1060,10 @@ Map.prototype.mixin({
 		}
 		else {
 
-console.log('drawing legacy map')
 			this.cycle_through_pixels(function(that, x, y, params) {
 
-				var real_x = (x + that.offset_x) * that.tile_width
-				var real_y = (y + that.offset_y) * that.tile_height
+				var real_x = x * that.tile_width
+				var real_y = y * that.tile_height
 
 				that.draw_common(that, x, y, real_x, real_y)
 			})
