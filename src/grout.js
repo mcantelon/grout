@@ -1313,8 +1313,8 @@ Grout.prototype.mixin({
 	click_handler:function(event) {
 
 		// determine x and y in real pixels relative to canvas
-		var relative_x = event.clientX - this.offsetLeft
-		var relative_y = event.clientY - this.offsetTop
+		var relative_x = event.clientX - (this.offsetLeft - document.body.scrollLeft)
+		var relative_y = event.clientY - (this.offsetTop - document.body.scrollTop)
 
 		if (this.grout.click_logic != undefined) {
 
