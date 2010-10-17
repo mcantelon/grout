@@ -161,7 +161,8 @@ function grout_palette(params, click_logic, render_logic) {
 		var grout_params = {
 			'width': 306,
 			'height': 17,
-			'canvas_id': 'picker'
+			'canvas_id': 'picker',
+			'render_mode': 'fast'
 		}
 
 		var tile_width = params['tile_width'] || 3
