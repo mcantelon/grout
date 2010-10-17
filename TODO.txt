@@ -1,6 +1,39 @@
+WHERE I'M AT
+-have changed API so width of grout is width in tiles
+-need to fix problem with legacy render mode (for Blood Funnel)
+-need to get rid of tile width option in wave toy or make it work
+
+got to change how it all works
+
+create temp pixel map
+change draw_all so it stamps everything onto one temp pixel map
+render pixel map
+draw
+
+
+
+
+
+
+
+
+
+-make it so all attributes can be set using param hash
+
+draw all should take group as optional arg
+mod delete_sprite function to delete from group
+
+
+-have it go faster as you go along
+-center piece when put into play
+
 -add way to shift pixels (like real pixels for scrolling)
 
 -can we stick reference to groutris in document rather than document AND canvas?
+
+test multiple animation loops (w two grouts)
+
+-change pixel to tile
 
 High:
 -have grout create canvas tag itself (with optional override)
