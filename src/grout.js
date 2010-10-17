@@ -203,7 +203,12 @@ var Has_Pixels = {
 		if (that.pixels[x] != undefined) {
 
 			if (typeof that.pixels[x][y] == 'object') {
-				that.parent.ctx.fillStyle = that.parent.rgb_to_hex(that.pixels[x][y])
+
+				that.parent.ctx.fillStyle = that.parent.rgb_to_hex(
+					that.pixels[x][y][0],
+					that.pixels[x][y][1],
+					that.pixels[x][y][2]
+				)
 			}
 			else if (that.pixels[x][y] == true) {
 
@@ -215,8 +220,6 @@ var Has_Pixels = {
 			}
 
 			if (that.pixels[x][y]) {
-
-//console.log('rx:' + real_x + '/ry:' + real_y + '/w:' + that.tile_width + '/h:' + that.tile_height)
 
 				// hide canvas errors
 				try {
@@ -1136,12 +1139,19 @@ Grout.prototype.mixin({
 		}
 
 		// set canvas size
-		this.canvas.setAttribute('width',  this.width)
-		this.canvas.setAttribute('height', this.height)
+		if (this.render_mode == 'fast') {
 
-		// create pixelization
-		this.canvas.style['width'] = this.width * this.tile_width
-		this.canvas.style['height'] = this.height * this.tile_height
+			this.canvas.setAttribute('width',  this.width)
+			this.canvas.setAttribute('height', this.height)
+
+			// create pixelization effect
+			this.canvas.style['width'] = this.width * this.tile_width
+			this.canvas.style['height'] = this.height * this.tile_height
+		}
+		else {
+			this.canvas.setAttribute('width',  this.width * this.tile_width)
+			this.canvas.setAttribute('height', this.height * this.tile_height)
+		}
 
 		// put reference to this object in canvas
 		this.canvas.grout = this
