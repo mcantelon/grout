@@ -15,6 +15,7 @@ function spritemaker() {
 		{'preset': 'medium'},
 		function (x, y) {
 			var colour = this.pixels[x][y]
+
 			spritemaker_set_color(colour)
 			this.parent.draw_all()
         }
@@ -29,7 +30,8 @@ function spritemaker_editor() {
 		'height': EDITOR_HEIGHT_IN_TILES,
 		'tile_width': EDITOR_TILE_SIZE,
 		'tile_height': EDITOR_TILE_SIZE,
-		'canvas_id': 'editor'
+		'canvas_id': 'editor',
+		'render_mode': 'sharp'
 	})
 
 	// create editor map
