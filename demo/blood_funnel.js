@@ -1,6 +1,6 @@
 var TILE_WIDTH  = 4
 var TILE_HEIGHT = 4
-var MAX_PLAYER_BULLETS = 2
+var MAX_PLAYER_BULLETS = 4
 var SCORE_MAX_WIDTH = 50
 var MAP_SIZE_IN_TILES = 75
 
@@ -89,13 +89,13 @@ function create_ship_related_sprites(grout) {
 
 function blood_funnel() {
 
-	var canvas_width = TILE_WIDTH * MAP_SIZE_IN_TILES
-
 	var grout = new Grout({
-		'width':  canvas_width * 2,
-		'height': canvas_width,
+		'width':  MAP_SIZE_IN_TILES * 2,
+		'height': MAP_SIZE_IN_TILES,
+		'tile_width': TILE_WIDTH,
+		'tile_height': TILE_HEIGHT,
 		'key_repeat_interval': 25,
-		'render_mode': 'slow'
+		'render_mode': 'sharp'
 	})
 
 	// add local sound effects
