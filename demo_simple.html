@@ -10,17 +10,16 @@
 <div id='my_grout'></div id='my_grout'>
 
 <script>
-var width_in_tiles = 30
+var width_in_tiles  = 30
 var height_in_tiles = 60
-var tile_size = 8
+var tile_size       = 8
 
 // create new Grout instance
 var my_grout = new Grout({
 	'width':  width_in_tiles,
 	'height': height_in_tiles,
 	'tile_width': tile_size,
-	'tile_height': tile_size,
-	'canvas_id': 'editor'
+	'tile_height': tile_size
 })
 
 // create new map
@@ -80,8 +79,6 @@ my_grout.animate(30, function() {
 	else {
 		my_ball.offset_x = 0 - my_ball.width
 	}
-
-//if (my_ball.state['moves'] > 0) { fff() }
 
 	my_ball.state['moves']++
 })
