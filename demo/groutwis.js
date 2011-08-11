@@ -10,7 +10,8 @@ function groutwis() {
 		'width':  tile_map_width,
 		'height': tile_map_width * 2,
 		'tile_width': tile_width,
-		'tile_height': tile_height
+		'tile_height': tile_height,
+		'render_mode': 'sharp'
 	});
 
 	grout_main.key_repeat_interval = 250;
@@ -20,7 +21,8 @@ function groutwis() {
 		'width':  4,
 		'height': 4,
 		'tile_width': tile_width,
-		'tile_height': tile_height
+		'tile_height': tile_height,
+		'render_mode': 'sharp'
 	});
 
 	// grout's state array is a place for ad-hoc data
