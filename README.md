@@ -4,6 +4,7 @@ If you want to have some fun with canvas and make chunky things Grout is
 a friend to you.
 
 Features:
+
  * functionality for making chunky pixel art and games
  * two rendering modes ("fast" and blurry, or "sharp" and less performant)
  * allows you to use ASCII art to define sprites
@@ -80,7 +81,7 @@ colors.
       ..C.C. \
       CCC..C \
       .....C \
-  ", man_colors)
+    ", man_colors)
 
 ## Animating sprites
 
