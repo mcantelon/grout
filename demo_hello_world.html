@@ -1,0 +1,37 @@
+<html>
+
+<head>
+	<title>Grout Hello World</title>
+	<script type="text/javascript" src="src/grout.js"></script>
+    <script type="text/javascript" src="src/grout_text.js"></script>
+</head>
+
+<body style='background-color: #333333'>
+
+<script>
+var width_in_tiles = 30
+var height_in_tiles = 12
+var tile_size = 8
+
+// create new Grout instance
+var my_grout = new Grout({
+	'width':  width_in_tiles,
+	'height': height_in_tiles,
+	'tile_width':  tile_size,
+	'tile_height': tile_size
+})
+
+// add a map and stamp some white text on it in the upper left corner
+my_grout.map(
+	'my_map', {
+		'width':  width_in_tiles,
+		'height': height_in_tiles,
+	}
+).stamp_text('hello world', 0, 0, 30, '#ffffff')
+
+// draw!
+my_grout.draw_all()
+</script>
+
+</body>
+</html>
