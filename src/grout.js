@@ -1149,6 +1149,7 @@ Grout.prototype.mixin({
 			this.canvas.style['height'] = this.height * this.tile_height
 		}
 		else {
+
 			this.canvas.setAttribute('width',  this.width * this.tile_width)
 			this.canvas.setAttribute('height', this.height * this.tile_height)
 		}
@@ -1370,8 +1371,8 @@ Grout.prototype.mixin({
 
 	clear_canvas:function() {
 
-		this.ctx.clearRect(0, 0, this.width, this.height)
-
+		var el = document.getElementById(this.canvas_id)
+		this.ctx.clearRect(0, 0, el.width, el.height)
 		return this
 	},
 
