@@ -1,5 +1,5 @@
-var GROUT_WIDTH  = 100
-var GROUT_HEIGHT = 100
+var GROUT_WIDTH  = 400
+var GROUT_HEIGHT = 200
 var DEFAULT_PLOT_LOGIC = 'sin((x + step) / wavelength) * amplitude'
 var grout
 
@@ -8,7 +8,8 @@ function wavetoy_init() {
 	// establish grout as a global variable
 	grout = new Grout({
 		'width':  GROUT_WIDTH,
-		'height': GROUT_HEIGHT
+		'height': GROUT_HEIGHT,
+		'render_mode': 'sharp'
 	})
 
 	set_plot_logic(grout, DEFAULT_PLOT_LOGIC)
@@ -82,8 +83,8 @@ function wavetoy(params) {
 		// create sprite for wave
 		var wave_sprite = grout.sprite(
 			'wave_' + i, {
-				'width': GROUT_WIDTH,
-				'height': GROUT_HEIGHT,
+				'width': GROUT_WIDTH / tile_size,
+				'height': GROUT_HEIGHT / tile_size,
 				'tile_width': tile_size,
 				'tile_height': tile_size
 			}
