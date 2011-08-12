@@ -856,6 +856,12 @@ Sprite.prototype.mixin({
 
         this.add_frame(frame_data.pixels)
 
+		// if adding first frame-auto set the sprite width and height
+		if (this.frames[this.current_sequence].length == 1) {
+			this.width  = frame_data.x
+			this.height = frame_data.y
+		}
+
 		return this
     },
 
