@@ -158,7 +158,7 @@ var Has_Pixels = {
 			for (var i = 0; i < this.tile_height; i++) {
 				for (var x = 0; x < this.width; x++) {
 
-					if (!this.undefined_or_null(pixels[x][y])
+					if (pixels[x] && !this.undefined_or_null(pixels[x][y])
 					  && pixels[x][y]
 					) {
 						if (pixels[x][y] == true) {
