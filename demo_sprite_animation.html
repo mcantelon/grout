@@ -1,0 +1,73 @@
+<html>
+
+<head>
+	<title>Grout Sprite Animation</title>
+	<script type="text/javascript" src="src/grout.js"></script>
+</head>
+
+<body style='background-color: #333333'>
+
+<script>
+var width_in_tiles = 6
+var height_in_tiles = 11
+var tile_size = 8
+
+var grout = new Grout({
+	'width':  width_in_tiles,
+	'height': height_in_tiles,
+	'tile_width':  tile_size,
+	'tile_height': tile_size
+})
+
+var man_colors = {
+	'H': '#271F2E', // hair color
+	'S': '#D9B166', // skin color
+	'C': '#000080', // clothing color
+	'B': '#000000'  // belt color
+}
+
+var man = grout.sprite(
+	'man', {
+//		'width': width_in_tiles,
+//		'height': height_in_tiles,
+		'tile_width': tile_size,
+		'tile_height': tile_size
+	}
+)
+
+man
+.add_frame_from_string(" \
+	.HHH.. \
+	.SSS.. \
+	..S... \
+	.CCC.. \
+	C.C.S. \
+	S.C... \
+	..B... \
+	..CC.. \
+	..C.C. \
+	CCC..C \
+	.....C \
+", man_colors)
+.add_frame_from_string(" \
+	.HHH.. \
+	.SSS.. \
+	..S... \
+	.CCC.. \
+	S.C.C. \
+	..C.S. \
+	..B... \
+	..CCCC \
+	..C..C \
+	..C..C \
+	..C... \
+", man_colors)
+.set_frame(0)
+
+grout.animate(500, function() {
+  man.next_frame(1)
+})
+</script>
+
+</body>
+</html>
