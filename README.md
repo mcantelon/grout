@@ -10,12 +10,12 @@ Features:
  * allows you to use ASCII art to define sprites
  * supports simple sprite animation
  * provides a pixel font with word wrap
+ * sprite collision detection and other helpful functionality
 
 ## Defining sprites
 
-Grout lets you define sprites using ASCII.
-
-Below is an example in which we create a draw a little man:
+Grout lets you define sprites using ASCII. Below is an example in which we create a draw a little man.
+Note that the width and height of the sprite get automatically set when we call the `make_sprite` function.
 
     var width_in_tiles = 6
     var height_in_tiles = 11
@@ -84,6 +84,59 @@ colors.
     ", man_colors)
 
 ## Animating sprites
+
+If we wanted to animate the little man from the previous examples we can
+do it by adding frames then using the `animate` and `next_frame` functions
+to cycle through the frames. Note that the width and height of the sprite get
+automatically set when we call the `add_frame_from_string` function for the
+first time (unless we've previously set the height and width).
+
+    var man_colors = {
+      'H': '#271F2E', // hair color
+      'S': '#D9B166', // skin color
+      'C': '#000080', // clothing color
+      'B': '#000000'  // belt color
+    }
+
+    var man = grout.sprite(
+      'man', {
+        'tile_width': tile_size,
+        'tile_height': tile_size
+      }
+    )
+
+    man
+    .add_frame_from_string(" \
+      .HHH.. \
+      .SSS.. \
+      ..S... \
+      .CCC.. \
+      C.C.S. \
+      S.C... \
+      ..B... \
+      ..CC.. \
+      ..C.C. \
+      CCC..C \
+      .....C \
+    ", man_colors)
+    .add_frame_from_string(" \
+      .HHH.. \
+      .SSS.. \
+      ..S... \
+      .CCC.. \
+      S.C.C. \
+      ..C.S. \
+      ..B... \
+      ..CCCC \
+      ..C..C \
+      ..C..C \
+      ..C... \
+    ", man_colors)
+    .set_frame(0)
+
+    grout.animate(500, function() {
+      man.next_frame(1)
+    })
 
 ## Adding pixel text
 
