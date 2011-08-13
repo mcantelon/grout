@@ -1285,6 +1285,11 @@ Grout.prototype.mixin({
 		return this
 	},
 
+	reset_keypresses:function() {
+
+		this.keys_pressed = {}
+	},
+
 	key_handler:function(event) {
 
 		// if key isn't already pressed, mark is as pressed and fire logic
