@@ -1,0 +1,39 @@
+<html>
+
+<head>
+	<title>Grout Logo</title>
+	<script type="text/javascript" src="src/grout.js"></script>
+    <script type="text/javascript" src="src/grout_text.js"></script>
+</head>
+
+<body style='background-color: #eeeeee'>
+
+<script>
+var width_in_tiles = 40
+  , height_in_tiles = 40
+  , tile_size = 5
+
+var sizing = {
+	'width':       width_in_tiles * tile_size,
+	'height':      height_in_tiles * tile_size,
+	'tile_width':  tile_size,
+	'tile_height': tile_size
+  }
+
+var grout = new Grout(sizing)
+  , logo = grout.map('logo', sizing)
+
+grout.render_mode = 'sharp'
+
+// palette from http://www.colourlovers.com/palette/1702543/squalor_and_cannabis
+var colors = ['#142F27', '#B27B38', '#38B244', '#54B238', '#7FB238']
+
+for (var i = 0; i < 5; i++) {
+  logo.stamp_text('grout', (i * 2) + 1, (i * 2) + 1, width_in_tiles, colors.pop())
+}
+
+grout.draw_all()
+</script>
+
+</body>
+</html>
