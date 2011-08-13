@@ -1,0 +1,142 @@
+<html>
+
+<head>
+	<title>Grout Sprite Collision</title>
+	<script type="text/javascript" src="src/grout.js"></script>
+</head>
+
+<body style='background-color: #eeeeee'>
+
+<script>
+var width_in_tiles = 40
+  , height_in_tiles = 40
+  , tile_size = 8
+
+var sizing = {
+	'width':       width_in_tiles,
+	'height':      height_in_tiles,
+	'tile_width':  tile_size,
+	'tile_height': tile_size
+  }
+
+var grout = new Grout(sizing)
+  , roadway = grout.map('roadway', sizing)
+
+// create car sprite
+var car_colors = {
+	'W': '#000000', // wheel color
+	'B': '#FF0000', // body color
+  }
+  , car = grout.sprite(
+	'car', {
+		'tile_width':  tile_size,
+		'tile_height': tile_size
+	}
+  )
+
+car.make_sprite(" \
+	.BBB. \
+	WBBBW \
+	.BBB. \
+	WBBBW \
+	.BBB. \
+", car_colors)
+
+function reset() {
+
+	grout.reset_keypresses()
+
+	// center car horizontally and place near bottom of map
+	car.offset_x = Math.floor((width_in_tiles - car.width) / 2) + 1
+	car.offset_y = height_in_tiles - car.height - 1
+
+	// clear map and draw initial roadway
+	roadway.clear()
+	for(var y = 0; y < height_in_tiles; y++) {
+		roadway.poke(shoulder_width, y, '#00ffff')
+		roadway.poke(shoulder_width + road_width, y, '#00ffff')
+	}
+
+	road_x = shoulder_width
+	ticks = 0
+	ticks_since_last_change = 0	
+}
+
+// define road characteristics
+var road_width = car.width + 9
+var shoulder_width = Math.floor((width_in_tiles - road_width) / 2)
+
+// define road characteristic and bookkeeping variables
+var road_x
+  , probability_of_road_change = 5
+  , direction
+  , ticks
+  , ticks_since_last_change
+  , last_keypress_tick
+
+reset()
+
+// make roadway move
+grout.animate(100, function() {
+
+	// check for collision of car with map
+	if (car.detect_collision_with_map(roadway)) {
+		alert('You died.')
+		reset()
+	}
+
+    // change road direction randomly if it hasn't recently changed
+    if (Math.floor(Math.random() * probability_of_road_change) == 0
+    	&& ticks_since_last_change > 3) {
+		direction = Math.floor(Math.random() * 3)
+    	ticks_since_last_change = 0
+    }
+    else {
+    	ticks_since_last_change++
+    }
+
+    // move roadway, if applicable, every other tick
+	if (ticks % 2) {
+		if (direction && direction == 1) {
+			// move roadway left
+			road_x = (road_x > 0) ? road_x - 1 : road_x
+		} else if (direction == 2) {
+			// move roadway right
+			road_x = ((road_x + 2) < (width_in_tiles - road_width)) ? road_x + 1 : road_x
+		}
+	}
+
+	// draw edge of road
+	roadway.poke(road_x, 0, '#00ffff')
+	roadway.poke(road_x + road_width, 0, '#00ffff')
+
+	// clear bottom row of roadway (so shifting down doesn't wrap) and move existing roadway down 
+    roadway.clear_range(0, height_in_tiles - 1, width_in_tiles, height_in_tiles)
+    roadway.shift(0, 1)
+
+	ticks++
+})
+
+// specify keyboard handling logic
+grout.keypress(function(key) {
+
+	// only allow one movement per tick
+	if (ticks != last_keypress_tick) {
+
+		// move left if left arrow key pressed
+		if (key == 37 && (car.offset_x > 0)) {
+			car.offset_x--
+		}
+
+		// move right if right arrow key pressed
+		if (key == 39 && (car.offset_x < (width_in_tiles - car.width))) {
+			car.offset_x++
+		}
+	}
+
+	last_keypress_tick = ticks
+})
+</script>
+
+</body>
+</html>
