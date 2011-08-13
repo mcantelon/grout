@@ -1,7 +1,8 @@
 Grout: make things with chunky pixels on canvas
 
 If you want to have some fun with canvas and make chunky things Grout is
-a friend to you.
+a friend to you. The documentation is sparse, so you might need to poke
+around some.
 
 Features:
 
@@ -12,10 +13,19 @@ Features:
  * provides a pixel font with word wrap
  * sprite collision detection and other helpful functionality
 
-## Defining sprites
+## Components
 
-Grout lets you define sprites using ASCII. Below is an example in which we create a draw a little man.
-Note that the width and height of the sprite get automatically set when we call the `make_sprite` function.
+When creating something with Grout, you use a Grout controller, one or more
+maps (planes on which you can draw directly or add sprites), and one or more
+sprites (planes that can be positioned on a map). Maps and sprites share a
+lot of functionality, although there are some functions particular to each
+(which will be expanded upon in later documentation).
+
+## Defining maps and sprites
+
+Grout lets you define sprites using ASCII. Below is an example in which we
+create a draw a little man. Note that the width and height of the sprite
+get automatically set when we call the `make_sprite` function.
 
     var width_in_tiles = 6
     var height_in_tiles = 11
