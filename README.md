@@ -1,4 +1,4 @@
-Grout: make things with chunky pixels on canvas
+![Grout logo](https://github.com/mcantelon/grout/raw/master/logo.png)
 
 If you want to have some fun with canvas and make chunky things Grout is
 a friend to you. The documentation is sparse, so you might need to poke
