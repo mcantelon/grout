@@ -100,9 +100,9 @@ function blood_funnel() {
 
 	// add local sound effects
 	var effects = {
-		'shoot': 'demo/sound/blood_funnel_tweet.ogg',
-		'death': 'demo/sound/bloodfunnel_death.ogg',
-		'level': 'demo/sound/bloodfunnel_level.ogg'
+		'shoot': 'sound/blood_funnel_tweet.ogg',
+		'death': 'sound/bloodfunnel_death.ogg',
+		'level': 'sound/bloodfunnel_level.ogg'
 	}
 
 	for (effect in effects) {
