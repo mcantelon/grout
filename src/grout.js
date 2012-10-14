@@ -1151,8 +1151,8 @@ Grout.prototype.mixin({
 			this.canvas.setAttribute('height', this.height)
 
 			// create pixelization effect
-			this.canvas.style['width'] = this.width * this.tile_width
-			this.canvas.style['height'] = this.height * this.tile_height
+      this.canvas.style['width'] = (this.width * this.tile_width) + 'px'
+      this.canvas.style['height'] = (this.height * this.tile_height) + 'px'
 		}
 		else {
 
